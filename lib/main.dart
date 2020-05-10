@@ -80,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage>{
   BluetoothDevice _connectedDevice;
   List<BluetoothService> _services;
   String _deviceName;
+  String _addedName;
 
   @override
   Widget build(BuildContext context) {
@@ -193,13 +194,12 @@ class _MyHomePageState extends State<MyHomePage>{
       );
    }
   Future<File> _addName(String s) {
-    String name;
     setState(() {
-      name = s;
+      _addedName = s;
     });
 
     // Write the variable as a string to the file.
-    return widget.storage.writeName(name);
+    return widget.storage.writeName(_addedName);
   }
 
   void _showDialog(String msg) {
@@ -278,7 +278,7 @@ class _MyHomePageState extends State<MyHomePage>{
                       try {
                         print("blue");
                         await device.connect();
-                        print("blue");
+//                        print("blue");
                       } catch (e) {
                         if (e.code != 'already_connected') {
                           throw e;
