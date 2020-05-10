@@ -187,7 +187,6 @@ class _MyHomePageState extends State<MyHomePage>{
             }
             setState(() {
               _connectedDevice = desired;
-              _addName(_connectedDevice.name);
               Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
             });
           }
@@ -289,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage>{
                       }
                       setState(() {
                         _connectedDevice = device;
-                        widget.storage.writeName(_connectedDevice.name);
+                        _addName(_connectedDevice.name);
                         print("new page");
                         Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
                         
