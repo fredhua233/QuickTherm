@@ -187,12 +187,22 @@ class _MyHomePageState extends State<MyHomePage>{
             }
             setState(() {
               _connectedDevice = desired;
-              ///widget.storage.writeName(_connectedDevice.name);
+              _addName(_connectedDevice.name);
               Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
             });
           }
       );
    }
+  Future<File> _addName(String s) {
+    String name;
+    setState(() {
+      name = s;
+    });
+
+    // Write the variable as a string to the file.
+    return widget.storage.writeName(name);
+  }
+
   void _showDialog(String msg) {
     // flutter defined function
     showDialog(
