@@ -162,9 +162,10 @@ class _MyHomePageState extends State<MyHomePage>{
           child: Text('Connect Previous Device', style: TextStyle(color:Colors.white)),
           onPressed: () async {
             if (_deviceName == '') {
-              _showDialog("No previous devic ever connected!");
+              _showDialog("No previous device ever connected!");
             }
             BluetoothDevice desired;
+            print("mmmmmmmm");
             for (BluetoothDevice b in widget.devicesList) {
               if (b.name == _deviceName) {
                 desired = b;
@@ -186,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage>{
             }
             setState(() {
               _connectedDevice = desired;
-              widget.storage.writeName(_connectedDevice.name);
+              ///widget.storage.writeName(_connectedDevice.name);
               Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
             });
           }
@@ -266,7 +267,9 @@ class _MyHomePageState extends State<MyHomePage>{
                     onPressed: () async {
                       widget.flutterBlue.stopScan();
                       try {
+                        print("blue");
                         await device.connect();
+                        print("blue");
                       } catch (e) {
                         if (e.code != 'already_connected') {
                           throw e;
@@ -277,7 +280,9 @@ class _MyHomePageState extends State<MyHomePage>{
                       setState(() {
                         _connectedDevice = device;
                         widget.storage.writeName(_connectedDevice.name);
+                        print("new page");
                         Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
+                        
                       });
                     },
                   ),
