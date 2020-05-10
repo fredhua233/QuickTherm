@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: "Available Devices"),
+      home: MyHomePage(title: "Available Devices", storage: NameStorage() ),
+
     );
   }
 }
@@ -31,6 +32,11 @@ class MyApp extends StatelessWidget {
  * Class to help store data for persistence across different APP launches
  */
 class NameStorage {
+  NameStorage(){
+    var myFile = new File("PrevDev");
+    myFile.create();
+  }
+
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
@@ -39,7 +45,7 @@ class NameStorage {
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$path/Persistence/PrevDev');
+    return File('$path/PrevDev');
   }
 
   Future<String> readName() async {
@@ -154,9 +160,8 @@ class _MyHomePageState extends State<MyHomePage>{
       );
     }
 
-  /**
-   * Button to connect with previous connected device //TODO: Check if it works
-   */
+  /// Button to connect with previous connected device //TODO: Check if it works
+
     Widget _connectPrev() {
       return FlatButton(
           color: Colors.yellow,
@@ -187,6 +192,7 @@ class _MyHomePageState extends State<MyHomePage>{
               _services = await desired.discoverServices();
             }
             setState(() {
+              print('setState');
               _connectedDevice = desired;
               Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
             });
