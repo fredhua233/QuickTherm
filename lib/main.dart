@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutterapp/MySubPage.dart';
+import 'package:system_setting/system_setting.dart';
 
 void main() => runApp(MyApp());
-
-/* Problems:
-1. How to add the spread-collection to console？ ----------- switch to master branch(from beta) and upgrade
-2. The app does not refresh(devices still remains on the app even when turned off)
-*/
 
 //TODO:
 class MyApp extends StatelessWidget {
@@ -28,9 +25,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/**
- * Class to help store data for persistence across different APP launches
- */
+/// Class to help store data for persistence across different APP launches
 class NameStorage {
   NameStorage(){
     var myFile = new File("PrevDev");
@@ -77,6 +72,7 @@ class MyHomePage extends StatefulWidget {
   final FlutterBlue flutterBlue = FlutterBlue.instance;
   final NameStorage storage;
   final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -87,14 +83,20 @@ class _MyHomePageState extends State<MyHomePage>{
   List<BluetoothService> _services;
   String _deviceName;
   String _addedName;
+  Future<bool> _BluetoothStatus;
+
 
   @override
   Widget build(BuildContext context) {
+    while(_BTstatus() != true) {
+      BTdialog();
+    }
     return Scaffold(
       appBar: AppBar(
           title: Text(widget.title),
       ),
       body: _buildListViewOfDevices(),
+
       floatingActionButton: Stack(
         children: <Widget>[
           Align(
@@ -109,6 +111,38 @@ class _MyHomePageState extends State<MyHomePage>{
       )
     );
   }
+  ///status of bluetooth of your device
+    Future<bool> _BTstatus() {
+      _BluetoothStatus =  widget.flutterBlue.isOn;
+      return _BluetoothStatus;
+    }
+
+  ///dialog alerting user to turn on bluetooth settings
+    void BTdialog() {
+      showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: new Text("Oops, something went wrong..."),
+          content: new Text("Please connect to bluetooth to continue."),
+          actions: [
+            FlatButton(
+              child: new Text("Cancel"),
+              onPressed: (){
+                Navigator.of(context).pop();
+              }
+            ),
+            FlatButton(
+              child: new Text("Go to Settings"),
+              onPressed: (){
+                  SystemSetting.goto(SettingTarget.BLUETOOTH);
+              },
+            )
+          ],
+        )
+      );
+    }
+
+  ///add a detected BT device to devicelist
     void _addDeviceTolist(final BluetoothDevice device) {
       if (!widget.devicesList.contains(device)) {
         setState(() {
@@ -117,6 +151,7 @@ class _MyHomePageState extends State<MyHomePage>{
       }
     }
 
+  ///detects bluetooth device
     @override
     void initState() {
       super.initState();
@@ -139,10 +174,8 @@ class _MyHomePageState extends State<MyHomePage>{
       scan(3);
     }
 
-  /**
-   * Button for refreshing found device list, press once every 4 sec for newest found device
-   * @return Widget button
-   */
+  /// Button for refreshing found device list, press once every 4 sec for newest found device
+  /// @return Widget button
     Widget _reloadButton() {
       return FlatButton(
         color: Colors.green,
@@ -168,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage>{
           child: Text('Connect Previous Device', style: TextStyle(color:Colors.white)),
           onPressed: () async {
             if (_deviceName == '') {
-              _showDialog("No previous device ever connected!");
+              _connectPrevDialog("Problems connecting to previous device" , "No previous device ever connected!");
             }
             BluetoothDevice desired;
             print("mmmmmmmm");
@@ -179,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage>{
               }
             }
             if (desired == null) {
-              _showDialog("Previous device: " + _deviceName + " not found!");
+              _connectPrevDialog("Problems connecting to previous device" ,"Previous device: " + _deviceName + " not found!");
             }
             widget.flutterBlue.stopScan();
             try {
@@ -208,14 +241,14 @@ class _MyHomePageState extends State<MyHomePage>{
     return widget.storage.writeName(_addedName);
   }
 
-  void _showDialog(String msg) {
+  void _connectPrevDialog(String title, String msg ) {
     // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("problems connecting to previous device"),
+          title: new Text(title),
           content: new Text(msg),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
@@ -230,11 +263,9 @@ class _MyHomePageState extends State<MyHomePage>{
       },
     );
   }
-  /**
-   * Scans for devices for a given amount of seconds, specified by SEC
-   * for continous scan let SEC equal 0
-   * @param int sec
-   */
+  /// Scans for devices for a given amount of seconds, specified by SEC
+  /// for continuous scan let SEC equal 0
+  /// @param int sec
   void scan(int sec) {
       if (sec != 0) {
         widget.flutterBlue.startScan(timeout: Duration(seconds: sec));
@@ -255,9 +286,8 @@ class _MyHomePageState extends State<MyHomePage>{
 
     }
 
-  /**
-   * Updated： Only shows devices with name.
-   */
+  /// Updated： Only shows devices with name.
+
   ListView _buildListViewOfDevices(){
       List<Container> containers = new List<Container>();
       for (BluetoothDevice device in widget.devicesList) {
