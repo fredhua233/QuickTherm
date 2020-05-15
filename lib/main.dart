@@ -84,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage>{
   String _deviceName;
   String _addedName;
   Future<bool> _BluetoothStatus;
+  bool connected = false;
 
 
   @override
@@ -91,25 +92,34 @@ class _MyHomePageState extends State<MyHomePage>{
 //    while(_BTstatus() != true) {
 //      BTdialog();
 //    }
-    return Scaffold(
-      appBar: AppBar(
-          title: Text(widget.title),
-      ),
-      body: _buildListViewOfDevices(),
+    if (!connected) {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
+          ),
+          body: _buildListViewOfDevices(),
 
-      floatingActionButton: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: _connectPrev()
+          floatingActionButton: Stack(
+            children: <Widget>[
+              Align(
+                  alignment: Alignment.bottomLeft,
+                  child: _connectPrev()
+              ),
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: _reloadButton()
+              ),
+            ],
+          )
+      );
+    } else {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: _reloadButton()
-          ),
-        ],
-      )
-    );
+          body: _buildListViewOfDevices(),
+      );
+    }
   }
   ///status of bluetooth of your device
 //    Future<bool> _BTstatus() {
@@ -193,8 +203,7 @@ class _MyHomePageState extends State<MyHomePage>{
       );
     }
 
-  /// Button to connect with previous connected device //TODO: Check if it works
-
+  /// Button to connect with previous connected device
     Widget _connectPrev() {
       return FlatButton(
           color: Colors.yellow,
@@ -324,17 +333,19 @@ class _MyHomePageState extends State<MyHomePage>{
                           _services = await device.discoverServices();
                         }
                         setState(() {
+                          connected = true;
                           _connectedDevice = device;
                           _addName(_connectedDevice.name);
                           print("new page");
                           Navigator.push(context, MaterialPageRoute(builder: (
                               context) => MySubPage(_connectedDevice)));
+                          // Write bytes In MIT App Inventor
                         });
                       } else {
                         _connectedDevice.disconnect();
+                        connected = false;
                         setState(() {
                           _connectedDevice = null;
-                          print("new page");
                         });
                       }
                     },

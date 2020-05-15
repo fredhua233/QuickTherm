@@ -33,6 +33,11 @@ class MySubPageState extends State<MySubPage>{
       body: Center(
         child: Text('Go back!'),
       ),
+      floatingActionButton:
+        FloatingActionButton.extended(
+          onPressed: () {},
+          label: Text("Take Temperature"),
+        ),
     );
   }
 
