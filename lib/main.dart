@@ -88,9 +88,9 @@ class _MyHomePageState extends State<MyHomePage>{
 
   @override
   Widget build(BuildContext context) {
-    while(_BTstatus() != true) {
-      BTdialog();
-    }
+//    while(_BTstatus() != true) {
+//      BTdialog();
+//    }
     return Scaffold(
       appBar: AppBar(
           title: Text(widget.title),
@@ -112,10 +112,10 @@ class _MyHomePageState extends State<MyHomePage>{
     );
   }
   ///status of bluetooth of your device
-    Future<bool> _BTstatus() {
-      _BluetoothStatus =  widget.flutterBlue.isOn;
-      return _BluetoothStatus;
-    }
+//    Future<bool> _BTstatus() {
+//      _BluetoothStatus =  widget.flutterBlue.isOn;
+//      return _BluetoothStatus;
+//    }
 
   ///dialog alerting user to turn on bluetooth settings
     void BTdialog() {
@@ -307,28 +307,36 @@ class _MyHomePageState extends State<MyHomePage>{
                     ),
                   ),
                   FlatButton(
-                    color: Colors.blue,
-                    child: Text('Connect', style: TextStyle(color:Colors.white)),
+                    color: _connectedDevice == null? Colors.blue : Colors.red,
+                    child: _connectedDevice == null? Text('Connect', style: TextStyle(color:Colors.white)) :
+                    Text('Disconnect', style: TextStyle(color:Colors.white)),
                     onPressed: () async {
-                      widget.flutterBlue.stopScan();
-                      try {
-                        print("blue");
-                        await device.connect();
-//                        print("blue");
-                      } catch (e) {
-                        if (e.code != 'already_connected') {
-                          throw e;
+                      if (_connectedDevice == null) {
+                        widget.flutterBlue.stopScan();
+                        try {
+                          print("blue");
+                          await device.connect();
+                        } catch (e) {
+                          if (e.code != 'already_connected') {
+                            throw e;
+                          }
+                        } finally {
+                          _services = await device.discoverServices();
                         }
-                      } finally {
-                        _services = await device.discoverServices();
+                        setState(() {
+                          _connectedDevice = device;
+                          _addName(_connectedDevice.name);
+                          print("new page");
+                          Navigator.push(context, MaterialPageRoute(builder: (
+                              context) => MySubPage(_connectedDevice)));
+                        });
+                      } else {
+                        _connectedDevice.disconnect();
+                        setState(() {
+                          _connectedDevice = null;
+                          print("new page");
+                        });
                       }
-                      setState(() {
-                        _connectedDevice = device;
-                        _addName(_connectedDevice.name);
-                        print("new page");
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
-                        
-                      });
                     },
                   ),
                 ],
