@@ -236,7 +236,7 @@ class _MyHomePageState extends State<MyHomePage>{
             setState(() {
               print('setState');
               _connectedDevice = desired;
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice， _services)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice, _services)));
             });
           }
       );
