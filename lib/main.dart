@@ -236,7 +236,7 @@ class _MyHomePageState extends State<MyHomePage>{
             setState(() {
               print('setState');
               _connectedDevice = desired;
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice， _services)));
             });
           }
       );
@@ -338,7 +338,7 @@ class _MyHomePageState extends State<MyHomePage>{
                           _addName(_connectedDevice.name);
                           print("new page");
                           Navigator.push(context, MaterialPageRoute(builder: (
-                              context) => MySubPage(_connectedDevice)));
+                              context) => MySubPage(_connectedDevice, _services)));
                           // Write bytes In MIT App Inventor
                         });
                       } else {

@@ -4,20 +4,21 @@ import 'package:flutter_blue/flutter_blue.dart';
 class MySubPage extends StatefulWidget{
 
   BluetoothDevice connectDevice;
+  List<BluetoothService> services;
 
-  MySubPage(this.connectDevice);
+  MySubPage(this.connectDevice, this.services);
 
   @override
   State<StatefulWidget> createState() {
-    return MySubPageState(connectDevice);
+    return MySubPageState(connectDevice, services);
   }
 }
 
 class MySubPageState extends State<MySubPage>{
 
   BluetoothDevice connectDevice;
-
-  MySubPageState(this.connectDevice);
+  List<BluetoothService> services;
+  MySubPageState(this.connectDevice, this.services);
 
   @override
   Widget build(BuildContext context) {
