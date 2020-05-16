@@ -74,17 +74,17 @@ class MyHomePage extends StatefulWidget {
   final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>{
+class MyHomePageState extends State<MyHomePage>{
 
   BluetoothDevice _connectedDevice;
   List<BluetoothService> _services;
   String _deviceName;
   String _addedName;
   Future<bool> _BluetoothStatus;
-  bool connected = false;
+  bool _connected = false;
 
 
   @override
@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage>{
 //    while(_BTstatus() != true) {
 //      BTdialog();
 //    }
-    if (!connected) {
+    if (!_connected) {
       return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
@@ -181,7 +181,9 @@ class _MyHomePageState extends State<MyHomePage>{
           _addDeviceTolist(device);
         }
       });
-      scan(3);
+      if (!_connected && _connectedDevice == null) {
+        scan(3);
+      }
     }
 
   /// Button for refreshing found device list, press once every 4 sec for newest found device
@@ -276,6 +278,7 @@ class _MyHomePageState extends State<MyHomePage>{
   /// for continuous scan let SEC equal 0
   /// @param int sec
   void scan(int sec) {
+    print("scanning");
       if (sec != 0) {
         widget.flutterBlue.startScan(timeout: Duration(seconds: sec));
         widget.flutterBlue.scanResults.listen((List<ScanResult> results){
@@ -333,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage>{
                           _services = await device.discoverServices();
                         }
                         setState(() {
-                          connected = true;
+                          _connected = true;
                           _connectedDevice = device;
                           _addName(_connectedDevice.name);
                           print("new page");
@@ -343,7 +346,7 @@ class _MyHomePageState extends State<MyHomePage>{
                         });
                       } else {
                         _connectedDevice.disconnect();
-                        connected = false;
+                        _connected = false;
                         setState(() {
                           _connectedDevice = null;
                         });
@@ -363,6 +366,7 @@ class _MyHomePageState extends State<MyHomePage>{
         ],
       );
     }
+
 }
 
 
