@@ -89,9 +89,6 @@ class MyHomePageState extends State<MyHomePage>{
 
   @override
   Widget build(BuildContext context) {
-//    while(_BTstatus() != true) {
-//      BTdialog();
-//    }
     if (!_connected) {
       return Scaffold(
           appBar: AppBar(
@@ -122,10 +119,13 @@ class MyHomePageState extends State<MyHomePage>{
     }
   }
   ///status of bluetooth of your device
-//    Future<bool> _BTstatus() {
-//      _BluetoothStatus =  widget.flutterBlue.isOn;
-//      return _BluetoothStatus;
-//    }
+    _BTstatus() async {
+      var _BluetoothStatus =  await widget.flutterBlue.isOn;
+      if(_BluetoothStatus != true){
+        BTdialog();
+      }
+      print(_BluetoothStatus);
+    }
 
   ///dialog alerting user to turn on bluetooth settings
     void BTdialog() {
@@ -165,6 +165,8 @@ class MyHomePageState extends State<MyHomePage>{
     @override
     void initState() {
       super.initState();
+      _BTstatus();
+
       try {
         widget.storage.readName().then((String name) {
           setState(() {
