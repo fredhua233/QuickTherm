@@ -10,7 +10,7 @@ import 'package:system_setting/system_setting.dart';
 
 void main() => runApp(MyApp());
 
-//TODO:
+//TODO: Auto connect to previous device, Persistence, Set up firebase for data
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -83,7 +83,6 @@ class MyHomePageState extends State<MyHomePage>{
   List<BluetoothService> _services;
   String _deviceName;
   String _addedName;
-  Future<bool> _BluetoothStatus;
   bool _connected = false;
 
 
@@ -100,7 +99,7 @@ class MyHomePageState extends State<MyHomePage>{
             children: <Widget>[
               Align(
                   alignment: Alignment.bottomLeft,
-                  child: _connectPrev()
+                  child: _connectPrevButton()
               ),
               Align(
                   alignment: Alignment.bottomRight,
@@ -113,60 +112,21 @@ class MyHomePageState extends State<MyHomePage>{
       return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice, _services))),
+            ),
           ),
           body: _buildListViewOfDevices(),
       );
     }
   }
-  ///status of bluetooth of your device
-    _BTstatus() async {
-      var _BluetoothStatus =  await widget.flutterBlue.isOn;
-      if(_BluetoothStatus != true){
-        BTdialog();
-      }
-      print(_BluetoothStatus);
-    }
-
-  ///dialog alerting user to turn on bluetooth settings
-    void BTdialog() {
-      showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-          title: new Text("Oops, something went wrong..."),
-          content: new Text("Please connect to bluetooth to continue."),
-          actions: [
-            FlatButton(
-              child: new Text("Cancel"),
-              onPressed: (){
-                Navigator.of(context).pop();
-              }
-            ),
-            FlatButton(
-              child: new Text("Go to Settings"),
-              onPressed: (){
-                  SystemSetting.goto(SettingTarget.BLUETOOTH);
-              },
-            )
-          ],
-        )
-      );
-    }
-
-  ///add a detected BT device to devicelist
-    void _addDeviceTolist(final BluetoothDevice device) {
-      if (!widget.devicesList.contains(device)) {
-        setState(() {
-          widget.devicesList.add(device);
-        });
-      }
-    }
 
   ///detects bluetooth device
     @override
     void initState() {
       super.initState();
       _BTstatus();
-
       try {
         widget.storage.readName().then((String name) {
           setState(() {
@@ -183,72 +143,116 @@ class MyHomePageState extends State<MyHomePage>{
           _addDeviceTolist(device);
         }
       });
-      if (!_connected && _connectedDevice == null) {
-        scan(3);
-      }
+      scan(3);
     }
+  ///status of bluetooth of your device
+  _BTstatus() async {
+    var _BluetoothStatus =  await widget.flutterBlue.isOn;
+    if(_BluetoothStatus != true){
+      BTdialog();
+    }
+    print(_BluetoothStatus);
+  }
+
+  ///dialog alerting user to turn on bluetooth settings
+  void BTdialog() {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: new Text("Oops, something went wrong..."),
+          content: new Text("Please connect to bluetooth to continue."),
+          actions: [
+            FlatButton(
+                child: new Text("Cancel"),
+                onPressed: (){
+                  Navigator.of(context).pop();
+                }
+            ),
+            FlatButton(
+              child: new Text("Go to Settings"),
+              onPressed: (){
+                SystemSetting.goto(SettingTarget.BLUETOOTH);
+              },
+            )
+          ],
+        )
+    );
+  }
+
+  ///add a detected BT device to devicelist
+  void _addDeviceTolist(final BluetoothDevice device) {
+    if (!widget.devicesList.contains(device)) {
+      setState(() {
+        widget.devicesList.add(device);
+      });
+    }
+  }
 
   /// Button for refreshing found device list, press once every 4 sec for newest found device
   /// @return Widget button
-    Widget _reloadButton() {
-      return FlatButton(
-        color: Colors.green,
-        child: Text('Refresh', style: TextStyle(color:Colors.white)),
-        onPressed: () {
-          List<BluetoothDevice> connected = new List<BluetoothDevice>();
-          widget.flutterBlue.connectedDevices
-              .asStream()
-              .listen((List<BluetoothDevice> devices) {
-              connected.addAll(devices);
-              for (BluetoothDevice device in devices) {
-                _addDeviceTolist(device);
-              }
-          });
+  Widget _reloadButton() {
+    return FlatButton(
+      color: Colors.green,
+      child: Text('Refresh', style: TextStyle(color:Colors.white)),
+      onPressed: () {
+        List<BluetoothDevice> connected = new List<BluetoothDevice>();
+        widget.flutterBlue.connectedDevices
+            .asStream()
+            .listen((List<BluetoothDevice> devices) {
+            connected.addAll(devices);
+            for (BluetoothDevice device in devices) {
+              _addDeviceTolist(device);
+            }
+        });
 
-          widget.devicesList.removeWhere((element) => !connected.contains(element));
-          scan(3);
-      }
-      );
+        widget.devicesList.removeWhere((element) => !connected.contains(element));
+        scan(3);
     }
+    );
+  }
 
   /// Button to connect with previous connected device
-    Widget _connectPrev() {
-      return FlatButton(
-          color: Colors.yellow,
-          child: Text('Connect Previous Device', style: TextStyle(color:Colors.white)),
-          onPressed: () async {
-            if (_deviceName == '') {
-              _connectPrevDialog("Problems connecting to previous device" , "No previous device ever connected!");
-            }
-            BluetoothDevice desired;
-            print("mmmmmmmm");
-            for (BluetoothDevice b in widget.devicesList) {
-              if (b.name == _deviceName) {
-                desired = b;
-                break;
-              }
-            }
-            if (desired == null) {
-              _connectPrevDialog("Problems connecting to previous device" ,"Previous device: " + _deviceName + " not found!");
-            }
-            widget.flutterBlue.stopScan();
-            try {
-              await desired.connect();
-            } catch (e) {
-              if (e.code != 'already_connected') {
-                throw e;
-              }
-            } finally {
-              _services = await desired.discoverServices();
-            }
-            setState(() {
-              print('setState');
-              _connectedDevice = desired;
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice, _services)));
-            });
-          }
-      );
-   }
+  Widget _connectPrevButton() {
+    return FlatButton(
+        color: Colors.yellow,
+        child: Text('Connect Previous Device', style: TextStyle(color:Colors.white)),
+        onPressed: () {
+          _connectPrev();
+        }
+    );
+  }
+
+  void _connectPrev() async {
+    if (_deviceName == '') {
+      _connectPrevDialog("Problems connecting to previous device" , "No previous device ever connected!");
+    }
+    BluetoothDevice desired;
+    for (BluetoothDevice b in widget.devicesList) {
+      if (b.name == _deviceName) {
+        desired = b;
+        break;
+      }
+    }
+    if (desired == null) {
+      _connectPrevDialog("Problems connecting to previous device" ,"Previous device: " + _deviceName + " not found! Refresh and try again.");
+    }
+    widget.flutterBlue.stopScan();
+    try {
+      await desired.connect();
+    } catch (e) {
+      if (e.code != 'already_connected') {
+        throw e;
+      }
+    } finally {
+      _services = await desired.discoverServices();
+    }
+    setState(() {
+      _connectedDevice = desired;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MySubPage(_connectedDevice, _services)));
+    });
+  }
+
+
   Future<File> _addName(String s) {
     setState(() {
       _addedName = s;
