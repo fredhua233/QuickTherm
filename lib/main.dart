@@ -200,7 +200,11 @@ class MyHomePageState extends State<MyHomePage>{
               .asStream()
               .listen((List<BluetoothDevice> devices) {
               connected.addAll(devices);
+              for (BluetoothDevice device in devices) {
+                _addDeviceTolist(device);
+              }
           });
+
           widget.devicesList.removeWhere((element) => !connected.contains(element));
           scan(3);
       }

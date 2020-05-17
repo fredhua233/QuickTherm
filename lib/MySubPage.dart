@@ -39,13 +39,15 @@ class MySubPageState extends State<MySubPage>{
       floatingActionButton:
         FloatingActionButton.extended(
           onPressed: () async {
-            //FIXME: change eventually
+            String reading;
             BluetoothCharacteristic characteristic = _getCharacteristic();
-            await characteristic.write(utf8.encode("AT"), withoutResponse: true);
-            List<int> value = await characteristic.read();
-            print(value);
+            await characteristic.setNotifyValue(true);
+            await characteristic.write(utf8.encode("AT+ADC4?"), withoutResponse: true);
+            characteristic.value.listen((value) {
+              print(value);
+            });
+
             setState(() {
-              msg = value.toString();
             });
           },
           label: Text("Take Temperature"),
