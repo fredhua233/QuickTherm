@@ -131,7 +131,7 @@ class MyHomePageState extends State<MyHomePage>{
       if(_BTstatus() == true){
         detectDevices();
       } else {
-        BTdialog();
+        WidgetsBinding.instance.addPostFrameCallback((_) => BTdialog());
         detectDevices();
       }
     }
@@ -148,12 +148,14 @@ class MyHomePageState extends State<MyHomePage>{
         barrierDismissible: false,
         builder: (_) => new AlertDialog(
           title: new Text("Oops, something went wrong..."),
-          content: new Text("Please connect to bluetooth to continue."),
+          content: new Text("Please turn on bluetooth to continue."),
           actions: [
             FlatButton(
                 child: new Text("I have turned it on"),
                 onPressed: (){
-                  Navigator.of(context).pop();
+                  if(_BTstatus() == true){
+                    Navigator.of(context).pop();
+                  }
                 }
             ),
             FlatButton(
