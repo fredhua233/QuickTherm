@@ -65,6 +65,7 @@ class NameStorage {
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title, @required this.storage}) : super(key: key);
 
@@ -84,7 +85,6 @@ class MyHomePageState extends State<MyHomePage>{
   String _deviceName;
   String _addedName;
   bool _connected = false;
-
 
 
   @override
@@ -124,25 +124,45 @@ class MyHomePageState extends State<MyHomePage>{
   }
 
   ///notify user to turn on bluetooth, detects bluetooth device
-    @override
-    void initState() {
-      super.initState();
-      // ignore: unrelated_type_equality_checks
-      if(_BTstatus() == true){
-        detectDevices();
-      } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) => BTdialog());
-        detectDevices();
-      }
+  @override
+  void initState() {
+    super.initState();
+    if(_BTstatus() != true){
+      WidgetsBinding.instance.addPostFrameCallback((_) => BTdialog());
+      print("pass");
+    } else {
+      detectDevices();
     }
-
-  Future<bool> _BTstatus() async {
-    var _BluetoothStatus =  await widget.flutterBlue.isOn;
-    return _BluetoothStatus;
   }
 
+  //Future<bool> _BTstatus() async {
+    //var _BluetoothStatus =  await widget.flutterBlue.isOn;
+    //return _BluetoothStatus;
+  //}
+/*  bool _BTstatus() {
+    sc.addStream(BTstatusStream());
+    sc.stream.listen((event) {
+      print(event);
+      return event;
+    });
+  }
+  Stream<bool> BTstatusStream() async* {
+    var _myStatus = await widget.flutterBlue.isOn;
+    yield* Stream.periodic(Duration(seconds: 1), (_){
+      return _myStatus;
+    });
+  }*/
+  _BTstatus() async {
+    var _myStatus = await widget.flutterBlue.isOn;
+    setState(() async {
+      _myStatus = await widget.flutterBlue.isOn;
+    });
+    return _myStatus;
+  }
   ///dialog alerting user to turn on bluetooth settings
-  void BTdialog() {
+  void BTdialog() async {
+    var _myStatus = await widget.flutterBlue.isOn;
+    if(!_myStatus){
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -152,10 +172,14 @@ class MyHomePageState extends State<MyHomePage>{
           actions: [
             FlatButton(
                 child: new Text("I have turned it on"),
-                onPressed: (){
-                  if(_BTstatus() == true){
+                onPressed: () async {
+                  var _newBTStatus = await widget.flutterBlue.isOn;
+                  if(_newBTStatus){
                     Navigator.of(context).pop();
                   }
+                  setState(() async {
+                    _newBTStatus = await widget.flutterBlue.isOn;
+                  });
                 }
             ),
             FlatButton(
@@ -166,8 +190,13 @@ class MyHomePageState extends State<MyHomePage>{
             )
           ],
         )
-    );
+    );}
+    detectDevices();
+    setState(() async {
+      _myStatus = await widget.flutterBlue.isOn;
+    });
   }
+
 
   void detectDevices(){
     try {
