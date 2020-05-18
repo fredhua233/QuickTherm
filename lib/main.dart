@@ -86,6 +86,7 @@ class MyHomePageState extends State<MyHomePage>{
   bool _connected = false;
 
 
+
   @override
   Widget build(BuildContext context) {
     if (!_connected) {
@@ -122,48 +123,35 @@ class MyHomePageState extends State<MyHomePage>{
     }
   }
 
-  ///detects bluetooth device
+  ///notify user to turn on bluetooth, detects bluetooth device
     @override
     void initState() {
       super.initState();
-      _BTstatus();
-      try {
-        widget.storage.readName().then((String name) {
-          setState(() {
-            _deviceName = name;
-          });
-        });
-      } catch (e) {
-        _deviceName = '';
+      // ignore: unrelated_type_equality_checks
+      if(_BTstatus() == true){
+        detectDevices();
+      } else {
+        BTdialog();
+        detectDevices();
       }
-      widget.flutterBlue.connectedDevices
-          .asStream()
-          .listen((List<BluetoothDevice> devices) {
-        for (BluetoothDevice device in devices) {
-          _addDeviceTolist(device);
-        }
-      });
-      scan(3);
     }
-  ///status of bluetooth of your device
-  _BTstatus() async {
+
+  Future<bool> _BTstatus() async {
     var _BluetoothStatus =  await widget.flutterBlue.isOn;
-    if(_BluetoothStatus != true){
-      BTdialog();
-    }
-    print(_BluetoothStatus);
+    return _BluetoothStatus;
   }
 
   ///dialog alerting user to turn on bluetooth settings
   void BTdialog() {
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (_) => new AlertDialog(
           title: new Text("Oops, something went wrong..."),
           content: new Text("Please connect to bluetooth to continue."),
           actions: [
             FlatButton(
-                child: new Text("Cancel"),
+                child: new Text("I have turned it on"),
                 onPressed: (){
                   Navigator.of(context).pop();
                 }
@@ -179,6 +167,25 @@ class MyHomePageState extends State<MyHomePage>{
     );
   }
 
+  void detectDevices(){
+    try {
+      widget.storage.readName().then((String name) {
+        setState(() {
+          _deviceName = name;
+        });
+      });
+    } catch (e) {
+      _deviceName = '';
+    }
+    widget.flutterBlue.connectedDevices
+        .asStream()
+        .listen((List<BluetoothDevice> devices) {
+      for (BluetoothDevice device in devices) {
+        _addDeviceTolist(device);
+      }
+    });
+    scan(3);
+  }
   ///add a detected BT device to devicelist
   void _addDeviceTolist(final BluetoothDevice device) {
     if (!widget.devicesList.contains(device)) {
