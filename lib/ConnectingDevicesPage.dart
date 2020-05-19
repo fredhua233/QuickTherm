@@ -113,18 +113,11 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   @override
   void initState() {
     super.initState();
-    if(_BTstatus() != true){
-      WidgetsBinding.instance.addPostFrameCallback((_) => BTdialog());
-      print("pass");
-    } else {
-      detectDevices();
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => BTdialog());
+    print("pass");
   }
   _BTstatus() async {
     var _myStatus = await widget.flutterBlue.isOn;
-    setState(() async {
-      _myStatus = await widget.flutterBlue.isOn;
-    });
     return _myStatus;
   }
   ///dialog alerting user to turn on bluetooth settings
@@ -145,8 +138,8 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                     if(_newBTStatus){
                       Navigator.of(context).pop();
                     }
-                    setState(() async {
-                      _newBTStatus = await widget.flutterBlue.isOn;
+                    setState(() {
+                      _newBTStatus = _BTstatus();
                     });
                   }
               ),
@@ -160,8 +153,8 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
           )
       );}
     detectDevices();
-    setState(() async {
-      _myStatus = await widget.flutterBlue.isOn;
+    setState(() {
+      _myStatus = _BTstatus();
     });
   }
 
