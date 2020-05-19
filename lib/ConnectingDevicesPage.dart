@@ -71,14 +71,20 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   String _deviceName;
   String _addedName;
   bool _connected = false;
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  var counter = 0;
+//  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
     if (!_connected ) {
       if (_deviceName != null && _deviceName != '') {
-          _autoConnect().then((wid) { Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services)));});
+//        widget.flutterBlue.isOn.then((status) {
+//          if (!status) {
+//            BTdialog();
+//          }
+//        });
+        _autoConnect().then((wid) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => wid));
+        });
       }
       return Scaffold(
           appBar: AppBar(
@@ -186,7 +192,12 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
         _addDeviceTolist(device);
       }
     });
-    scan(3);
+    try {
+      scan(3);
+    } catch (e) {
+      BTdialog();
+    }
+
   }
   ///add a detected BT device to devicelist
   void _addDeviceTolist(final BluetoothDevice device) {
