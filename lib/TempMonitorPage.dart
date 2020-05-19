@@ -2,26 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:convert';
 
-// FIXME: Enacting plan 2: using Arduino and HM-10 as a pass through until arrival of UART converter
 
-class MySubPage extends StatefulWidget{
+class TempMonitorPage extends StatefulWidget{
   BluetoothDevice connectDevice;
   List<BluetoothService> services;
 
-  MySubPage(this.connectDevice, this.services);
+  TempMonitorPage(this.connectDevice, this.services);
 
   @override
   State<StatefulWidget> createState() {
-    return MySubPageState(connectDevice, services);
+    return TempMonitorPageState(connectDevice, services);
   }
 }
 
-class MySubPageState extends State<MySubPage>{
+class TempMonitorPageState extends State<TempMonitorPage>{
 
   BluetoothDevice connectDevice;
   List<BluetoothService> services;
   String msg = 'Go back!';
-  MySubPageState(this.connectDevice, this.services);
+  TempMonitorPageState(this.connectDevice, this.services);
 
   @override
   Widget build(BuildContext context) {
