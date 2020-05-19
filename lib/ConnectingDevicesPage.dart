@@ -71,11 +71,15 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   String _deviceName;
   String _addedName;
   bool _connected = false;
-
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  var counter = 0;
 
   @override
   Widget build(BuildContext context) {
-    if (!_connected) {
+    if (!_connected ) {
+      if (_deviceName != null && _deviceName != '') {
+          _autoConnect().then((wid) { Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services)));});
+      }
       return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
@@ -114,8 +118,9 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => BTdialog());
-    print("pass");
+    detectDevices();
   }
+
   _BTstatus() async {
     var _myStatus = await widget.flutterBlue.isOn;
     return _myStatus;
@@ -169,6 +174,11 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
     } catch (e) {
       _deviceName = '';
     }
+//    _prefs.then((pref) {
+//      if (pref.containsKey("PreviousDevice")) {
+//        _deviceName = pref.getString("PreviousDevice");
+//      }
+//    });
     widget.flutterBlue.connectedDevices
         .asStream()
         .listen((List<BluetoothDevice> devices) {
@@ -219,6 +229,30 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
           _connectPrev();
         }
     );
+  }
+
+  Future<Widget> _autoConnect() async {
+    BluetoothDevice desired;
+    for (BluetoothDevice b in widget.devicesList) {
+      if (b.name == _deviceName) {
+        desired = b;
+        break;
+      }
+    }
+    if (desired != null) {
+      widget.flutterBlue.stopScan();
+      try {
+        await desired.connect();
+      } catch (e) {
+        if (e.code != 'already_connected') {
+          throw e;
+        }
+      } finally {
+        _services = await desired.discoverServices();
+      }
+      _connectedDevice = desired;
+      return TempMonitorPage(_connectedDevice, _services);
+    }
   }
 
   void _connectPrev() async {
@@ -348,6 +382,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                         _connected = true;
                         _connectedDevice = device;
                         _addName(_connectedDevice.name);
+//                        _prefs.then((pref) { pref.setString("PreviousDevice", _connectedDevice.name);});
                         print("new page");
                         Navigator.push(context, MaterialPageRoute(builder: (
                             context) => TempMonitorPage(_connectedDevice, _services)));
