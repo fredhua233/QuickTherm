@@ -72,6 +72,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   String _addedName;
   String _devName;
   bool _connected = false;
+
 //  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
@@ -100,10 +101,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-//          leading: IconButton(
-//            icon: Icon(Icons.arrow_back, color: Colors.white),
-//            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services))),
-//          ),
         ),
         body: _buildListViewOfDevices(),
       );
@@ -118,10 +115,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   }
 
 
-  Future<bool> _BTstatus() async {
-    var _myStatus = await widget.flutterBlue.isOn;
-    return _myStatus;
-  }
   ///dialog alerting user to turn on bluetooth settings
   void BTdialog() async {
     bool _myStatus = await widget.flutterBlue.isOn;
@@ -139,12 +132,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                     var _newBTStatus = await widget.flutterBlue.isOn;
                     if(_newBTStatus){
                       Navigator.of(context).pop();
-                    } else {
-                      BTdialog();
                     }
-                    setState(() async {
-                      _newBTStatus = await _BTstatus();
-                    });
                   }
               ),
               FlatButton(
@@ -158,9 +146,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
       );
     }
     detectDevices();
-    setState(() async {
-      _myStatus = await _BTstatus();
-    });
   }
 
   Future<String> _getPrevDevName() async {
@@ -261,7 +246,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
       setState(() {
         _connected = true;
       });
-//      _connected = true;
+
       return TempMonitorPage(_connectedDevice, _services);
     }
   }
