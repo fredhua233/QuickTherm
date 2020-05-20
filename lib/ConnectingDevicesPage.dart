@@ -100,10 +100,10 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services))),
-          ),
+//          leading: IconButton(
+//            icon: Icon(Icons.arrow_back, color: Colors.white),
+//            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services))),
+//          ),
         ),
         body: _buildListViewOfDevices(),
       );
@@ -258,7 +258,10 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
         _services = await desired.discoverServices();
       }
       _connectedDevice = desired;
-      _connected = true;
+      setState(() {
+        _connected = true;
+      });
+//      _connected = true;
       return TempMonitorPage(_connectedDevice, _services);
     }
   }
