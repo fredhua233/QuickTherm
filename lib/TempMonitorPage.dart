@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:convert';
 
-
+//Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 class TempMonitorPage extends StatefulWidget{
   BluetoothDevice connectDevice;
   List<BluetoothService> services;

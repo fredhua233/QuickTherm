@@ -70,22 +70,13 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   List<BluetoothService> _services;
   String _deviceName;
   String _addedName;
+  String _devName;
   bool _connected = false;
 //  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
     if (!_connected ) {
-      if (_deviceName != null && _deviceName != '') {
-//        widget.flutterBlue.isOn.then((status) {
-//          if (!status) {
-//            BTdialog();
-//          }
-//        });
-        _autoConnect().then((wid) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => wid));
-        });
-      }
       return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
@@ -124,16 +115,16 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => BTdialog());
-    detectDevices();
   }
 
-  _BTstatus() async {
+
+  Future<bool> _BTstatus() async {
     var _myStatus = await widget.flutterBlue.isOn;
     return _myStatus;
   }
   ///dialog alerting user to turn on bluetooth settings
   void BTdialog() async {
-    var _myStatus = await widget.flutterBlue.isOn;
+    bool _myStatus = await widget.flutterBlue.isOn;
     if(!_myStatus){
       showDialog(
           context: context,
@@ -148,9 +139,11 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                     var _newBTStatus = await widget.flutterBlue.isOn;
                     if(_newBTStatus){
                       Navigator.of(context).pop();
+                    } else {
+                      BTdialog();
                     }
-                    setState(() {
-                      _newBTStatus = _BTstatus();
+                    setState(() async {
+                      _newBTStatus = await _BTstatus();
                     });
                   }
               ),
@@ -162,15 +155,23 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
               )
             ],
           )
-      );}
+      );
+    }
     detectDevices();
-    setState(() {
-      _myStatus = _BTstatus();
+    setState(() async {
+      _myStatus = await _BTstatus();
     });
   }
 
-
-  void detectDevices(){
+  Future<String> _getPrevDevName() async {
+    try {
+      String name = await widget.storage.readName();
+      return name;
+    } catch (e) {
+      return '';
+    }
+  }
+  void detectDevices() {
     try {
       widget.storage.readName().then((String name) {
         setState(() {
@@ -192,12 +193,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
         _addDeviceTolist(device);
       }
     });
-    try {
-      scan(3);
-    } catch (e) {
-      BTdialog();
-    }
-
+    scan(3);
   }
   ///add a detected BT device to devicelist
   void _addDeviceTolist(final BluetoothDevice device) {
@@ -214,7 +210,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
     return FlatButton(
         color: Colors.green,
         child: Text('Refresh', style: TextStyle(color:Colors.white)),
-        onPressed: () {
+        onPressed: () async {
           List<BluetoothDevice> connected = new List<BluetoothDevice>();
           widget.flutterBlue.connectedDevices
               .asStream()
@@ -224,9 +220,8 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
               _addDeviceTolist(device);
             }
           });
-
           widget.devicesList.removeWhere((element) => !connected.contains(element));
-          scan(3);
+          await scan(3);
         }
     );
   }
@@ -242,14 +237,15 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
     );
   }
 
-  Future<Widget> _autoConnect() async {
+  Future<Widget> autoConnect(String name) async {
     BluetoothDevice desired;
     for (BluetoothDevice b in widget.devicesList) {
-      if (b.name == _deviceName) {
+      if (b.name == name) {
         desired = b;
         break;
       }
     }
+    print(widget.devicesList);
     if (desired != null) {
       widget.flutterBlue.stopScan();
       try {
@@ -262,6 +258,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
         _services = await desired.discoverServices();
       }
       _connectedDevice = desired;
+      _connected = true;
       return TempMonitorPage(_connectedDevice, _services);
     }
   }
@@ -292,6 +289,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
     }
     setState(() {
       _connectedDevice = desired;
+      _connected = true;
       Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services)));
     });
   }
@@ -331,16 +329,24 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   /// Scans for devices for a given amount of seconds, specified by SEC
   /// for continuous scan let SEC equal 0
   /// @param int sec
-  void scan(int sec) {
-    print("scanning");
+   scan(int sec) {
     if (sec != 0) {
       widget.flutterBlue.startScan(timeout: Duration(seconds: sec));
       widget.flutterBlue.scanResults.listen((List<ScanResult> results){
         for(ScanResult result in results) {
           _addDeviceTolist(result.device);
+          if (result.device.name == _deviceName) {
+            autoConnect(_deviceName).then((wid) {
+              if (wid != null) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => wid));
+              }
+            });
+          }
         }
       });
       widget.flutterBlue.stopScan();
+      print(widget.devicesList);
+      return true;
     } else {
       widget.flutterBlue.scanResults.listen((List<ScanResult> results){
         for(ScanResult result in results) {
@@ -373,14 +379,13 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                   ),
                 ),
                 FlatButton(
-                  color: _connectedDevice == null? Colors.blue : Colors.red,
-                  child: _connectedDevice == null? Text('Connect', style: TextStyle(color:Colors.white)) :
+                  color: !_connected ? Colors.blue : Colors.red,
+                  child: !_connected ? Text('Connect', style: TextStyle(color:Colors.white)) :
                   Text('Disconnect', style: TextStyle(color:Colors.white)),
                   onPressed: () async {
                     if (_connectedDevice == null) {
                       widget.flutterBlue.stopScan();
                       try {
-                        print("blue");
                         await device.connect();
                       } catch (e) {
                         if (e.code != 'already_connected') {

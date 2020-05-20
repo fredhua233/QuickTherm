@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'ConnectingDevicesPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 void main() => runApp(BLETherometer());
 
 //TODO：If the user already set up info, move to profile page, else move to choose identity page
