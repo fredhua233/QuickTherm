@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(BLETherometer());
 
-//TODO：If the user already set up info, move to profile page, else move to choose identity page
+//TODO：If the user already set up info, move choose devices, which moves to temperature else move to choose identity page
 class BLETherometer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:convert';
 
+//Critical voltage 3V, threshold 3.3V
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
+// T for discrete, C for constant monitor, S for stop constant monitoring
 class TempMonitorPage extends StatefulWidget{
   BluetoothDevice connectDevice;
   List<BluetoothService> services;
@@ -19,7 +22,7 @@ class TempMonitorPageState extends State<TempMonitorPage>{
 
   BluetoothDevice connectDevice;
   List<BluetoothService> services;
-  String msg = 'Go back!';
+  String msg = 'Your Temperature';
   TempMonitorPageState(this.connectDevice, this.services);
 
   @override
@@ -33,21 +36,30 @@ class TempMonitorPageState extends State<TempMonitorPage>{
         title: Text(connectDevice.name == '' ? '(unknown device)' : connectDevice.name),
       ),
       body: Center(
-        child: Text(msg),
+        child: Text(msg,
+          style: new TextStyle(
+            fontSize: 40.0,
+            color: Colors.black,
+          ),),
       ),
       floatingActionButton:
         FloatingActionButton.extended(
           onPressed: () async {
-            String reading = "";
+            String TempString = "";
+            double Temp = 0;
+            int Vcc = 0;
             BluetoothCharacteristic characteristic = _getCharacteristic();
             await characteristic.setNotifyValue(true);
-            await characteristic.write(utf8.encode("AT+ADC4?"));
+            await characteristic.write(utf8.encode("T"));
             characteristic.value.listen((value) {
-              List<int> res = value.sublist(value.length - 4);
-              reading = utf8.decode(res);
-              print(value);
+              String reading = utf8.decode(value);
+              int semi = reading.indexOf(';');
+              TempString = reading.substring(2, semi);
+              Temp = double.parse(TempString);
+              Vcc = int.parse(reading.substring(semi + 5));
+              print(Vcc);
               setState(() {
-                msg = reading + "V";
+                msg = TempString + String.fromCharCode(0x00B0) + "C";
               });
             });
 

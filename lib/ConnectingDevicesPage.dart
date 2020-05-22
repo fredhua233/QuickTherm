@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutterapp/TempMonitorPage.dart';
 import 'package:system_setting/system_setting.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 //TODO: Auto connect to previous device, Persistence, Set up firebase for data
+
+
 
 /// Class to help store data for persistence across different APP launches
 class NameStorage {
@@ -70,7 +71,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   List<BluetoothService> _services;
   String _deviceName;
   String _addedName;
-  String _devName;
   bool _connected = false;
 
 //  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -148,14 +148,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
     detectDevices();
   }
 
-  Future<String> _getPrevDevName() async {
-    try {
-      String name = await widget.storage.readName();
-      return name;
-    } catch (e) {
-      return '';
-    }
-  }
   void detectDevices() {
     try {
       widget.storage.readName().then((String name) {
@@ -166,11 +158,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
     } catch (e) {
       _deviceName = '';
     }
-//    _prefs.then((pref) {
-//      if (pref.containsKey("PreviousDevice")) {
-//        _deviceName = pref.getString("PreviousDevice");
-//      }
-//    });
     widget.flutterBlue.connectedDevices
         .asStream()
         .listen((List<BluetoothDevice> devices) {
@@ -180,6 +167,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
     });
     scan(3);
   }
+
   ///add a detected BT device to devicelist
   void _addDeviceTolist(final BluetoothDevice device) {
     if (!widget.devicesList.contains(device)) {
@@ -386,7 +374,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                         _connected = true;
                         _connectedDevice = device;
                         _addName(_connectedDevice.name);
-//                        _prefs.then((pref) { pref.setString("PreviousDevice", _connectedDevice.name);});
                         print("new page");
                         Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services)));
                         // Write bytes In MIT App Inventor
