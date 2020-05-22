@@ -388,8 +388,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                         _addName(_connectedDevice.name);
 //                        _prefs.then((pref) { pref.setString("PreviousDevice", _connectedDevice.name);});
                         print("new page");
-                        Navigator.push(context, MaterialPageRoute(builder: (
-                            context) => TempMonitorPage(_connectedDevice, _services)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services)));
                         // Write bytes In MIT App Inventor
                       });
                     } else {
