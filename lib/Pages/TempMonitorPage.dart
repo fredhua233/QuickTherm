@@ -19,6 +19,11 @@ enum _State {
   discreet
 }
 
+enum _Therm {
+  started,
+  stopped
+}
+
 class TempMonitorPage extends StatefulWidget{
   BluetoothDevice connectDevice;
   List<BluetoothService> services;
@@ -37,6 +42,7 @@ class TempMonitorPageState extends State<TempMonitorPage>{
   TempMonitorPageState(this.connectDevice, this.services);
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   var _monitorState = _State.discreet;
+  var _constantMode = _Therm.stopped;
   bool save;
 
   String msg = '';
@@ -135,8 +141,9 @@ class TempMonitorPageState extends State<TempMonitorPage>{
         ]
 
       ),
-
-      floatingActionButton: _button(_monitorState)
+      floatingActionButton: _button(_monitorState),
+      backgroundColor: _monitorState == _State.constant && _constantMode == _Therm.started ? Colors.lightGreen[200] :
+      _monitorState == _State.constant && _constantMode == _Therm.stopped ? Colors.red[200] : Colors.white
     );
   }
 
@@ -261,6 +268,7 @@ class TempMonitorPageState extends State<TempMonitorPage>{
                     String TempString = "";
                     setState(() {
                       heading = "Started";
+                      _constantMode = _Therm.started;
                     });
                     BluetoothCharacteristic characteristic = _getCharacteristic();
                     await characteristic.setNotifyValue(true);
@@ -269,7 +277,7 @@ class TempMonitorPageState extends State<TempMonitorPage>{
                     sub = characteristic.value.listen((value) {
                       if (value.length > 0 && value != null) {
                         String reading = utf8.decode(value);
-                        if (value.length < 10) {
+                        if (value.length > 10) {
                           double Temp = 0;
                           int Vcc = 0;
                           int semi = reading.indexOf(';');
@@ -312,6 +320,7 @@ class TempMonitorPageState extends State<TempMonitorPage>{
                   Future.delayed(Duration(seconds: 1)).then((value) {
                     setState(() {
                       heading = "Stopped";
+                      _constantMode = _Therm.stopped;
                     });
                   });
                 },
