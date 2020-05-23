@@ -54,11 +54,12 @@ class NameStorage {
 
 
 class ConnectingDevicesPage extends StatefulWidget {
-  ConnectingDevicesPage({Key key, this.title, @required this.storage}) : super(key: key);
+  ConnectingDevicesPage({Key key, this.title, @required this.storage, this.autoConnect}) : super(key: key);
 
   final String title;
   final FlutterBlue flutterBlue = FlutterBlue.instance;
   final NameStorage storage;
+  final bool autoConnect;
   final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
 
   @override
@@ -400,7 +401,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
       ],
     );
   }
-
 }
 
 

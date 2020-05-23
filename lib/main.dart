@@ -16,7 +16,7 @@ class BLETherometer extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ConnectingDevicesPage(title: "Available Devices", storage: NameStorage()),
+      home: ConnectingDevicesPage(title: "Available Devices", storage: NameStorage(), autoConnect: true),
       //home: ChooseIdentityPage(),
     );
   }

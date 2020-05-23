@@ -37,6 +37,7 @@ void loop() {
     ble_device.print(";Vcc:");
     ble_device.print(Vbat);
     delay(100);
+    msg = 'z';
   }
   if (msg == 'C') {
     while(true) {
@@ -64,6 +65,7 @@ void loop() {
         break;
       }
     }
+    msg = 'z';
   }
     
 }
