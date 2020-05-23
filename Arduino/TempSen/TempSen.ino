@@ -1,6 +1,6 @@
 #include <SystemStatus.h>
 #include <SoftwareSerial.h>
-SoftwareSerial ble_device(0, 1); // BLE TX-> ATtiny85 PB0, BLE RX-> ATtiny85 PB1
+SoftwareSerial ble_device(8, 9); // BLE TX-> ATtiny85 PB0, BLE RX-> ATtiny85 PB1
 SystemStatus dev_status = SystemStatus();
 int ThermistorPin = 3;
 float Vo, Vin;
@@ -12,6 +12,7 @@ volatile int ii = 0; // integer to iterate
 
 void setup() {
   pinMode(ThermistorPin, INPUT);
+
   ble_device.begin(9600); // start BEL device
   delay(500); // wait until BLE device start
 }

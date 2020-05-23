@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
-import 'file:///C:/AndrewSue/Programming/Projects/TempSensor/lib/Pages/ConnectingDevicesPage.dart';
+import 'dart:io';
 
-//TODO: set up persistence and auto login, set up profile page
+import 'package:flutter/material.dart';
+import 'package:flutterapp/pages/ConnectingDevicesPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
 class ChooseIdentity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,6 @@ class ChooseIdentity extends StatelessWidget {
           children: [
             Text('I am a:'),
             selectIdentity(),
-            //continue button
           ],
         ),
     ),
@@ -31,11 +33,44 @@ class selectIdentity extends StatefulWidget{
 class _selectIdentityState extends State<selectIdentity>{
   String _identity;
   String temp;
+  bool checkValue;
 
-  void getDropDownItem(){
+
+  sharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs;
+  }
+
+  String getDropDownItem(){
     setState(() {
       temp = _identity;
     });
+    return temp;
+  }
+
+  addStringToSF(key, value) {
+    sharedPref().setString(key, value);
+  }
+
+  String getValueSF() {
+    return sharedPref().getstring('id');
+  }
+
+  bool isPresent() {
+    sharedPref().containsKey('id');
+  }
+
+  autoLogin(){
+    if(isPresent() != null){
+      switch(getValueSF()){
+        case 'resident':
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
+          break;
+        case 'manager' :
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
+          break;
+      }
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -67,18 +102,22 @@ class _selectIdentityState extends State<selectIdentity>{
         RaisedButton(
           child: Text('Continue'),
           onPressed: () {
-            getDropDownItem();
-//            if(_identity != null){
-//              switch(_identity){
-//                case 'resident':
-//                  Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
-//                  break;
-//                case 'manager':
-//                  Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
-//              case 'hospital':
+            if(_identity != null){
+              switch(_identity){
+                case 'resident':
+                  addStringToSF('id', 'resident');    ///key: id, value: resident
+                  //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
+                  //go to profile page TODO: finish profile page
+                  break;
+                case 'manager':
+                  addStringToSF('id', 'manager');     ///key: id, value: manager
+                  //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
+                  //go to profile page TODO: finish profile page
+                  break;
+//                case 'hospital':
 //                go to checking building page
-//              }
-//            }
+              }
+            }
           },
         )
       ],)
