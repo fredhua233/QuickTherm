@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutterapp/TempMonitorPage.dart';
+import 'package:flutterapp/Pages/TempMonitorPage.dart';
 import 'package:system_setting/system_setting.dart';
 
 //TODO: Auto connect to previous device, Persistence, Set up firebase for data

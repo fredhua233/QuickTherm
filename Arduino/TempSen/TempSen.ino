@@ -62,6 +62,7 @@ void loop() {
       delay(1000);
 
       if (m == 'S') {
+        ble_device.print("Terminate");
         break;
       }
     }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/ConnectingDevicesPage.dart';
+import 'file:///C:/AndrewSue/Programming/Projects/TempSensor/lib/Pages/ConnectingDevicesPage.dart';
 
 //TODO: set up persistence and auto login, set up profile page
 class ChooseIdentity extends StatelessWidget {
