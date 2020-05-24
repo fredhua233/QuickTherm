@@ -9,7 +9,8 @@ import 'package:flutterapp/Pages/TempMonitorPage.dart';
 import 'package:system_setting/system_setting.dart';
 
 //TODO: Auto connect to previous device, Persistence, Set up firebase for data
-
+BluetoothDevice Device;
+List<BluetoothService> Services;
 
 
 /// Class to help store data for persistence across different APP launches
@@ -212,31 +213,36 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
   }
 
   Future<Widget> autoConnect(String name) async {
-    BluetoothDevice desired;
-    for (BluetoothDevice b in widget.devicesList) {
-      if (b.name == name) {
-        desired = b;
-        break;
-      }
-    }
-    print(widget.devicesList);
-    if (desired != null) {
-      widget.flutterBlue.stopScan();
-      try {
-        await desired.connect();
-      } catch (e) {
-        if (e.code != 'already_connected') {
-          throw e;
+    if (widget.autoConnect) {
+      BluetoothDevice desired;
+      for (BluetoothDevice b in widget.devicesList) {
+        if (b.name == name) {
+          desired = b;
+          break;
         }
-      } finally {
-        _services = await desired.discoverServices();
       }
-      _connectedDevice = desired;
-      setState(() {
-        _connected = true;
-      });
-
-      return TempMonitorPage(_connectedDevice, _services);
+      print(widget.devicesList);
+      if (desired != null) {
+        widget.flutterBlue.stopScan();
+        try {
+          await desired.connect();
+        } catch (e) {
+          if (e.code != 'already_connected') {
+            throw e;
+          }
+        } finally {
+          _services = await desired.discoverServices();
+          Services = _services;
+        }
+        setState(() {
+          _connectedDevice = desired;
+          Device = _connectedDevice;
+          _connected = true;
+        });
+        return TempMonitorPage(_connectedDevice, _services);
+      } else {
+        return null;
+      }
     }
   }
 
@@ -263,9 +269,11 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
       }
     } finally {
       _services = await desired.discoverServices();
+      Services = _services;
     }
     setState(() {
       _connectedDevice = desired;
+      Device = _connectedDevice;
       _connected = true;
       Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services)));
     });
@@ -312,7 +320,9 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
       widget.flutterBlue.scanResults.listen((List<ScanResult> results){
         for(ScanResult result in results) {
           _addDeviceTolist(result.device);
-          if (result.device.name == _deviceName) {
+          if (result.device.name == _deviceName && widget.autoConnect) {
+            print(widget.autoConnect);
+            print("auto connected");
             autoConnect(_deviceName).then((wid) {
               if (wid != null) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => wid));
@@ -322,7 +332,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
         }
       });
       widget.flutterBlue.stopScan();
-      print(widget.devicesList);
       return true;
     } else {
       widget.flutterBlue.scanResults.listen((List<ScanResult> results){
@@ -370,12 +379,13 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                         }
                       } finally {
                         _services = await device.discoverServices();
+                        Services = _services;
                       }
                       setState(() {
                         _connected = true;
                         _connectedDevice = device;
+                        Device = _connectedDevice;
                         _addName(_connectedDevice.name);
-                        print("new page");
                         Navigator.push(context, MaterialPageRoute(builder: (context) => TempMonitorPage(_connectedDevice, _services)));
                         // Write bytes In MIT App Inventor
                       });
@@ -384,6 +394,9 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage>{
                       _connected = false;
                       setState(() {
                         _connectedDevice = null;
+                        _services = null;
+                        Services = null;
+                        Device = null;
                       });
                     }
                   },

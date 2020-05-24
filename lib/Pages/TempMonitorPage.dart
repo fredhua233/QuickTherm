@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:convert';
 import 'package:flutterapp/Pages/ConnectingDevicesPage.dart';
+import 'package:flutterapp/Pages/main.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
-// TODO: Set up firebase, health color code, fix navigator, change data delete mechanism
+// TODO: Set up firebase, health color code, fix navigator
 /**
  * The current state of measurement, constant or discreet
  */
@@ -43,26 +44,16 @@ class TempMonitorPageState extends State<TempMonitorPage>{
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   var _monitorState = _State.discreet;
   var _constantMode = _Therm.stopped;
-  bool save;
+  bool save = true;
 
-  String msg = '';
+  String msg = "";
   String heading = "Your Temperature";
 
-  @override
-  void initState() {
-    super.initState();
-    _showMsg();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Icon(
-            Icons.menu,
-          ),
-        ),
+        leading: menu.getMenu(context),
         actions: <Widget>[
           Padding(
               padding: EdgeInsets.only(right: 20.0),
@@ -93,7 +84,8 @@ class TempMonitorPageState extends State<TempMonitorPage>{
                     break;
                   case "Disconnect":
                     connectDevice.disconnect();
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                    print("pressed disconnect");
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
                         ConnectingDevicesPage(title: "Available Devices", storage: NameStorage(), autoConnect: false)));
                     break;
                 }
@@ -103,17 +95,22 @@ class TempMonitorPageState extends State<TempMonitorPage>{
                   value: "Change Mode",
                   child: Text(
                     "Change Mode of Monitoring",
-                  ),
+                  )
                 ),
                 PopupMenuItem(
                   value: "Disconnect",
                   child: Text(
                     "Disconnect from Current Device",
-                  ),
+                  )
                 ),
+                PopupMenuItem(
+                  value: "Delete",
+                  child: Text(
+                    "Delete Last Taking"
+                  )
+                )
               ]
             ),
-
           ),
         ],
         title: Text("Thermometer"),
@@ -139,7 +136,6 @@ class TempMonitorPageState extends State<TempMonitorPage>{
               )
           ),
         ]
-
       ),
       floatingActionButton: _button(_monitorState),
       backgroundColor: _monitorState == _State.constant && _constantMode == _Therm.started ? Colors.lightGreen[200] :
@@ -151,13 +147,13 @@ class TempMonitorPageState extends State<TempMonitorPage>{
    * Show default heading
    */
   _showMsg(){
-    String text = '';
     _prefs.then((pref) {
+      String text = '';
       text = pref.containsKey("LastTemp") ? pref.getDouble("LastTemp").toString()
           + String.fromCharCode(0x00B0) + "C" : "Take Temperature";
-    });
-    setState(() {
-      msg = text;
+      setState(() {
+        msg = text;
+      });
     });
   }
   /**
@@ -224,37 +220,46 @@ class TempMonitorPageState extends State<TempMonitorPage>{
    */
   Widget _button(_State s) {
     if (s == _State.discreet) {
-      return FloatingActionButton.extended(
-        onPressed: () async {
-          String TempString = "";
-          setState(() {
-            heading = "Your Temperature";
-          });
-          BluetoothCharacteristic characteristic = _getCharacteristic();
-          await characteristic.setNotifyValue(true);
-          await characteristic.write(utf8.encode("T"));
-          double Temp = 0;
-          int Vcc = 0;
-          await for (var value in characteristic.value) {
-            if (value.length != 0 && value != null) {
-              String reading = utf8.decode(value);
-              int semi = reading.indexOf(';');
-              TempString = reading.substring(2, semi);
-              Temp = double.parse(TempString);
-              Vcc = int.parse(reading.substring(semi + 5));
-              setState(() {
-                msg = TempString + String.fromCharCode(0x00B0) + "C";
-              });
-              break;
-            }
-          }
-          _checkingForHealth(Temp);
-          if (Vcc < 3300) {
-            _errDialog("Low Battery", "Low battery, please charge your armband. Current Battery level: " + (Vcc/3700).toString());
-          }
-        },
-        label: Text("Measure"),
-        icon: new Icon(MdiIcons.thermometer)
+      return Stack (
+        children: <Widget>[
+          Align(
+            alignment: Alignment.bottomRight,
+            child: FloatingActionButton.extended(
+                onPressed: () async {
+                  String TempString = "";
+                  setState(() {
+                    heading = "Your Temperature";
+                  });
+                  BluetoothCharacteristic characteristic = _getCharacteristic();
+                  await characteristic.setNotifyValue(true);
+                  await characteristic.write(utf8.encode("T"));
+                  double Temp = 0;
+                  int Vcc = 0;
+                  await for (var value in characteristic.value) {
+                    if (value.length != 0 && value != null) {
+                      String reading = utf8.decode(value);
+                      int semi = reading.indexOf(';');
+                      TempString = reading.substring(2, semi);
+                      Temp = double.parse(TempString);
+                      Vcc = int.parse(reading.substring(semi + 5));
+                      setState(() {
+                        msg = TempString + String.fromCharCode(0x00B0) + "C";
+                      });
+                      break;
+                    }
+                  }
+                  await characteristic.write(utf8.encode("S"));
+                  _checkingForHealth(Temp);
+                  if (Vcc < 3300) {
+                    _errDialog("Low Battery", "Low battery, please charge your armband. "
+                        "Current Battery level: " + ((Vcc / 3700) * 100).toString() + "%");
+                  }
+                },
+                label: Text("Measure"),
+                icon: new Icon(MdiIcons.thermometer)
+            )
+          )
+        ]
       );
     } else {
       return Stack(
@@ -288,7 +293,7 @@ class TempMonitorPageState extends State<TempMonitorPage>{
                             msg =
                                 TempString + String.fromCharCode(0x00B0) + "C";
                           });
-                          _saveData(Temp, 0);
+                          _saveData(Temp);
                           if (Vcc < 3300) {
                             _errDialog("Low Battery",
                                 "Low battery, please charge your armband. "
@@ -345,41 +350,42 @@ class TempMonitorPageState extends State<TempMonitorPage>{
       } else if (temp > 37.5) {
         _errDialog("Fever!", "You potentially have fever!");
       }
-      _saveData(temp, 0);
+      _saveData(temp);
     }
   }
 
   /**
    * Handles Saving data
    */
-  void _saveData(double temp, int c) async {
+  void _saveData(double temp) async {
     SharedPreferences pref = await _prefs;
-    Future.delayed(Duration(seconds: 1)).then((value) {
-      if (c == 1) {
-        _saveDataDialog(temp);
-      }
-      if (save) {
-        pref.setDouble("LastTemp", temp);
-        _pushData(temp).then((success) {
-          if (!success) {
-            _errDialog("Pushing data to cloud failed!", "Please check your wifi connection and try again.");
-          }
-        });
+//    Future.delayed(Duration(seconds: 1)).then((value) {
+//      if (c == 1) {
+//        _saveDataDialog(temp);
+//      }
+//      if (save) {
+    pref.setDouble("LastTemp", temp);
+    pref.setString("LastMeasTime", new DateTime.now().toString());
+    _pushData(temp).then((success) {
+      if (!success) {
+        _errDialog("Pushing data to cloud failed!", "Please check your wifi connection and try again.");
       }
     });
+//      }
+//    });
   }
 
 /**
  * Dialog for save data
  */
-  _saveDataDialog(double temp) {
+  _deleteDataDialog(double temp) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Your Temperature: " + temp.toString() + String.fromCharCode(0x00B0) + "C"),
-          content: new Text("Save this measurement in cloud? If you think there is an error in this measurement, please press NO and measure again."),
+          content: new Text("Delete this measurement in cloud? If you think there is an error in this measurement, please press Yes and measure again."),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
@@ -404,6 +410,20 @@ class TempMonitorPageState extends State<TempMonitorPage>{
         );
       },
     );
+  }
+  /*
+  Handles delete data
+  */
+  _deleteData() {
+    _prefs.then((pref) {
+      if (pref.containsKey("LastTemp")) {
+        double temp = pref.getDouble("LastTemp");
+        _deleteDataDialog(temp);
+        if (!save) {
+          pref.remove("LastTemp");
+        }
+      }
+    });
   }
   /*
   Handles pushing data to cloud
