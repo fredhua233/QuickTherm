@@ -6,8 +6,8 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
 import 'ConnectingDevicesPage.dart';
-import 'main.dart';
 
 //Critical voltage 3V, threshold 3.3V
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7

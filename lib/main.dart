@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../Utils/Utils.dart';
-import 'ConnectingDevicesPage.dart';
+import 'Pages/ConnectingDevicesPage.dart';
+import 'Utils/Utils.dart';
 
 Menu menu = new Menu();
 
