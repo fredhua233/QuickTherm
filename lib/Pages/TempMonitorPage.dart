@@ -14,7 +14,7 @@ import 'ConnectingDevicesPage.dart';
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
-// TODO: Set up firebase, health color code message and retangle border, fix navigator
+// TODO: Push data to firebase, fix navigator, find bugs
 /**
  * The current state of measurement, constant or discreet
  */
@@ -63,7 +63,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
 
   _initialize() async {
     _pref = await _utils.pref;
-    String text, time, hmsg = "";
+    String text, time, hmsg, ptag, stag = "";
     if (_pref.containsKey("LastTemp")) {
       text = _pref.containsKey("LastTemp")
           ? _pref.getDouble("LastTemp").toString() +
@@ -79,10 +79,26 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     if (_pref.containsKey("HealthMsg")) {
       hmsg = _pref.getString("HealthMsg") ?? "";
     }
+    ptag = _pref.getString("1stTag") ?? "";
+    stag = _pref.getString("2ndTag") ?? "";
     setState(() {
       msg = text;
       _time = time;
       _healthMsg = hmsg;
+      if (ptag == Colors.black.toString()) {
+        _primaryTag = Colors.black;
+      } else if (ptag == Colors.black45.toString()) {
+        _primaryTag = Colors.black45;
+      } else if (ptag == Colors.white.toString()) {
+        _primaryTag = Colors.white;
+      }
+      if (stag == Colors.red.toString()) {
+        _secondaryTag = Colors.red;
+      } else if (stag == Colors.green.toString()) {
+        _secondaryTag = Colors.green;
+      } else if (stag == Colors.blue.toString()) {
+        _secondaryTag = Colors.blue;
+      }
     });
   }
 
@@ -180,7 +196,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                     }
                   }
                   await characteristic.write(utf8.encode("S"));
-                  _checkingForHealth(Temp);
+                  _checkingForHealth(Temp, 1);
                   if (Vcc < 3300) {
                     _errDialog(
                         "Low Battery",
@@ -227,7 +243,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                                   String.fromCharCode(0x00B0) +
                                   "C";
                             });
-                            _saveData(Temp);
+                            _checkingForHealth(Temp, 0);
                             if (Vcc < 3300) {
                               _errDialog(
                                   "Low Battery",
@@ -271,14 +287,16 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   /**
    * Handles giving health status warnings
    */
-  void _checkingForHealth(double temp) {
+  void _checkingForHealth(double temp, int m) {
     bool set = false;
     if (temp < 20 || temp > 45) {
       _errDialog("Try Again!",
           "Bad measurement, please close this dialog, adjust placement of armband and try to measure your temperature again.");
     } else {
       if (temp < 35) {
-        _errDialog("Hypothermia!", "You potentially have hypothermia!");
+        if (m > 0) {
+          _errDialog("Hypothermia!", "You potentially have hypothermia!");
+        }
         setState(() {
           _primaryTag = Colors.black;
           _secondaryTag = Colors.blue;
@@ -286,7 +304,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         });
         set = true;
       } else if (temp > 37.5) {
-        _errDialog("Fever!", "You potentially have fever!");
+        if (m > 0) {
+          _errDialog("Fever!", "You potentially have fever!");
+        }
         setState(() {
           _primaryTag = Colors.black;
           _secondaryTag = Colors.red;
@@ -298,7 +318,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         setState(() {
           int elapsed = 3;
           DateTime today = new DateTime.now();
-          if (_pref.containsKey("LastIll") && _primaryTag != Colors.black) {
+          if (_pref.containsKey("LastIll")) {
             elapsed = today
                 .difference(DateTime.parse(_pref.getString("LastIll")))
                 .inDays;
@@ -306,11 +326,14 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           _primaryTag = elapsed >= 3 ? Colors.white : Colors.black45;
           _healthMsg = elapsed >= 3
               ? "Healthy, normal temperature"
-              : "Potential illness/recovery, normal temperature";
+              : "Potential illness/recovery, \n normal temperature";
           _secondaryTag = Colors.green;
         });
       }
       _pref.setString("HealthMsg", _healthMsg);
+      _pref.setString("1stTag", _primaryTag.toString());
+      _pref.setString("2ndTag", _secondaryTag.toString());
+      print(_primaryTag.toString());
       _saveData(temp);
     }
   }
@@ -466,46 +489,64 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         body: Stack(children: <Widget>[
           Align(
               alignment: FractionalOffset(0.5, 0.1),
-              child: Text(heading,
-                  style: new TextStyle(fontSize: 25, color: Colors.black))),
+              child: heading != null
+                  ? Text(heading,
+                      style: new TextStyle(fontSize: 25, color: Colors.black))
+                  : new Text(" ",
+                      style: new TextStyle(fontSize: 25, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.5, 0.25),
-              child: Text(msg,
-                  style: new TextStyle(fontSize: 40, color: _secondaryTag))),
+              child: msg != null
+                  ? Text(msg,
+                      style: new TextStyle(fontSize: 50, color: _secondaryTag))
+                  : new Text(" ",
+                      style: new TextStyle(fontSize: 40, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.15, 0.45),
               child: Text("Time taken: ",
                   style: new TextStyle(fontSize: 18, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.175, 0.5),
-              child: Text(_time,
-                  style: new TextStyle(fontSize: 15, color: Colors.black))),
+              child: _time != null
+                  ? Text(_time,
+                      style: new TextStyle(fontSize: 15, color: Colors.black))
+                  : new Text(" ",
+                      style: new TextStyle(fontSize: 15, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.175, 0.6),
               child: Text("Health Condition: ",
                   style: new TextStyle(fontSize: 18, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.15, 0.675),
-              child: DecoratedBox(
+              child: Container(
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
+                      color: _primaryTag,
                       border: Border.all(
-                          color: _primaryTag,
-                          width: 20.0,
-                          style: BorderStyle.solid)))),
+                          color: Colors.black,
+                          width: 2,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10)))),
           Align(
-              alignment: FractionalOffset(0.30, 0.675),
-              child: DecoratedBox(
+              alignment: FractionalOffset(0.35, 0.675),
+              child: Container(
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
+                      color: _secondaryTag,
                       border: Border.all(
-                          color: _secondaryTag,
-                          width: 20.0,
-                          style: BorderStyle.solid)))),
+                          color: Colors.black,
+                          width: 2,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10)))),
           Align(
               alignment: FractionalOffset(0.175, 0.75),
-              child: Text("-" + _healthMsg,
-                  style: new TextStyle(fontSize: 15, color: Colors.black))),
+              child: _healthMsg != null
+                  ? Text("-" + _healthMsg,
+                      style: new TextStyle(fontSize: 15, color: Colors.black))
+                  : new Text(" ",
+                      style: new TextStyle(fontSize: 15, color: Colors.black))),
         ]),
         floatingActionButton: _button(_monitorState),
         backgroundColor:

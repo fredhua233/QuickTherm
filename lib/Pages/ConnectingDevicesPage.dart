@@ -10,7 +10,7 @@ import 'package:system_setting/system_setting.dart';
 
 import 'TempMonitorPage.dart';
 
-//TODO: Auto connect to previous device, Persistence, Set up firebase for data
+//TODO: Auto connect to previous device, Persistence, Set up firebase for data, fix error
 BluetoothDevice Device;
 List<BluetoothService> Services;
 
