@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:quicktherm/Utils/UserInfo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utils/Utils.dart';
@@ -13,7 +14,7 @@ import 'ConnectingDevicesPage.dart';
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
-// TODO: Set up firebase, health color code, fix navigator
+// TODO: Set up firebase, health color code message and retangle border, fix navigator
 /**
  * The current state of measurement, constant or discreet
  */
@@ -41,6 +42,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
 
   SharedPreferences _pref;
   Utils _utils = new Utils();
+  UserInfo _user = new UserInfo();
   var _monitorState = _State.discreet;
   var _constantMode = _Therm.stopped;
   bool save = true;
@@ -48,7 +50,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   String msg = "";
   String heading = "Your Temperature";
   String _time = "";
-  String _healthStatus = "";
+  String _healthMsg = "";
 
   Color _primaryTag = Colors.white;
   Color _secondaryTag = Colors.white;
@@ -56,21 +58,32 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   @override
   void initState() {
     super.initState();
-    _getPref();
+    _initialize();
   }
 
-  _getPref() async {
+  _initialize() async {
     _pref = await _utils.pref;
+    String text, time, hmsg = "";
     if (_pref.containsKey("LastTemp")) {
-      String text = _pref.containsKey("LastTemp")
+      text = _pref.containsKey("LastTemp")
           ? _pref.getDouble("LastTemp").toString() +
               String.fromCharCode(0x00B0) +
               "C"
           : "Take Temperature";
-      setState(() {
-        msg = text;
-      });
     }
+    if (_pref.containsKey("LastMeasTime")) {
+      time = _pref.containsKey("LastMeasTime")
+          ? _pref.getString("LastMeasTime").substring(0, 19)
+          : "";
+    }
+    if (_pref.containsKey("HealthMsg")) {
+      hmsg = _pref.getString("HealthMsg") ?? "";
+    }
+    setState(() {
+      msg = text;
+      _time = time;
+      _healthMsg = hmsg;
+    });
   }
 
   /**
@@ -259,15 +272,45 @@ class TempMonitorPageState extends State<TempMonitorPage> {
    * Handles giving health status warnings
    */
   void _checkingForHealth(double temp) {
+    bool set = false;
     if (temp < 20 || temp > 45) {
       _errDialog("Try Again!",
           "Bad measurement, please close this dialog, adjust placement of armband and try to measure your temperature again.");
     } else {
       if (temp < 35) {
         _errDialog("Hypothermia!", "You potentially have hypothermia!");
+        setState(() {
+          _primaryTag = Colors.black;
+          _secondaryTag = Colors.blue;
+          _healthMsg = "Ill, potential hypothermia ";
+        });
+        set = true;
       } else if (temp > 37.5) {
         _errDialog("Fever!", "You potentially have fever!");
+        setState(() {
+          _primaryTag = Colors.black;
+          _secondaryTag = Colors.red;
+          _healthMsg = "Ill, potential fever";
+        });
+        set = true;
       }
+      if (!set) {
+        setState(() {
+          int elapsed = 3;
+          DateTime today = new DateTime.now();
+          if (_pref.containsKey("LastIll") && _primaryTag != Colors.black) {
+            elapsed = today
+                .difference(DateTime.parse(_pref.getString("LastIll")))
+                .inDays;
+          }
+          _primaryTag = elapsed >= 3 ? Colors.white : Colors.black45;
+          _healthMsg = elapsed >= 3
+              ? "Healthy, normal temperature"
+              : "Potential illness/recovery, normal temperature";
+          _secondaryTag = Colors.green;
+        });
+      }
+      _pref.setString("HealthMsg", _healthMsg);
       _saveData(temp);
     }
   }
@@ -276,14 +319,14 @@ class TempMonitorPageState extends State<TempMonitorPage> {
    * Handles Saving data
    */
   void _saveData(double temp) async {
-//    SharedPreferences pref = await _prefs;
-//    Future.delayed(Duration(seconds: 1)).then((value) {
-//      if (c == 1) {
-//        _saveDataDialog(temp);
-//      }
-//      if (save) {
     _pref.setDouble("LastTemp", temp);
     _pref.setString("LastMeasTime", new DateTime.now().toString());
+    if (temp > 37.5 || temp < 35) {
+      _pref.setString("LastIll", new DateTime.now().toString());
+    }
+    setState(() {
+      _time = _pref.getString("LastMeasTime").substring(0, 19);
+    });
     _pushData(temp).then((success) {
       if (!success) {
         _errDialog("Pushing data to cloud failed!",
@@ -428,11 +471,41 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           Align(
               alignment: FractionalOffset(0.5, 0.25),
               child: Text(msg,
-                  style: new TextStyle(fontSize: 40, color: Colors.black))),
+                  style: new TextStyle(fontSize: 40, color: _secondaryTag))),
           Align(
-              alignment: FractionalOffset(0.1, 0.5),
-              child: Text("Time taken: " + _pref.getString("LastMeasTime"),
-                  style: new TextStyle(fontSize: 20, color: Colors.black))),
+              alignment: FractionalOffset(0.15, 0.45),
+              child: Text("Time taken: ",
+                  style: new TextStyle(fontSize: 18, color: Colors.black))),
+          Align(
+              alignment: FractionalOffset(0.175, 0.5),
+              child: Text(_time,
+                  style: new TextStyle(fontSize: 15, color: Colors.black))),
+          Align(
+              alignment: FractionalOffset(0.175, 0.6),
+              child: Text("Health Condition: ",
+                  style: new TextStyle(fontSize: 18, color: Colors.black))),
+          Align(
+              alignment: FractionalOffset(0.15, 0.675),
+              child: DecoratedBox(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      border: Border.all(
+                          color: _primaryTag,
+                          width: 20.0,
+                          style: BorderStyle.solid)))),
+          Align(
+              alignment: FractionalOffset(0.30, 0.675),
+              child: DecoratedBox(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      border: Border.all(
+                          color: _secondaryTag,
+                          width: 20.0,
+                          style: BorderStyle.solid)))),
+          Align(
+              alignment: FractionalOffset(0.175, 0.75),
+              child: Text("-" + _healthMsg,
+                  style: new TextStyle(fontSize: 15, color: Colors.black))),
         ]),
         floatingActionButton: _button(_monitorState),
         backgroundColor:
@@ -443,6 +516,4 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                     ? Colors.red[200]
                     : Colors.white);
   }
-
-  _getLogistics() {}
 }

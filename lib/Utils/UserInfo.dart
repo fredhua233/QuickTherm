@@ -11,7 +11,8 @@ class UserInfo {
       age,
       identity;
   bool reminderDaily;
-  Illness condition;
+  //FIXME: remember to change line below
+  Illness condition = Illness.severe;
 //  TimeOfDay remindTime;
   ///where to put persistence? here or Utils?
   ///NOTE: SharedPreference put in Utils

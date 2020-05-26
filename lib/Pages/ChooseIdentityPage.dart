@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ConnectingDevicesPage.dart';
 
-class ChooseIdentity extends StatelessWidget {
+class ChooseIdentityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

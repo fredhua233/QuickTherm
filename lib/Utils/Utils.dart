@@ -40,9 +40,9 @@ class Utils {
                         "Profile",
                       )),
                   PopupMenuItem(
-                      value: "Temperature Monitor",
+                      value: "TempMon",
                       child: Text(
-                        "TempMon",
+                        "Temperature Monitor",
                       ))
                 ],
             icon: Icon(Icons.menu));
