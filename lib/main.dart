@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'Pages/ConnectingDevicesPage.dart';
-import 'Utils/Utils.dart';
 
-Menu menu = new Menu();
+//Menu menu = new Menu();
 
 void main() => runApp(BLETherometer());
 

@@ -1,17 +1,20 @@
 //  import 'package:flutter/material.dart';
 
 class UserInfo {
-  String Name;
-  String address;
-  String phoneNumber;
-  String managerName;
-  String sex;
-  String healthHistory;
-  String healthStatus;
-  String condition;
-  String DOB;
-  String age;
+  String Name,
+      address,
+      phoneNumber,
+      managerName,
+      sex,
+      healthHistory,
+      DOB,
+      age,
+      identity;
   bool reminderDaily;
+  Illness condition;
 //  TimeOfDay remindTime;
-///where to put persistence? here or Utils?
+  ///where to put persistence? here or Utils?
+  ///NOTE: SharedPreference put in Utils
 }
+
+enum Illness { severe, potential, healthy }

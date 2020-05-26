@@ -6,7 +6,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../main.dart';
+import '../Utils/Utils.dart';
 import 'ConnectingDevicesPage.dart';
 
 //Critical voltage 3V, threshold 3.3V
@@ -39,112 +39,38 @@ class TempMonitorPageState extends State<TempMonitorPage> {
 
   TempMonitorPageState(this.connectDevice, this.services);
 
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  SharedPreferences _pref;
+  Utils _utils = new Utils();
   var _monitorState = _State.discreet;
   var _constantMode = _Therm.stopped;
   bool save = true;
 
   String msg = "";
   String heading = "Your Temperature";
+  String _time = "";
+  String _healthStatus = "";
+
+  Color _primaryTag = Colors.white;
+  Color _secondaryTag = Colors.white;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: menu.getMenu(context),
-          actions: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Icon(
-                    Icons.timeline,
-                  ),
-                )),
-            Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: PopupMenuButton<String>(
-                  onSelected: (value) {
-                    switch (value) {
-                      case "Change Mode":
-                        if (_monitorState == _State.constant) {
-                          setState(() {
-                            _monitorState = _State.discreet;
-                            heading = "Your Temperature";
-                          });
-                        } else {
-                          setState(() {
-                            _monitorState = _State.constant;
-                            heading = "";
-                          });
-                        }
-                        break;
-                      case "Disconnect":
-                        connectDevice.disconnect();
-                        print("pressed disconnect");
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ConnectingDevicesPage(
-                                    title: "Available Devices",
-                                    storage: NameStorage(),
-                                    autoConnect: false)));
-                        break;
-                    }
-                  },
-                  itemBuilder: (context) => [
-                        PopupMenuItem(
-                            value: "Change Mode",
-                            child: Text(
-                              "Change Mode of Monitoring",
-                            )),
-                        PopupMenuItem(
-                            value: "Disconnect",
-                            child: Text(
-                              "Disconnect from Current Device",
-                            )),
-                        PopupMenuItem(
-                            value: "Delete", child: Text("Delete Last Taking"))
-                      ]),
-            ),
-          ],
-          title: Text("Thermometer"),
-        ),
-        body: Stack(children: <Widget>[
-          Align(
-              alignment: FractionalOffset(0.5, 0.1),
-              child: Text(heading,
-                  style: new TextStyle(fontSize: 25, color: Colors.black))),
-          Align(
-              alignment: FractionalOffset(0.5, 0.25),
-              child: Text(msg,
-                  style: new TextStyle(fontSize: 40, color: Colors.black))),
-        ]),
-        floatingActionButton: _button(_monitorState),
-        backgroundColor:
-            _monitorState == _State.constant && _constantMode == _Therm.started
-                ? Colors.lightGreen[200]
-                : _monitorState == _State.constant &&
-                        _constantMode == _Therm.stopped
-                    ? Colors.red[200]
-                    : Colors.white);
+  void initState() {
+    super.initState();
+    _getPref();
   }
 
-  /**
-   * Show default heading
-   */
-  _showMsg() {
-    _prefs.then((pref) {
-      String text = '';
-      text = pref.containsKey("LastTemp")
-          ? pref.getDouble("LastTemp").toString() +
+  _getPref() async {
+    _pref = await _utils.pref;
+    if (_pref.containsKey("LastTemp")) {
+      String text = _pref.containsKey("LastTemp")
+          ? _pref.getDouble("LastTemp").toString() +
               String.fromCharCode(0x00B0) +
               "C"
           : "Take Temperature";
       setState(() {
         msg = text;
       });
-    });
+    }
   }
 
   /**
@@ -350,22 +276,20 @@ class TempMonitorPageState extends State<TempMonitorPage> {
    * Handles Saving data
    */
   void _saveData(double temp) async {
-    SharedPreferences pref = await _prefs;
+//    SharedPreferences pref = await _prefs;
 //    Future.delayed(Duration(seconds: 1)).then((value) {
 //      if (c == 1) {
 //        _saveDataDialog(temp);
 //      }
 //      if (save) {
-    pref.setDouble("LastTemp", temp);
-    pref.setString("LastMeasTime", new DateTime.now().toString());
+    _pref.setDouble("LastTemp", temp);
+    _pref.setString("LastMeasTime", new DateTime.now().toString());
     _pushData(temp).then((success) {
       if (!success) {
         _errDialog("Pushing data to cloud failed!",
             "Please check your wifi connection and try again.");
       }
     });
-//      }
-//    });
   }
 
   /**
@@ -413,15 +337,14 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   Handles delete data
   */
   _deleteData() {
-    _prefs.then((pref) {
-      if (pref.containsKey("LastTemp")) {
-        double temp = pref.getDouble("LastTemp");
-        _deleteDataDialog(temp);
-        if (!save) {
-          pref.remove("LastTemp");
-        }
+    if (_pref.containsKey("LastTemp")) {
+      double temp = _pref.getDouble("LastTemp");
+      _deleteDataDialog(temp);
+      if (!save) {
+        _pref.remove("LastTemp");
+        _pref.remove("LastMeasTime");
       }
-    });
+    }
   }
 
   /*
@@ -430,4 +353,96 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   Future<bool> _pushData(double temp) async {
     return true;
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+//          FIXME: Change line below
+          leading: _utils.getMenu(context, "resident"),
+          actions: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Icon(
+                    Icons.timeline,
+                  ),
+                )),
+            Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: PopupMenuButton<String>(
+                  onSelected: (value) {
+                    switch (value) {
+                      case "Change Mode":
+                        if (_monitorState == _State.constant) {
+                          setState(() {
+                            _monitorState = _State.discreet;
+                            heading = "Your Temperature";
+                          });
+                        } else {
+                          setState(() {
+                            _monitorState = _State.constant;
+                            heading = "";
+                          });
+                        }
+                        break;
+                      case "Disconnect":
+                        connectDevice.disconnect();
+                        print("pressed disconnect");
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ConnectingDevicesPage(
+                                    title: "Available Devices",
+                                    storage: NameStorage(),
+                                    autoConnect: false)));
+                        break;
+                      case "Delete":
+                        _deleteData();
+                    }
+                  },
+                  itemBuilder: (context) => [
+                        PopupMenuItem(
+                            value: "Change Mode",
+                            child: Text(
+                              "Change Mode of Monitoring",
+                            )),
+                        PopupMenuItem(
+                            value: "Disconnect",
+                            child: Text(
+                              "Disconnect from Current Device",
+                            )),
+                        PopupMenuItem(
+                            value: "Delete", child: Text("Delete Last Taking"))
+                      ]),
+            ),
+          ],
+          title: Text("Thermometer"),
+        ),
+        body: Stack(children: <Widget>[
+          Align(
+              alignment: FractionalOffset(0.5, 0.1),
+              child: Text(heading,
+                  style: new TextStyle(fontSize: 25, color: Colors.black))),
+          Align(
+              alignment: FractionalOffset(0.5, 0.25),
+              child: Text(msg,
+                  style: new TextStyle(fontSize: 40, color: Colors.black))),
+          Align(
+              alignment: FractionalOffset(0.1, 0.5),
+              child: Text("Time taken: " + _pref.getString("LastMeasTime"),
+                  style: new TextStyle(fontSize: 20, color: Colors.black))),
+        ]),
+        floatingActionButton: _button(_monitorState),
+        backgroundColor:
+            _monitorState == _State.constant && _constantMode == _Therm.started
+                ? Colors.lightGreen[200]
+                : _monitorState == _State.constant &&
+                        _constantMode == _Therm.stopped
+                    ? Colors.red[200]
+                    : Colors.white);
+  }
+
+  _getLogistics() {}
 }

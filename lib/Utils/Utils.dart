@@ -6,17 +6,14 @@ import '../Pages/ConnectingDevicesPage.dart';
 import '../Pages/ProfilePage.dart';
 import '../Pages/TempMonitorPage.dart';
 
-class Menu {
+class Utils {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  String identity;
 
-  Future<String> getIdentity() async {
-    SharedPreferences pref = await _prefs;
-    identity = pref.getString("id");
-    return pref.getString("id");
+  Future<SharedPreferences> get pref {
+    return _prefs;
   }
 
-  Widget getMenu(BuildContext context) {
+  Widget getMenu(BuildContext context, String identity) {
     switch (identity) {
       case "resident":
         print("resident");
@@ -55,5 +52,6 @@ class Menu {
       case "overseer":
         break;
     }
+    return Container();
   }
 }

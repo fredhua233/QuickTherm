@@ -8,5 +8,7 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   @override
-  Widget build(BuildContext context) {}
+  Widget build(BuildContext context) {
+    return Container();
+  }
 }
