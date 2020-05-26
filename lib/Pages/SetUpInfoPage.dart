@@ -10,6 +10,7 @@ class setUpInfoPage extends StatefulWidget {
 class _setUpInfoPageState extends State<setUpInfoPage> {
   final _formKey = new GlobalKey<FormState>();
   final _user = UserInfo();
+  String _groupValue;
 
   @override
   Widget build(BuildContext context) {
@@ -17,62 +18,54 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
         appBar: AppBar(
           title: Text('Fill out your information'),
         ),
-        body: Container(
-            padding: EdgeInsets.all(24),
-            child: Builder(
-              builder: (context) => Form(
+        body: SafeArea(
+            top: false,
+            bottom: false,
+            child: Form(
                 key: _formKey,
                 autovalidate: true,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    new ListView(
-                      padding: EdgeInsets.all(20),
-                      children: <Widget> [
-                        TextFormField(
-                          decoration: InputDecoration(
-                              icon: Icon(Icons.calendar_today),
-                              hintText: 'Enter your first and last name (Ex. John Doe)',
-                              labelText: 'Name'
-                          ),
-                          validator: (value) {
-                            if (value.isEmpty){
-                              return 'Please enter your name';
-                            }
-                            return null;
-                          },
-                          onSaved: (val) => setState(() => _user.Name = val),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget> [
-                            RadioListTile(
-                              title: const Text('Male'),
-                              value: 0,
-                              onChanged: (value) => {
-                                setState(() {
-                                  _user.sex = value;
-                                })
-                              },
-                            ),
-                            RadioListTile(
-                              title: const Text('Female'),
-                              value: 1,
-                              onChanged: (value) => {
-                                setState(() {
-                                  _user.sex = value;
-                                })
-                              },
-                            )
-                          ],
-                        )
-
-                      ],
-                    )
-                  ],
-                ),
+              child: new ListView(
+                padding: EdgeInsets.all(20),
+                children: <Widget> [
+                  TextFormField(
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.person),
+                        hintText: 'Enter your name (Ex. John Doe)',
+                        labelText: 'Name'
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty){
+                        return 'Please enter your name';
+                      }
+                      return null;
+                    },
+                    onSaved: (val) => setState(() => _user.Name = val),
+                  ),
+                  RadioListTile(
+                    title: const Text('Male'),
+                    value: 'Male',
+                    groupValue: _groupValue,
+                    onChanged: (value) => {
+                      setState(() {
+                        _groupValue = value;
+                        _user.sex = value;
+                      })
+                    },
+                  ),
+                  RadioListTile(
+                    title: const Text('Female'),
+                    value: 'Female',
+                    groupValue: _groupValue,
+                    onChanged: (value) => {
+                    setState(() {
+                    _groupValue = value;
+                    _user.sex = value;
+                    })
+                    },
+                  )
+                ],
               ),
-            )
+            ),
         )
     );
   }

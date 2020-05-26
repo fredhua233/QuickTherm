@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'SetUpInfoPage.dart';
 import 'ConnectingDevicesPage.dart';
 
 class ChooseIdentityPage extends StatelessWidget {
@@ -32,12 +33,18 @@ class _selectIdentityState extends State<selectIdentity> {
   String _identity;
   String temp;
   bool checkValue;
+  SharedPreferences _pref;
 
-  sharedPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPref();
+
   }
-
+  getPref () async {
+    _pref = await Utils().pref;
+  }
   String getDropDownItem() {
     setState(() {
       temp = _identity;
@@ -46,15 +53,15 @@ class _selectIdentityState extends State<selectIdentity> {
   }
 
   addStringToSF(key, value) {
-    sharedPref().setString(key, value);
+    _pref.setString(key, value);
   }
 
   String getValueSF() {
-    return sharedPref().getstring('id');
+    return _pref.getString('id');
   }
 
   bool isPresent() {
-    sharedPref().containsKey('id');
+    return _pref.containsKey('id');
   }
 
   autoLogin() {
@@ -64,15 +71,19 @@ class _selectIdentityState extends State<selectIdentity> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ConnectingDevicesPage(
-                      title: "Available Devices", storage: NameStorage())));
+                 builder: (context) =>
+//                  ConnectingDevicesPage(
+//                      title: "Available Devices", storage: NameStorage())));
+              setUpInfoPage()));
           break;
         case 'manager':
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ConnectingDevicesPage(
-                      title: "Available Devices", storage: NameStorage())));
+                  builder: (context) =>
+                      setUpInfoPage()));
+//                      ConnectingDevicesPage(
+//                      title: "Available Devices", storage: NameStorage())));
           break;
       }
     }
@@ -112,15 +123,24 @@ class _selectIdentityState extends State<selectIdentity> {
             if (_identity != null) {
               switch (_identity) {
                 case 'resident':
+                  //addStringToSF('id', 'manager');
                   addStringToSF('id', 'resident');
-
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              setUpInfoPage()));
                   ///key: id, value: resident
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page
                   break;
                 case 'manager':
                   addStringToSF('id', 'manager');
-
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              setUpInfoPage()));
                   ///key: id, value: manager
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page
