@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -56,6 +57,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   Color _primaryTag = Colors.white;
   Color _secondaryTag = Colors.white;
 
+  DocumentReference _log;
+  Map<String, dynamic> _data;
+
   @override
   void initState() {
     super.initState();
@@ -101,6 +105,11 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         _secondaryTag = Colors.blue;
       }
     });
+    //FIXME: Change below
+//    _log = _firestore.document("/Organizations/"+_user.organization+"/Buildings/"+_user.building+"/Units/"+_user.roomNumber+"/Individuals/"+_user.Name);
+    _log = _user.log;
+    DocumentSnapshot doc = await _log.get();
+    _data = doc.data;
   }
 
   /**
@@ -343,15 +352,16 @@ class TempMonitorPageState extends State<TempMonitorPage> {
    * Handles Saving data
    */
   void _saveData(double temp) async {
+    DateTime now = new DateTime.now();
     _pref.setDouble("LastTemp", temp);
-    _pref.setString("LastMeasTime", new DateTime.now().toString());
+    _pref.setString("LastMeasTime", now.toString());
     if (temp > 37.5 || temp < 35) {
       _pref.setString("LastIll", new DateTime.now().toString());
     }
     setState(() {
       _time = _pref.getString("LastMeasTime").substring(0, 19);
     });
-    _pushData(temp).then((success) {
+    _pushData(temp, now).then((success) {
       if (!success) {
         _errDialog("Pushing data to cloud failed!",
             "Please check your wifi connection and try again.");
@@ -417,7 +427,10 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   /*
   Handles pushing data to cloud
    */
-  Future<bool> _pushData(double temp) async {
+  Future<bool> _pushData(double temp, DateTime now) async {
+    Map<String, dynamic> temps = _data["Temperature"];
+    temps.addAll({now.toString(): temp.toString()});
+    _log.updateData({"Temperature": temps});
     return true;
   }
 
