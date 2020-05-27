@@ -71,24 +71,21 @@ class _selectIdentityState extends State<selectIdentity> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                 builder: (context) =>
+                 builder: (context) =>  setUpInfoPage()));
 //                  ConnectingDevicesPage(
 //                      title: "Available Devices", storage: NameStorage())));
-              setUpInfoPage()));
           break;
         case 'manager':
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      setUpInfoPage()));
+                  builder: (context) => setUpInfoPage()));
 //                      ConnectingDevicesPage(
 //                      title: "Available Devices", storage: NameStorage())));
           break;
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -128,8 +125,7 @@ class _selectIdentityState extends State<selectIdentity> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              setUpInfoPage()));
+                          builder: (context) => setUpInfoPage()));
                   ///key: id, value: resident
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page
@@ -139,8 +135,7 @@ class _selectIdentityState extends State<selectIdentity> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              setUpInfoPage()));
+                          builder: (context) => setUpInfoPage()));
                   ///key: id, value: manager
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page

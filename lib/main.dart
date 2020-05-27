@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'Pages/ChooseIdentityPage.dart';
 import 'Pages/ConnectingDevicesPage.dart';
 
 //Menu menu = new Menu();
@@ -50,12 +50,12 @@ class BLETherometer extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         //FIXME: Change below to ChooseIdentity
-        home:
-//        ChooseIdentityPage()
+        home: ChooseIdentityPage());
 
-            ConnectingDevicesPage(
-                title: "Available Devices",
-                storage: NameStorage(),
-                autoConnect: true));
+//            ConnectingDevicesPage(
+//                title: "Available Devices",
+//                storage: NameStorage(),
+//                autoConnect: true));
+
   }
 }

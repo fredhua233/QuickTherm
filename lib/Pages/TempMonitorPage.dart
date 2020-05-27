@@ -15,6 +15,7 @@ import 'ConnectingDevicesPage.dart';
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
 // TODO: Push data to firebase, fix navigator, find bugs
+// FIXME: Maybe take temperature for a minute( or some time) and get its average
 /**
  * The current state of measurement, constant or discreet
  */
