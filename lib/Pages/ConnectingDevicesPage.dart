@@ -13,14 +13,10 @@ import 'TempMonitorPage.dart';
 //TODO: Auto connect to previous device, Persistence, Set up firebase for data, fix error
 BluetoothDevice Device;
 List<BluetoothService> Services;
+bool Connected = false;
 
 /// Class to help store data for persistence across different APP launches
 class NameStorage {
-  NameStorage() {
-    var myFile = new File("PrevDev");
-    myFile.create();
-  }
-
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
@@ -74,13 +70,12 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
   List<BluetoothService> _services;
   String _deviceName;
   String _addedName;
-  bool _connected = false;
 
 //  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
-    if (!_connected) {
+    if (!Connected) {
       return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
@@ -228,7 +223,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
         setState(() {
           _connectedDevice = desired;
           Device = _connectedDevice;
-          _connected = true;
+          Connected = true;
         });
         return TempMonitorPage(_connectedDevice, _services);
       } else {
@@ -270,8 +265,8 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
     setState(() {
       _connectedDevice = desired;
       Device = _connectedDevice;
-      _connected = true;
-      Navigator.push(
+      Connected = true;
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) =>
@@ -325,7 +320,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
             print("auto connected");
             autoConnect(_deviceName).then((wid) {
               if (wid != null) {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => wid));
               }
             });
@@ -365,8 +360,8 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
                   ),
                 ),
                 FlatButton(
-                  color: !_connected ? Colors.blue : Colors.red,
-                  child: !_connected
+                  color: !Connected ? Colors.blue : Colors.red,
+                  child: !Connected
                       ? Text('Connect', style: TextStyle(color: Colors.white))
                       : Text('Disconnect',
                           style: TextStyle(color: Colors.white)),
@@ -384,11 +379,11 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
                         Services = _services;
                       }
                       setState(() {
-                        _connected = true;
+                        Connected = true;
                         _connectedDevice = device;
                         Device = _connectedDevice;
                         _addName(_connectedDevice.name);
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => TempMonitorPage(
@@ -397,7 +392,7 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
                       });
                     } else {
                       _connectedDevice.disconnect();
-                      _connected = false;
+                      Connected = false;
                       setState(() {
                         _connectedDevice = null;
                         _services = null;

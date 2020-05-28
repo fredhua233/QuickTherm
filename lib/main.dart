@@ -45,17 +45,18 @@ class BLETherometer extends StatelessWidget {
 //      }
 //    });
     return MaterialApp(
-        title: 'BLE Thermometer',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        //FIXME: Change below to ChooseIdentity
-        home:
-//        ChooseIdentityPage());
+      title: 'BLE Thermometer',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      //FIXME: Change below to ChooseIdentity
+      home:
+//        ChooseIdentityPage(),
 
-            ConnectingDevicesPage(
-                title: "Available Devices",
-                storage: NameStorage(),
-                autoConnect: true));
+          ConnectingDevicesPage(
+              title: "Available Devices",
+              storage: NameStorage(),
+              autoConnect: true),
+    );
   }
 }

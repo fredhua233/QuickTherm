@@ -16,7 +16,7 @@ import 'HistoryPage.dart';
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
-// TODO: Push data to firebase, fix navigator, find bugs
+// TODO:  fix navigator, find bugs, make sure to stop ble from transmitting when mode changed
 // FIXME: Maybe take temperature for a minute( or some time) and get its average
 /**
  * The current state of measurement, constant or discreet
@@ -115,8 +115,6 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         _secondaryTag = Colors.blue;
       }
     });
-    //FIXME: Change below
-//    _log = _firestore.document("/Organizations/"+_user.organization+"/Buildings/"+_user.building+"/Units/"+_user.roomNumber+"/Individuals/"+_user.Name);
   }
 
   /**
@@ -165,6 +163,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         Align(
             alignment: Alignment.bottomRight,
             child: FloatingActionButton.extended(
+                heroTag: "discreet measuring",
                 onPressed: () async {
                   String TempString = "";
                   setState(() {
@@ -211,6 +210,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
               child: Padding(
                   padding: const EdgeInsets.only(left: 30.0),
                   child: FloatingActionButton.extended(
+                    heroTag: "continuous measuring start",
                     onPressed: () async {
                       String TempString = "";
                       setState(() {
@@ -260,6 +260,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           Align(
               alignment: Alignment.bottomRight,
               child: FloatingActionButton.extended(
+                heroTag: "continuous measuring stop",
                 onPressed: () async {
                   BluetoothCharacteristic characteristic = _getCharacteristic();
                   await characteristic.setNotifyValue(true);
@@ -447,53 +448,67 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     return Scaffold(
         appBar: AppBar(
 //          FIXME: Change line below
-          leading: _utils.getMenu(context, "resident"),
+          leading: _utils.getMenu(context, "resident", "Temp Monitor Page"),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HistoryPage()));
-                  },
-                  child: Icon(
-                    Icons.timeline,
+                child: Hero(
+                  tag: "history",
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HistoryPage()));
+                    },
+                    child: Icon(
+                      Icons.timeline,
+                    ),
                   ),
                 )),
             Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: PopupMenuButton<String>(
-                  onSelected: (value) {
-                    switch (value) {
-                      case "Change Mode":
-                        if (_monitorState == _State.constant) {
-                          setState(() {
-                            _monitorState = _State.discreet;
-                            heading = "Your Temperature";
-                          });
-                        } else {
-                          setState(() {
-                            _monitorState = _State.constant;
-                            heading = "";
-                          });
+                padding: EdgeInsets.only(right: 20.0),
+                child: Hero(
+                    tag: "options",
+                    child: PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        switch (value) {
+                          case "Change Mode":
+                            if (_monitorState == _State.constant) {
+                              BluetoothCharacteristic characteristic =
+                                  _getCharacteristic();
+                              await characteristic.setNotifyValue(true);
+                              await characteristic.write(utf8.encode("S"));
+                              setState(() {
+                                _constantMode = _Therm.stopped;
+                                _monitorState = _State.discreet;
+                                heading = "Your Temperature";
+                              });
+                            } else {
+                              setState(() {
+                                _monitorState = _State.constant;
+                                heading = "";
+                              });
+                            }
+                            break;
+                          case "Disconnect":
+                            connectDevice.disconnect();
+                            Device = null;
+                            Services = null;
+                            Connected = false;
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => ConnectingDevicesPage(
+                                        title: "Available Devices",
+                                        storage: NameStorage(),
+                                        autoConnect: false)),
+                                (Route<dynamic> route) => false);
+                            break;
+                          case "Delete":
+                            _deleteData();
                         }
-                        break;
-                      case "Disconnect":
-                        connectDevice.disconnect();
-                        print("pressed disconnect");
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ConnectingDevicesPage(
-                                    title: "Available Devices",
-                                    storage: NameStorage(),
-                                    autoConnect: false)));
-                        break;
-                      case "Delete":
-                        _deleteData();
-                    }
-                  },
-                  itemBuilder: (context) => [
+                      },
+                      itemBuilder: (context) => [
                         PopupMenuItem(
                             value: "Change Mode",
                             child: Text(
@@ -506,8 +521,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                             )),
                         PopupMenuItem(
                             value: "Delete", child: Text("Delete Last Taking"))
-                      ]),
-            ),
+                      ],
+                    ))),
           ],
           title: Text("Thermometer"),
         ),

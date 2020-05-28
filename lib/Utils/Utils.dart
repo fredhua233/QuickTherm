@@ -39,7 +39,7 @@ class Utils {
     );
   }
 
-  Widget getMenu(BuildContext context, String identity) {
+  Widget getMenu(BuildContext context, String identity, String currentPage) {
     switch (identity) {
       case "resident":
         print("resident");
@@ -47,15 +47,19 @@ class Utils {
             onSelected: (value) {
               switch (value) {
                 case "profile":
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                  if (currentPage != "Profile Page") {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ProfilePage()));
+                  }
                   break;
                 case "TempMon":
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              TempMonitorPage(Device, Services)));
+                  if (currentPage != "Temp Monitor Page") {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                TempMonitorPage(Device, Services)));
+                  }
                   break;
               }
             },
