@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utils/Utils.dart';
 import 'ConnectingDevicesPage.dart';
+import 'HistoryPage.dart';
 
 //Critical voltage 3V, threshold 3.3V
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
@@ -66,7 +67,18 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     _initialize();
   }
 
+  //initalizes all variable displaying data of the last measurement
   _initialize() async {
+    // Sets up fire base
+    _log = _user.log;
+    DocumentSnapshot doc = await _log.get();
+    if (doc != null) {
+      _data = doc.data;
+    } else {
+      _utils.errDialog("Unable to get data", "Incorrect path", context);
+    }
+
+    //Sets up shared persistence
     _pref = await _utils.pref;
     String text, time, hmsg, ptag, stag = "";
     if (_pref.containsKey("LastTemp")) {
@@ -81,11 +93,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           ? _pref.getString("LastMeasTime").substring(0, 19)
           : "";
     }
-    if (_pref.containsKey("HealthMsg")) {
-      hmsg = _pref.getString("HealthMsg") ?? "";
-    }
-    ptag = _pref.getString("1stTag") ?? "";
-    stag = _pref.getString("2ndTag") ?? "";
+    hmsg = _data.containsKey("Health Msg") ? _data["Health Msg"] : "";
+    ptag = _data.containsKey("Primary Tag") ? _data["Primary Tag"] : "";
+    stag = _data.containsKey("Secondary Tag") ? _data["Secondary Tag"] : "";
     setState(() {
       msg = text;
       _time = time;
@@ -107,9 +117,6 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     });
     //FIXME: Change below
 //    _log = _firestore.document("/Organizations/"+_user.organization+"/Buildings/"+_user.building+"/Units/"+_user.roomNumber+"/Individuals/"+_user.Name);
-    _log = _user.log;
-    DocumentSnapshot doc = await _log.get();
-    _data = doc.data;
   }
 
   /**
@@ -131,46 +138,22 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         }
       }
     } else {
-      _errDialog(
+      _utils.errDialog(
           "Service not found",
           "Needed service not found, disconnect and "
-              "attempt again, or connect to another device.");
+              "attempt again, or connect to another device.",
+          context);
     }
     if (char != null) {
       return char;
     } else {
-      _errDialog(
+      _utils.errDialog(
           "Suitable characteristic not found",
           "disconnect and "
-              "attempt again, or connect to another device.");
+              "attempt again, or connect to another device.",
+          context);
       return null;
     }
-  }
-
-  /**
-   * Template for error dialogs.
-   */
-  void _errDialog(String title, String msg) {
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text(title),
-          content: new Text(msg),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   /*
@@ -208,12 +191,13 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                   await characteristic.write(utf8.encode("S"));
                   _checkingForHealth(Temp, 1);
                   if (Vcc < 3300) {
-                    _errDialog(
+                    _utils.errDialog(
                         "Low Battery",
                         "Low battery, please charge your armband. "
                                 "Current Battery level: " +
                             ((Vcc / 3700) * 100).toString() +
-                            "%");
+                            "%",
+                        context);
                   }
                 },
                 label: Text("Measure"),
@@ -255,12 +239,13 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                             });
                             _checkingForHealth(Temp, 0);
                             if (Vcc < 3300) {
-                              _errDialog(
+                              _utils.errDialog(
                                   "Low Battery",
                                   "Low battery, please charge your armband. "
                                           "Current Battery level: " +
                                       ((Vcc / 3700) * 100).toString() +
-                                      "%");
+                                      "%",
+                                  context);
                             }
                           }
                           if (reading == "Terminate") {
@@ -300,12 +285,15 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   void _checkingForHealth(double temp, int m) {
     bool set = false;
     if (temp < 20 || temp > 45) {
-      _errDialog("Try Again!",
-          "Bad measurement, please close this dialog, adjust placement of armband and try to measure your temperature again.");
+      _utils.errDialog(
+          "Try Again!",
+          "Bad measurement, please close this dialog, adjust placement of armband and try to measure your temperature again.",
+          context);
     } else {
       if (temp < 35) {
         if (m > 0) {
-          _errDialog("Hypothermia!", "You potentially have hypothermia!");
+          _utils.errDialog(
+              "Hypothermia!", "You potentially have hypothermia!", context);
         }
         setState(() {
           _primaryTag = Colors.black;
@@ -315,7 +303,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
         set = true;
       } else if (temp > 37.5) {
         if (m > 0) {
-          _errDialog("Fever!", "You potentially have fever!");
+          _utils.errDialog("Fever!", "You potentially have fever!", context);
         }
         setState(() {
           _primaryTag = Colors.black;
@@ -340,10 +328,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           _secondaryTag = Colors.green;
         });
       }
-      _pref.setString("HealthMsg", _healthMsg);
-      _pref.setString("1stTag", _primaryTag.toString());
-      _pref.setString("2ndTag", _secondaryTag.toString());
-      print(_primaryTag.toString());
+//      _pref.setString("HealthMsg", _healthMsg);
+//      _pref.setString("1stTag", _primaryTag.toString());
+//      _pref.setString("2ndTag", _secondaryTag.toString());
       _saveData(temp);
     }
   }
@@ -363,8 +350,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     });
     _pushData(temp, now).then((success) {
       if (!success) {
-        _errDialog("Pushing data to cloud failed!",
-            "Please check your wifi connection and try again.");
+        _utils.errDialog("Pushing data to cloud failed!",
+            "Please check your wifi connection and try again.", context);
       }
     });
   }
@@ -414,23 +401,44 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   Handles delete data
   */
   _deleteData() {
+    Map<String, dynamic> temps = _data["Temperature"];
     if (_pref.containsKey("LastTemp")) {
       double temp = _pref.getDouble("LastTemp");
       _deleteDataDialog(temp);
       if (!save) {
-        _pref.remove("LastTemp");
-        _pref.remove("LastMeasTime");
+        try {
+          temps.remove(_pref.getString("LastMeasTime"));
+        } catch (e) {
+          _utils.errDialog(
+              "Unable to delete", "Last Data already deleted", context);
+        }
       }
     }
+    _log.updateData({"Temperature": temps});
   }
 
   /*
   Handles pushing data to cloud
    */
   Future<bool> _pushData(double temp, DateTime now) async {
+    //FIXME: Change if set up format during SetUp info page
+    if (!_data.containsKey("Primary Tag") &&
+        !_data.containsKey("Secondary Tag") &&
+        !_data.containsKey("Health Msg")) {
+      _data.addAll({
+        "Primary Tag": _primaryTag.toString(),
+        "Secondary Tag": _secondaryTag.toString(),
+        "Health Msg": _healthMsg
+      });
+    }
     Map<String, dynamic> temps = _data["Temperature"];
     temps.addAll({now.toString(): temp.toString()});
-    _log.updateData({"Temperature": temps});
+    _log.updateData({
+      "Temperature": temps,
+      "Primary Tag": _primaryTag.toString(),
+      "Secondary Tag": _secondaryTag.toString(),
+      "Health Msg": _healthMsg
+    });
     return true;
   }
 
@@ -444,7 +452,10 @@ class TempMonitorPageState extends State<TempMonitorPage> {
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HistoryPage()));
+                  },
                   child: Icon(
                     Icons.timeline,
                   ),

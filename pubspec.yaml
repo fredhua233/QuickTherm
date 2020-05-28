@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: ^0.5.7+2
   material_design_icons_flutter: 2.7.94
   cloud_firestore: ^0.13.6
+  syncfusion_flutter_charts: ^18.1.54
 dev_dependencies:
   flutter_test:
     sdk: flutter

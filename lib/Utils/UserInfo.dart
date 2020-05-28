@@ -35,6 +35,7 @@ class UserInfo {
 //        roomNumber +
 //        "/Individuals/" +
 //        Name);
+
     _userInfo = _firestore.document(
         "/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals/JohnWhite");
   }
