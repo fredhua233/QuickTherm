@@ -1,77 +1,3 @@
-//import 'dart:math';
-//
-//import 'package:flutter/material.dart';
-//import 'package:charts_flutter/flutter.dart';
-//import 'package:charts_flutter/src/text_element.dart' as text;
-//import 'package:charts_flutter/src/text_style.dart' as style;
-//
-//class Chart extends StatelessWidget {
-//  @override
-//  Widget build(BuildContext context) {
-//    return LineChart(
-//      _createSampleData(),
-//      behaviors: [
-//        LinePointHighlighter(
-//            symbolRenderer: CustomCircleSymbolRenderer()
-//        )
-//      ],
-//      selectionModels: [
-//        SelectionModelConfig(
-//            changedListener: (SelectionModel model) {
-//              if(model.hasDatumSelection)
-//                print(model.selectedSeries[0].measureFn(model.selectedDatum[0].index));
-//            }
-//        )
-//      ],
-//    );
-//  }
-//
-//  List<Series<LinearSales, int>> _createSampleData() {
-//    final data = [
-//      new LinearSales(0, 5),
-//      new LinearSales(1, 25),
-//      new LinearSales(2, 100),
-//      new LinearSales(3, 75),
-//    ];
-//    return [
-//      new Series<LinearSales, int>(
-//        id: 'Sales',
-//        colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
-//        domainFn: (LinearSales sales, _) => sales.year,
-//        measureFn: (LinearSales sales, _) => sales.sales,
-//        data: data,
-//      )
-//    ];
-//  }
-//}
-//
-//class CustomCircleSymbolRenderer extends CircleSymbolRenderer {
-//  @override
-//  void paint(ChartCanvas canvas, Rectangle<num> bounds, {List<int> dashPattern, Color fillColor, FillPatternType fillPattern, Color strokeColor, double strokeWidthPx}) {
-//    super.paint(canvas, bounds, dashPattern: dashPattern, fillColor: fillColor, fillPattern : fillPattern, strokeColor: strokeColor, strokeWidthPx: strokeWidthPx);
-//    canvas.drawRect(
-//        Rectangle(bounds.left - 5, bounds.top - 30, bounds.width + 10, bounds.height + 10),
-//        fill: Color.white
-//    );
-//    var textStyle = style.TextStyle();
-//    textStyle.color = Color.black;
-//    textStyle.fontSize = 15;
-//    canvas.drawText(
-//        text.TextElement("1", style: textStyle),
-//        (bounds.left).round(),
-//        (bounds.top - 28).round()
-//    );
-//  }
-//}
-//class LinearSales {
-//  final int year;
-//  final int sales;
-//  LinearSales(this.year, this.sales);
-//}
-//
-
-
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -81,13 +7,16 @@ import 'package:charts_flutter/src/text_style.dart' as style;
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' as cup;
 
 import '../Utils/UserInfo.dart';
 import '../Utils/Utils.dart';
 
-String _time;
-String _temp;
+String _time = "";
+String _temp = "";
+
+
+//FIXME: add points on graph?
 
 class HistoryPage extends StatefulWidget {
   @override
@@ -101,6 +30,10 @@ class HistoryPageState extends State<HistoryPage> {
   DocumentReference _log;
   Map<String, dynamic> _data;
   List<Series<TempsData, DateTime>> _line;
+  _Mode _displayMode = _Mode.Day;
+
+  String _lastMeasured = "";
+  String dropdownValue = "Last Day";
 
 
   _onSelectionChanged(SelectionModel model) {
@@ -119,10 +52,6 @@ class HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
-//    SystemChrome.setPreferredOrientations([
-//      DeviceOrientation.landscapeRight,
-//      DeviceOrientation.landscapeLeft,
-//    ]);
     _init();
   }
 
@@ -136,25 +65,84 @@ class HistoryPageState extends State<HistoryPage> {
       _utils.errDialog("Unable to get data", "Incorrect path", context);
     }
     setState(() {
-      _line = _getData();
+      _line = _getData(_displayMode);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("History"),
       ),
       body: SingleChildScrollView(
-          child: Stack(
+          child: Column(
             children: [
+              ButtonBar(
+                alignment: MainAxisAlignment.start,
+                buttonAlignedDropdown: true,
+                children: <Widget>[
+                  DropdownButton<String>(
+                  value: dropdownValue,
+                    icon: Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: cup.TextStyle(color: Colors.black),
+                    onChanged: (String newValue) {
+                      setState(() {
+                        dropdownValue = newValue;
+                        switch (newValue) {
+                          case 'Last Hour':
+                            _displayMode = _Mode.Hour;
+                            _line = _getData(_displayMode);
+                            break;
+                          case 'Last Day':
+                            _displayMode = _Mode.Day;
+                            _line = _getData(_displayMode);
+                            break;
+                          case 'Last Three Days':
+                            _displayMode = _Mode.ThreeDays;
+                            _line = _getData(_displayMode);
+                            break;
+                          case 'Last Week':
+                            _displayMode = _Mode.Week;
+                            _line = _getData(_displayMode);
+                            break;
+                          case 'Custom':
+//                            _displayMode = _Mode.Hour;
+//                            _line = _getData(_displayMode);
+                            break;
+                        }
+                      });
+                    },
+                    items: <String>['Last Hour', 'Last Day', 'Last Three Days', 'Last Week', 'Custom']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  )
+                ],
+              ),
               Center(
                 child: Container(
                   width: 350,
                   height: 400,
                   child: _graph())),
-
+              Align(
+                alignment: cup.Alignment.topLeft,
+                child: Padding(
+                  padding: new EdgeInsets.only(top: 5.0, left: 10.0),
+                  child: new Text("(Date : Temperature): " , style: new cup.TextStyle(fontSize: 15),))
+              ),
+              Align(
+                  alignment: cup.Alignment.topLeft,
+                  child: Padding(
+                      padding: new EdgeInsets.only(top: 5.0, left: 10.0),
+                      child: _time != null && _temp != null ? new Text(_time + " : " + _temp +  String.fromCharCode(0x00B0) + "C") : new Text(" "))
+              )
             ],
         )
       )
@@ -183,7 +171,7 @@ class HistoryPageState extends State<HistoryPage> {
               behaviorPosition: BehaviorPosition.bottom,
               titleOutsideJustification:
               OutsideJustification.middleDrawArea),
-          LinePointHighlighter(
+          new LinePointHighlighter(
               symbolRenderer: CustomCircleSymbolRenderer()
           )
         ])
@@ -191,37 +179,79 @@ class HistoryPageState extends State<HistoryPage> {
     return wid;
   }
 
-//  @override
-//  dispose() {
-////    SystemChrome.setPreferredOrientations([
-////      DeviceOrientation.portraitUp,
-////      DeviceOrientation.portraitDown,
-////    ]);
-//    super.dispose();
-//  }
-
-  List<Series<TempsData, DateTime>> _getData() {
+  List<Series<TempsData, DateTime>> _getData(_Mode m, {String day}) {
     var points = new List<TempsData>();
-    Map<String, dynamic> t = _data["Temperature"];
-    List<String> date = t.keys.toList();
-    date.sort((a, b) => a.compareTo(b));
-    for (var s in date) {
-      points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
+    if (_data != null) {
+      Map<String, dynamic> t = _data["Temperature"];
+      List<String> date = t.keys.toList();
+      date.sort((a, b) => a.compareTo(b));
+      setState(() {
+        _lastMeasured = date.last;
+      });
+      if (m == _Mode.BeginningOfTime) {
+        for (var s in date) {
+          points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
+        }
+      } else if (m == _Mode.Day) {
+        DateTime last = DateTime.parse(date.last);
+        for (int i = date.length - 1; i >= 0 && last
+            .difference(DateTime.parse(date[i]))
+            .inDays <= 1; i--) {
+          points.add(new TempsData(
+              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+        }
+      } else if (m == _Mode.Hour) {
+        DateTime last = DateTime.parse(date.last);
+        for (int i = date.length - 1; i >= 0 && last
+            .difference(DateTime.parse(date[i]))
+            .inHours <= 1; i--) {
+          points.add(new TempsData(
+              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+        }
+      } else if (m == _Mode.Week) {
+        DateTime last = DateTime.parse(date.last);
+        for (int i = date.length - 1; i >= 0 && last
+            .difference(DateTime.parse(date[i]))
+            .inDays <= 7; i--) {
+          points.add(new TempsData(
+              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+        }
+      } else if (m == _Mode.ThreeDays) {
+        DateTime last = DateTime.parse(date.last);
+        for (int i = date.length - 1; i >= 0 && last
+            .difference(DateTime.parse(date[i]))
+            .inDays <= 3; i--) {
+          points.add(new TempsData(
+              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+        }
+      }
+//      else if (m == _Mode.Custom) {
+//        List<String> tempDay = date.where((element) => element.contains(day)).toList();
+//        for (var s in tempDay) {
+//          points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
+//        }
+//      }
+      if (points.length == 0 || points.length == 1) {
+        _utils.errDialog("Not Enough Value!", "There are no measurements or not "
+            "enough measurements taken in the selected time window. ", context);
+      }
+      return [
+        new Series<TempsData, DateTime>(
+          id: 'Temperature',
+          colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
+          domainFn: (TempsData pts, _) => pts.time,
+          measureFn: (TempsData pts, _) => pts.temp,
+          data: points,
+        )
+      ];
+    } else {
+      return new List<Series<TempsData, DateTime>>();
     }
 
-    return [
-      new Series<TempsData, DateTime>(
-        id: 'Temperature',
-        colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
-        domainFn: (TempsData pts, _) => pts.time,
-        measureFn: (TempsData pts, _) => pts.temp,
-        data: points,
-      )
-    ];
   }
 }
 
-enum _Mode { Week, Hour, Day }
+enum _Mode { Week, Hour, Day, ThreeDays, BeginningOfTime, Custom}
 
 class TempsData {
   final DateTime time;
