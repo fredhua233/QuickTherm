@@ -207,7 +207,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
           break;
         }
       }
-      print(widget.devicesList);
       if (desired != null) {
         widget.flutterBlue.stopScan();
         try {
@@ -316,8 +315,6 @@ class ConnectingDevicesPageState extends State<ConnectingDevicesPage> {
         for (ScanResult result in results) {
           _addDeviceTolist(result.device);
           if (result.device.name == _deviceName && widget.autoConnect) {
-            print(widget.autoConnect);
-            print("auto connected");
             autoConnect(_deviceName).then((wid) {
               if (wid != null) {
                 Navigator.pushReplacement(

@@ -42,7 +42,6 @@ class Utils {
   Widget getMenu(BuildContext context, String identity, String currentPage) {
     switch (identity) {
       case "resident":
-        print("resident");
         return PopupMenuButton<String>(
             onSelected: (value) {
               switch (value) {

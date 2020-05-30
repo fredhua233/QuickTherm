@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Utils/UserInfo.dart';
@@ -16,7 +17,7 @@ import 'HistoryPage.dart';
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
-// TODO:  fix navigator, find bugs, make sure to stop ble from transmitting when mode changed
+// TODO:  fix navigator, find bugs,
 // FIXME: Maybe take temperature for a minute( or some time) and get its average
 /**
  * The current state of measurement, constant or discreet
@@ -64,6 +65,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     _initialize();
   }
 
@@ -188,7 +191,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                     }
                   }
                   await characteristic.write(utf8.encode("S"));
-                  _checkingForHealth(Temp, 1);
+                  _checkingForHealth(Temp, 1, 1);
                   if (Vcc < 3300) {
                     _utils.errDialog(
                         "Low Battery",
@@ -222,6 +225,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                       await characteristic.setNotifyValue(true);
                       await characteristic.write(utf8.encode("C"));
                       StreamSubscription sub;
+                      Map<String, dynamic> rec = new Map<String, dynamic>();
                       sub = characteristic.value.listen((value) {
                         if (value.length > 0 && value != null) {
                           String reading = utf8.decode(value);
@@ -237,18 +241,28 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                                   String.fromCharCode(0x00B0) +
                                   "C";
                             });
-                            _checkingForHealth(Temp, 0);
+                            DateTime now = new DateTime.now();
+                            _pref.setDouble("LastTemp", Temp);
+                            _pref.setString("LastMeasTime", now.toString());
+                            if (Temp > 37.5 || Temp < 35) {
+                              _pref.setString("LastIll", now.toString());
+                            }
+                            setState(() {
+                              _time = _pref
+                                  .getString("LastMeasTime")
+                                  .substring(0, 19);
+                            });
+                            rec.addAll({now.toString(): Temp});
+                            _checkingForHealth(Temp, 0, 0);
                             if (Vcc < 3300) {
                               _utils.errDialog(
                                   "Low Battery",
-                                  "Low battery, please charge your armband. "
-                                          "Current Battery level: " +
-                                      ((Vcc / 3700) * 100).toString() +
-                                      "%",
+                                  "Low battery, please charge your armband.",
                                   context);
                             }
                           }
                           if (reading == "Terminate") {
+                            _pushDataMap(rec);
                             sub.cancel();
                           }
                         }
@@ -283,9 +297,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   /**
    * Handles giving health status warnings
    */
-  void _checkingForHealth(double temp, int m) {
+  void _checkingForHealth(double temp, int m, int p) {
     bool set = false;
-    if (temp < 20 || temp > 45) {
+    if (temp < 15 || temp > 45) {
       _utils.errDialog(
           "Try Again!",
           "Bad measurement, please close this dialog, adjust placement of armband and try to measure your temperature again.",
@@ -332,7 +346,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
 //      _pref.setString("HealthMsg", _healthMsg);
 //      _pref.setString("1stTag", _primaryTag.toString());
 //      _pref.setString("2ndTag", _secondaryTag.toString());
-      _saveData(temp);
+      if (p > 0) {
+        _saveData(temp);
+      }
     }
   }
 
@@ -344,7 +360,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     _pref.setDouble("LastTemp", temp);
     _pref.setString("LastMeasTime", now.toString());
     if (temp > 37.5 || temp < 35) {
-      _pref.setString("LastIll", new DateTime.now().toString());
+      _pref.setString("LastIll", now.toString());
     }
     setState(() {
       _time = _pref.getString("LastMeasTime").substring(0, 19);
@@ -433,7 +449,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       });
     }
     Map<String, dynamic> temps = _data["Temperature"];
-    temps.addAll({now.toString(): temp.toString()});
+    temps.addAll({now.toString(): temp});
     _log.updateData({
       "Temperature": temps,
       "Primary Tag": _primaryTag.toString(),
@@ -441,6 +457,26 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       "Health Msg": _healthMsg
     });
     return true;
+  }
+
+  _pushDataMap(Map<String, dynamic> tempMap) async {
+    if (!_data.containsKey("Primary Tag") &&
+        !_data.containsKey("Secondary Tag") &&
+        !_data.containsKey("Health Msg")) {
+      _data.addAll({
+        "Primary Tag": _primaryTag.toString(),
+        "Secondary Tag": _secondaryTag.toString(),
+        "Health Msg": _healthMsg
+      });
+    }
+    Map<String, dynamic> temps = _data["Temperature"];
+    temps.addAll(tempMap);
+    await _log.updateData({
+      "Temperature": temps,
+      "Primary Tag": _primaryTag.toString(),
+      "Secondary Tag": _secondaryTag.toString(),
+      "Health Msg": _healthMsg
+    });
   }
 
   @override
@@ -596,5 +632,16 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                         _constantMode == _Therm.stopped
                     ? Colors.red[200]
                     : Colors.white);
+  }
+
+  @override
+  dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
   }
 }
