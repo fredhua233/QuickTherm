@@ -12,8 +12,8 @@ import 'package:flutter/cupertino.dart' as cup;
 import '../Utils/UserInfo.dart';
 import '../Utils/Utils.dart';
 
-String _time = "";
-String _temp = "";
+String _time = "N/A";
+String _temp = "N/A";
 
 
 //FIXME: add points on graph?
@@ -34,6 +34,7 @@ class HistoryPageState extends State<HistoryPage> {
 
   String _lastMeasured = "";
   String dropdownValue = "Last Day";
+  final _textController = TextEditingController();
 
 
   _onSelectionChanged(SelectionModel model) {
@@ -110,8 +111,8 @@ class HistoryPageState extends State<HistoryPage> {
                             _line = _getData(_displayMode);
                             break;
                           case 'Custom':
-//                            _displayMode = _Mode.Hour;
-//                            _line = _getData(_displayMode);
+                            _displayMode = _Mode.Custom;
+                            _inputDialog();
                             break;
                         }
                       });
@@ -224,13 +225,12 @@ class HistoryPageState extends State<HistoryPage> {
           points.add(new TempsData(
               DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
         }
+      } else if (m == _Mode.Custom) {
+        List<String> tempDay = date.where((element) => element.contains(day)).toList();
+        for (var s in tempDay) {
+          points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
+        }
       }
-//      else if (m == _Mode.Custom) {
-//        List<String> tempDay = date.where((element) => element.contains(day)).toList();
-//        for (var s in tempDay) {
-//          points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
-//        }
-//      }
       if (points.length == 0 || points.length == 1) {
         _utils.errDialog("Not Enough Value!", "There are no measurements or not "
             "enough measurements taken in the selected time window. ", context);
@@ -248,6 +248,55 @@ class HistoryPageState extends State<HistoryPage> {
       return new List<Series<TempsData, DateTime>>();
     }
 
+  }
+
+  _inputDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Input Date"),
+          content: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: _textController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'YYYY-MM-DD',
+                ),
+              )
+          ),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: new Text("View"),
+              onPressed: () {
+                String date = _textController.text;
+                print("Date");
+                print(date);
+                setState(() {
+                  _line = _getData(_displayMode, day: date);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 }
 
