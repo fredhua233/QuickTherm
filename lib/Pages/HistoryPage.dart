@@ -137,9 +137,9 @@ class HistoryPageState extends State<HistoryPage> {
                   height: 400,
                   child: _graph())),
               Align(
-                alignment: cup.Alignment.topLeft,
+                alignment: cup.FractionalOffset(0.04,0),
                 child: Padding(
-                  padding: new EdgeInsets.only(top: 15.0, left: 10.0),
+                  padding: new EdgeInsets.only(top: 15.0),
                   child: new Text("Selected point: " , style: new cup.TextStyle(fontSize: 16),))
               ),
               Align(
@@ -147,21 +147,21 @@ class HistoryPageState extends State<HistoryPage> {
                   child: Stack(
                     children: <Widget>[
                       Align(
-                        alignment: cup.Alignment.topLeft,
+                        alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, left: 10.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: _time != null && _time != "N/A"? new Text(_time.substring(0, 19)) : new Text("N/A")),
                       ),
                       Align(
-                          alignment: cup.Alignment.topCenter,
+                          alignment: cup.FractionalOffset(0.75,0),
                           child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, left: 140.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: _tag(_secondaryTag(_temp)))
                           ),
                       Align(
-                        alignment: cup.Alignment.topRight,
+                        alignment: cup.FractionalOffset(0.975,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child:  _temp != null ? new Text(_temp +  String.fromCharCode(0x00B0) + "C") : new Text(" ")),
                       ),
                     ],
@@ -171,11 +171,13 @@ class HistoryPageState extends State<HistoryPage> {
                 color: Colors.blue[200],
                 height: 20,
                 thickness: 3,
+                indent: 0,
+                endIndent: 0,
               ),
               Align(
-                  alignment: cup.Alignment.topLeft,
+                  alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
-                      padding: new EdgeInsets.only(top: 30.0, left: 10.0),
+                      padding: new EdgeInsets.only(top: 30.0),
                       child: new Text("Statistics \n$_timeWindow: " , style: new cup.TextStyle(fontSize: 17),))
               ),
               Align(
@@ -183,43 +185,41 @@ class HistoryPageState extends State<HistoryPage> {
                   child: Stack(
                     children: <Widget>[
                       Align(
-                          alignment: cup.Alignment.topLeft,
+                          alignment: cup.FractionalOffset(0.175,0),
                           child: Padding(
-                              padding: new EdgeInsets.only(top: 10.0, left: 60.0),
+                              padding: new EdgeInsets.only(top: 10.0),
                               child: _tag(_secondaryTag(_avg)))
                       ),
                       Align(
-                        alignment: cup.Alignment.topLeft,
+                        alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, left: 25.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: new Text("Avg")),
                       ),
                       Align(
-                          alignment: cup.Alignment.topCenter,
+                          alignment: cup.FractionalOffset(0.575,0),
                           child: Padding(
-                              padding: new EdgeInsets.only(top: 10.0, left: 60.0),
+                              padding: new EdgeInsets.only(top: 10.0),
                               child: _tag(_secondaryTag(_max)))
                       ),
                       Align(
-                        alignment: cup.Alignment.topCenter,
+                        alignment: cup.FractionalOffset(0.45,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
                             child: new cup.Text("Max"))
                       ),
-
                       Align(
-                          alignment: cup.Alignment.topRight,
+                          alignment: cup.FractionalOffset(0.98,0),
                           child: Padding(
-                              padding: new EdgeInsets.only(top: 10.0, right: 3.0),
+                              padding: new EdgeInsets.only(top: 10.0),
                               child: _tag(_secondaryTag(_min)))
                       ),
                       Align(
-                        alignment: cup.Alignment.topRight,
+                        alignment: cup.FractionalOffset(0.875,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, right: 25.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child:  new Text("Min")),
                       ),
-
                     ],
                   )
               ),
@@ -228,21 +228,21 @@ class HistoryPageState extends State<HistoryPage> {
                   child: Stack(
                     children: <Widget>[
                       Align(
-                        alignment: cup.Alignment.topLeft,
+                        alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, left: 10.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: _avg != null ? new Text(_avg + String.fromCharCode(0x00B0) + "C") : Text("")),
                       ),
                       Align(
-                        alignment: cup.Alignment.topCenter,
+                          alignment: cup.FractionalOffset(0.5,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
                             child: _max != null ? new Text(_max + String.fromCharCode(0x00B0) + "C") : Text(""))
                       ),
                       Align(
-                        alignment: cup.Alignment.topRight,
+                        alignment: cup.FractionalOffset(0.975,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: _min != null ? new Text(_min + String.fromCharCode(0x00B0) + "C") : Text(""))
                       ),
                     ],
@@ -252,11 +252,13 @@ class HistoryPageState extends State<HistoryPage> {
                 color: Colors.blue[200],
                 height: 20,
                 thickness: 3,
+                indent: 0,
+                endIndent: 0,
               ),
               Align(
-                  alignment: cup.Alignment.topLeft,
+                  alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
-                      padding: new EdgeInsets.only(top: 30.0, left: 10.0),
+                      padding: new EdgeInsets.only(top: 30.0),
                       child: new Text("Last Measurement:" , style: new cup.TextStyle(fontSize: 17),))
               ),
               Align(
@@ -264,15 +266,15 @@ class HistoryPageState extends State<HistoryPage> {
                   child: Stack(
                     children: <Widget>[
                       Align(
-                        alignment: cup.Alignment.topLeft,
+                        alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, left: 10),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: new Text("Time")),
                       ),
                       Align(
-                        alignment: cup.Alignment.topRight,
+                        alignment: cup.FractionalOffset(0.975,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child:  new Text("Temperature")),
                       ),
                     ],
@@ -283,27 +285,27 @@ class HistoryPageState extends State<HistoryPage> {
                   child: Stack(
                     children: <Widget>[
                       Align(
-                        alignment: cup.Alignment.topLeft,
+                        alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, left: 10.0),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: _lastMeasured != null && _lastMeasured.length > 19? new Text(_lastMeasured.substring(0, 19)) : Text("")),
                       ),
                       Align(
-                          alignment: cup.Alignment.topCenter,
+                          alignment: cup.FractionalOffset(0.625,0),
                           child: Padding(
-                              padding: new EdgeInsets.only(top: 10.0, left: 75),
+                              padding: new EdgeInsets.only(top: 10.0),
                               child: _tag(_primaryTag())),
                       ),
                       Align(
-                        alignment: cup.Alignment.topCenter,
+                        alignment: cup.FractionalOffset(0.725,0),
                         child: Padding(
-                            padding: new EdgeInsets.only(top: 10.0, left: 150),
+                            padding: new EdgeInsets.only(top: 10.0),
                             child: _tag(_secondaryTag(_lastTemp))),
                       ),
                       Align(
-                          alignment: cup.Alignment.topRight,
+                          alignment: cup.FractionalOffset(0.975,0),
                           child: Padding(
-                              padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                              padding: new EdgeInsets.only(top: 10.0),
                               child: _lastTemp != null ? new Text(_lastTemp + String.fromCharCode(0x00B0) + "C") : Text(""))
                       ),
                     ],
@@ -313,17 +315,19 @@ class HistoryPageState extends State<HistoryPage> {
                 color: Colors.blue[200],
                 height: 20,
                 thickness: 3,
+                indent: 0,
+                endIndent: 0,
               ),
               Align(
-                  alignment: cup.Alignment.topLeft,
+                  alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
-                      padding: new EdgeInsets.only(top: 30.0, left: 10.0),
+                      padding: new EdgeInsets.only(top: 30.0),
                       child: new Text("About the Coronavirus (COVID-19)" , style: new cup.TextStyle(fontSize: 17)))
               ),
               Align(
-                  alignment: cup.Alignment.topLeft,
+                  alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
-                      padding: new EdgeInsets.only(top: 30.0, left: 10.0, bottom: 20),
+                      padding: new EdgeInsets.only(top: 30.0, bottom: 20),
                       child:new InkWell(
                           child: new Text('Learn more (tap here) at: https://www.cdc.gov/coronavirus/2019-ncov/'),
                           onTap: () => _launchInBrowser("https://www.cdc.gov/coronavirus/2019-ncov/")
