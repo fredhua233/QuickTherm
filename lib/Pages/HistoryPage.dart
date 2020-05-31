@@ -1,22 +1,23 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart';
-import 'package:charts_flutter/src/text_element.dart' as text;
-import 'package:charts_flutter/src/text_style.dart' as style;
-
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart' as cup;
 
+import 'package:charts_flutter/flutter.dart';
+// ignore: implementation_imports
+import 'package:charts_flutter/src/text_element.dart' as text;
+// ignore: implementation_imports
+import 'package:charts_flutter/src/text_style.dart' as style;
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:url_launcher/url_launcher.dart';
 import '../Utils/UserInfo.dart';
 import '../Utils/Utils.dart';
 
 String _time = "N/A";
 String _temp = "N/A";
 
-
-//FIXME: add points on graph?
 
 class HistoryPage extends StatefulWidget {
   @override
@@ -32,13 +33,13 @@ class HistoryPageState extends State<HistoryPage> {
   List<Series<TempsData, DateTime>> _line;
   _Mode _displayMode = _Mode.Day;
 
-  String _lastMeasured = "";
+  String _lastMeasured, _lastTemp, _mode, _min, _max, _avg, _timeWindow = " ";
   String dropdownValue = "Last Day";
   final _textController = TextEditingController();
 
 
   _onSelectionChanged(SelectionModel model) {
-    String time, temp = "";
+    String time, temp = "N/A";
     if(model.hasDatumSelection) {
       temp = model.selectedSeries[0].measureFn(model.selectedDatum[0].index).toString();
       time = model.selectedDatum.first.datum.time.toString();
@@ -72,7 +73,6 @@ class HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text("History"),
@@ -110,6 +110,10 @@ class HistoryPageState extends State<HistoryPage> {
                             _displayMode = _Mode.Week;
                             _line = _getData(_displayMode);
                             break;
+                          case 'Beginning of Time':
+                            _displayMode = _Mode.BeginningOfTime;
+                            _line = _getData(_displayMode);
+                            break;
                           case 'Custom':
                             _displayMode = _Mode.Custom;
                             _inputDialog();
@@ -117,7 +121,7 @@ class HistoryPageState extends State<HistoryPage> {
                         }
                       });
                     },
-                    items: <String>['Last Hour', 'Last Day', 'Last Three Days', 'Last Week', 'Custom']
+                    items: <String>['Last Hour', 'Last Day', 'Last Three Days', 'Last Week', 'Beginning of Time', 'Custom']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -135,21 +139,254 @@ class HistoryPageState extends State<HistoryPage> {
               Align(
                 alignment: cup.Alignment.topLeft,
                 child: Padding(
-                  padding: new EdgeInsets.only(top: 5.0, left: 10.0),
-                  child: new Text("(Date : Temperature): " , style: new cup.TextStyle(fontSize: 15),))
+                  padding: new EdgeInsets.only(top: 15.0, left: 10.0),
+                  child: new Text("Selected point: " , style: new cup.TextStyle(fontSize: 16),))
+              ),
+              Align(
+                  alignment: cup.Alignment.topCenter,
+                  child: Stack(
+                    children: <Widget>[
+                      Align(
+                        alignment: cup.Alignment.topLeft,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, left: 10.0),
+                            child: _time != null && _time != "N/A"? new Text(_time.substring(0, 19)) : new Text("N/A")),
+                      ),
+                      Align(
+                          alignment: cup.Alignment.topCenter,
+                          child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, left: 140.0),
+                            child: _tag(_secondaryTag(_temp)))
+                          ),
+                      Align(
+                        alignment: cup.Alignment.topRight,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                            child:  _temp != null ? new Text(_temp +  String.fromCharCode(0x00B0) + "C") : new Text(" ")),
+                      ),
+                    ],
+                  )
+              ),
+              Divider(
+                color: Colors.blue[200],
+                height: 20,
+                thickness: 3,
               ),
               Align(
                   alignment: cup.Alignment.topLeft,
                   child: Padding(
-                      padding: new EdgeInsets.only(top: 5.0, left: 10.0),
-                      child: _time != null && _temp != null ? new Text(_time + " : " + _temp +  String.fromCharCode(0x00B0) + "C") : new Text(" "))
-              )
+                      padding: new EdgeInsets.only(top: 30.0, left: 10.0),
+                      child: new Text("Statistics \n$_timeWindow: " , style: new cup.TextStyle(fontSize: 17),))
+              ),
+              Align(
+                  alignment: cup.Alignment.topCenter,
+                  child: Stack(
+                    children: <Widget>[
+                      Align(
+                          alignment: cup.Alignment.topLeft,
+                          child: Padding(
+                              padding: new EdgeInsets.only(top: 10.0, left: 60.0),
+                              child: _tag(_secondaryTag(_avg)))
+                      ),
+                      Align(
+                        alignment: cup.Alignment.topLeft,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, left: 25.0),
+                            child: new Text("Avg")),
+                      ),
+                      Align(
+                          alignment: cup.Alignment.topCenter,
+                          child: Padding(
+                              padding: new EdgeInsets.only(top: 10.0, left: 60.0),
+                              child: _tag(_secondaryTag(_max)))
+                      ),
+                      Align(
+                        alignment: cup.Alignment.topCenter,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0),
+                            child: new cup.Text("Max"))
+                      ),
+
+                      Align(
+                          alignment: cup.Alignment.topRight,
+                          child: Padding(
+                              padding: new EdgeInsets.only(top: 10.0, right: 3.0),
+                              child: _tag(_secondaryTag(_min)))
+                      ),
+                      Align(
+                        alignment: cup.Alignment.topRight,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, right: 25.0),
+                            child:  new Text("Min")),
+                      ),
+
+                    ],
+                  )
+              ),
+              Align(
+                  alignment: cup.Alignment.topCenter,
+                  child: Stack(
+                    children: <Widget>[
+                      Align(
+                        alignment: cup.Alignment.topLeft,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, left: 10.0),
+                            child: _avg != null ? new Text(_avg + String.fromCharCode(0x00B0) + "C") : Text("")),
+                      ),
+                      Align(
+                        alignment: cup.Alignment.topCenter,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0),
+                            child: _max != null ? new Text(_max + String.fromCharCode(0x00B0) + "C") : Text(""))
+                      ),
+                      Align(
+                        alignment: cup.Alignment.topRight,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                            child: _min != null ? new Text(_min + String.fromCharCode(0x00B0) + "C") : Text(""))
+                      ),
+                    ],
+                  )
+              ),
+              Divider(
+                color: Colors.blue[200],
+                height: 20,
+                thickness: 3,
+              ),
+              Align(
+                  alignment: cup.Alignment.topLeft,
+                  child: Padding(
+                      padding: new EdgeInsets.only(top: 30.0, left: 10.0),
+                      child: new Text("Last Measurement:" , style: new cup.TextStyle(fontSize: 17),))
+              ),
+              Align(
+                  alignment: cup.Alignment.topCenter,
+                  child: Stack(
+                    children: <Widget>[
+                      Align(
+                        alignment: cup.Alignment.topLeft,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, left: 10),
+                            child: new Text("Time")),
+                      ),
+                      Align(
+                        alignment: cup.Alignment.topRight,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                            child:  new Text("Temperature")),
+                      ),
+                    ],
+                  )
+              ),
+              Align(
+                  alignment: cup.Alignment.topCenter,
+                  child: Stack(
+                    children: <Widget>[
+                      Align(
+                        alignment: cup.Alignment.topLeft,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, left: 10.0),
+                            child: _lastMeasured != null && _lastMeasured.length > 19? new Text(_lastMeasured.substring(0, 19)) : Text("")),
+                      ),
+                      Align(
+                          alignment: cup.Alignment.topCenter,
+                          child: Padding(
+                              padding: new EdgeInsets.only(top: 10.0, left: 75),
+                              child: _tag(_primaryTag())),
+                      ),
+                      Align(
+                        alignment: cup.Alignment.topCenter,
+                        child: Padding(
+                            padding: new EdgeInsets.only(top: 10.0, left: 150),
+                            child: _tag(_secondaryTag(_lastTemp))),
+                      ),
+                      Align(
+                          alignment: cup.Alignment.topRight,
+                          child: Padding(
+                              padding: new EdgeInsets.only(top: 10.0, right: 10.0),
+                              child: _lastTemp != null ? new Text(_lastTemp + String.fromCharCode(0x00B0) + "C") : Text(""))
+                      ),
+                    ],
+                  )
+              ),
+              Divider(
+                color: Colors.blue[200],
+                height: 20,
+                thickness: 3,
+              ),
+              Align(
+                  alignment: cup.Alignment.topLeft,
+                  child: Padding(
+                      padding: new EdgeInsets.only(top: 30.0, left: 10.0),
+                      child: new Text("About the Coronavirus (COVID-19)" , style: new cup.TextStyle(fontSize: 17)))
+              ),
+              Align(
+                  alignment: cup.Alignment.topLeft,
+                  child: Padding(
+                      padding: new EdgeInsets.only(top: 30.0, left: 10.0, bottom: 20),
+                      child:new InkWell(
+                          child: new Text('Learn more (tap here) at: https://www.cdc.gov/coronavirus/2019-ncov/'),
+                          onTap: () => _launchInBrowser("https://www.cdc.gov/coronavirus/2019-ncov/")
+                      )
+                  ),
+              ),
             ],
         )
       )
     );
   }
 
+  Future<void> _launchInBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+        enableJavaScript: true,
+        headers: <String, String>{'my_header_key': 'my_header_value'},
+      );
+    } else {
+      _utils.errDialog("Unable to Open Link", "Sorry, please navigate to link using the default browser of your device.", context);
+    }
+  }
+
+  //Gets color of secondary tag
+  cup.Color _secondaryTag(String tag) {
+    return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 37.5 ? Colors.red :
+           tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 36) < 35.0 ? Colors.blue :
+           tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 90) < 37.5 && (double.parse(tag) ?? 0) > 35.0 ? Colors.green : Colors.white;
+  }
+
+
+  //Gets the color of primary tag
+  cup.Color _primaryTag() {
+    if (_data != null) {
+      String ptag = _data["Primary Tag"];
+      if (ptag == Colors.black.toString()) {
+        return Colors.black;
+      } else if (ptag == Colors.black45.toString()) {
+        return Colors.black45;
+      } else if (ptag == Colors.white.toString()) {
+        return Colors.white;
+      }
+    }
+    return Colors.white;
+  }
+  //Creates tag
+  Widget _tag(cup.Color c) {
+    return Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+            color: c,
+            border: Border.all(
+                color: Colors.black,
+                width: 2,
+                style: BorderStyle.solid),
+            borderRadius: BorderRadius.circular(5)));
+  }
+
+  //creates and returns the graph
   Widget _graph() {
     var wid = _line != null ? TimeSeriesChart(
         _line,
@@ -163,12 +400,13 @@ class HistoryPageState extends State<HistoryPage> {
           )
         ],
         behaviors: [
-          new ChartTitle('Date v Temperature',
+          new ChartTitle(_mode,
               subTitle: String.fromCharCode(0x00B0) + "C",
               behaviorPosition: BehaviorPosition.top,
               titleOutsideJustification: OutsideJustification.start,
               innerPadding: 18),
           new ChartTitle('Date',
+              subTitle: _timeWindow,
               behaviorPosition: BehaviorPosition.bottom,
               titleOutsideJustification:
               OutsideJustification.middleDrawArea),
@@ -180,61 +418,101 @@ class HistoryPageState extends State<HistoryPage> {
     return wid;
   }
 
+  //Gets data depending on mode
   List<Series<TempsData, DateTime>> _getData(_Mode m, {String day}) {
     var points = new List<TempsData>();
+    double max = double.negativeInfinity,
+           min = double.infinity,
+           avg, sum = 0;
     if (_data != null) {
       Map<String, dynamic> t = _data["Temperature"];
       List<String> date = t.keys.toList();
       date.sort((a, b) => a.compareTo(b));
       setState(() {
         _lastMeasured = date.last;
+        _lastTemp = t[_lastMeasured].toString();
       });
       if (m == _Mode.BeginningOfTime) {
-        for (var s in date) {
-          points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
+        for (int i = date.length - 1; i >= 0; i--) {
+          points.add(new TempsData(
+              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
         }
+        setState(() {
+          _mode = "Since Beginning of Time";
+        });
       } else if (m == _Mode.Day) {
         DateTime last = DateTime.parse(date.last);
         for (int i = date.length - 1; i >= 0 && last
             .difference(DateTime.parse(date[i]))
-            .inDays <= 1; i--) {
+            .inHours <= 24; i--) {
           points.add(new TempsData(
               DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
         }
+        setState(() {
+          _mode = "Last Day";
+        });
       } else if (m == _Mode.Hour) {
         DateTime last = DateTime.parse(date.last);
         for (int i = date.length - 1; i >= 0 && last
             .difference(DateTime.parse(date[i]))
-            .inHours <= 1; i--) {
+            .inHours < 1; i--) {
           points.add(new TempsData(
               DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
         }
+        setState(() {
+          _mode = "Last Hour";
+        });
       } else if (m == _Mode.Week) {
         DateTime last = DateTime.parse(date.last);
         for (int i = date.length - 1; i >= 0 && last
             .difference(DateTime.parse(date[i]))
-            .inDays <= 7; i--) {
+            .inDays < 7; i--) {
           points.add(new TempsData(
               DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
         }
+        setState(() {
+          _mode = "Last Week";
+        });
       } else if (m == _Mode.ThreeDays) {
         DateTime last = DateTime.parse(date.last);
         for (int i = date.length - 1; i >= 0 && last
             .difference(DateTime.parse(date[i]))
-            .inDays <= 3; i--) {
+            .inDays < 3; i--) {
           points.add(new TempsData(
               DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
         }
+        setState(() {
+          _mode = "Last 3 Days";
+        });
       } else if (m == _Mode.Custom) {
         List<String> tempDay = date.where((element) => element.contains(day)).toList();
         for (var s in tempDay) {
           points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
         }
+        setState(() {
+          _mode = "Custom";
+        });
       }
       if (points.length == 0 || points.length == 1) {
         _utils.errDialog("Not Enough Value!", "There are no measurements or not "
             "enough measurements taken in the selected time window. ", context);
       }
+      for(var pt in points) {
+        sum += pt.temp;
+        if (pt.temp < min) {
+          min = pt.temp;
+        }
+        if (pt.temp > max) {
+          max = pt.temp;
+        }
+      }
+      avg = sum / points.length;
+      setState(() {
+        _timeWindow = "(" + points.last.time.toString().substring(5, 10) + " to " + points.first.time.toString().substring(5, 10) + ")";
+        _max = max.toString();
+        _min = min.toString();
+        _avg = avg.toString().length > 5 ? avg.toString().substring(0, 5) : avg.toString();
+      });
       return [
         new Series<TempsData, DateTime>(
           id: 'Temperature',
@@ -273,11 +551,13 @@ class HistoryPageState extends State<HistoryPage> {
               child: new Text("View"),
               onPressed: () {
                 String date = _textController.text;
-                print("Date");
-                print(date);
                 setState(() {
                   _line = _getData(_displayMode, day: date);
                 });
+                if (_line[0].data.length == 0) {
+                  _utils.errDialog("Not Enough Value!", "There are no measurements or not "
+                      "enough measurements taken in the selected time window. ", context);
+                }
                 Navigator.of(context).pop();
               },
             ),
@@ -300,7 +580,9 @@ class HistoryPageState extends State<HistoryPage> {
   }
 }
 
-enum _Mode { Week, Hour, Day, ThreeDays, BeginningOfTime, Custom}
+enum _Mode {
+  Week, Hour, Day, ThreeDays, BeginningOfTime, Custom
+}
 
 class TempsData {
   final DateTime time;

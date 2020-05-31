@@ -8,6 +8,7 @@ import 'Pages/ConnectingDevicesPage.dart';
 void main() => runApp(BLETherometer());
 
 //TODO：If the user already set up info, move choose devices, which moves to temperature else move to choose identity page
+//Clean Data base aka only keep recent 2 weeks
 class BLETherometer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
