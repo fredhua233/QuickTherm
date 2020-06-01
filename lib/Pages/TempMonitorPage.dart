@@ -438,7 +438,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   Handles pushing data to cloud
    */
   Future<bool> _pushData(double temp, DateTime now) async {
-    //FIXME: Change if set up format during SetUp info page
+    //FIXME: Change if set up format during SetUp info page,  5/31: its ok to use update, as userinfo uses set, link: https://stackoverflow.com/questions/46597327/difference-between-set-with-merge-true-and-update
     if (!_data.containsKey("Primary Tag") &&
         !_data.containsKey("Secondary Tag") &&
         !_data.containsKey("Health Msg")) {

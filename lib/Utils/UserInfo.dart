@@ -2,50 +2,46 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class UserInfo {
-  String Name, //
-      address, //
-      phoneNumber, //
-      managerName, //
-      sex, //
-      healthHistory, //
+  String Name,
+      address,
+      phoneNumber,
+      managerName,
+      sex,
+      healthHistory,
       DOB,
-
-      ///changing to showDatePicker
-      age,
-
-      ///doing this later
-      identity, //
+      age, ///doing this later
+      identity,
       organization,
-      building,
-      roomNumber; //
-  bool priorHealth; //
-  Illness condition; //
-  TimeOfDay remindTimeAM, remindTimePM, remindTimeNOON; //
+      roomNumber;
+  bool priorHealth;
+  Illness condition;
+  TimeOfDay remindTimeAM, remindTimePM, remindTimeNOON;
   ///where to put persistence? here or Utils?
   ///NOTE: SharedPreference put in Utils
   Firestore _firestore = Firestore.instance;
-  DocumentReference _userInfo;
+  DocumentReference _userInfoCF;
+  Map<String, dynamic> _userProfile = new Map<String, dynamic>();
 
   UserInfo() {
-//    _userInfo = _firestore.document("/Organizations/" +
-//        organization +
-//        "/Buildings/" +
-//        building +
-//        "/Units/" +
-//        roomNumber +
-//        "/Individuals/" +
-//        Name);
-
-    _userInfo = _firestore.document(
-        "/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals/JohnWhite");
+    _userInfoCF = _firestore.document(
+        "/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$Name");
   }
 
-  DocumentReference get log => _userInfo;
+  DocumentReference get log => _userInfoCF;
   Firestore get fireStore => _firestore;
 
-  save() {
-    print('save to firebase or persistence');
+  save() async {
+    _userProfile = {
+      'Name' : Name,
+      'Contact' : phoneNumber,
+      'Sex' : sex,
+      /// doing this later 'Age' : age,
+      'Manager' : managerName
+    };
+    _userProfile['Prior Medical Condition'] = priorHealth ? healthHistory : priorHealth;
+    await _userInfoCF.setData(_userProfile);
   }
 }
 
 enum Illness { severe, potential, healthy }
+

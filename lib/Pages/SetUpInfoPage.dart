@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Utils/UserInfo.dart';
+import '../Pages/ConnectingDevicesPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+///FIXME: filled in data(not saved) gets lost while off focus of screen
 class setUpInfoPage extends StatefulWidget {
   @override
   _setUpInfoPageState createState() => _setUpInfoPageState();
@@ -79,7 +81,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           labelText: 'Date of Birth'
                       ),
                       validator: (value){
-                        if(value.isEmpty || !value.contains('/') || int.parse(value.substring(0,2)) > 12 || int.parse(value.substring(3,5)) > 31){
+                        if(value.isEmpty || !value.contains('/')){
                           return 'Please enter in correct format: MM/DD/YYYY';
                         }
                         return null;
@@ -185,7 +187,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                         WhitelistingTextInputFormatter.digitsOnly
                       ],
                       validator: (value){
-                        if(value.isEmpty || !value.contains(' ')){
+                        if(value.isEmpty){
                           return "Please enter your room number";
                         }
                         return null;
@@ -246,6 +248,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       _user.healthHistory = val;
                     }) ,
                   ),
+                  ///FIXME: show time picked on screen for remind times
                   Row(
                     children: [
                       Text('Morning Remind time'),
@@ -302,11 +305,16 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                     ],
                   ),
                   RaisedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       final form = _formKey.currentState;
                       if (form.validate()) {
                         form.save();
                         _user.save();
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => ConnectingDevicesPage(
+                                title: "Available Devices",
+                                storage: NameStorage(),
+                                autoConnect: true)));
                       }
                     },
                     child: Text('Save'),
