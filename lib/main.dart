@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'Pages/ChooseIdentityPage.dart';
+import 'Pages/StartUp/ChooseIdentityPage.dart';
 import 'Pages/ConnectingDevicesPage.dart';
 
 //Menu menu = new Menu();

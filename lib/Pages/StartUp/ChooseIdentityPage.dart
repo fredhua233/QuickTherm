@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'SetUpInfoPage.dart';
-import 'ConnectingDevicesPage.dart';
+import '../ConnectingDevicesPage.dart';
 
 class ChooseIdentityPage extends StatelessWidget {
   @override

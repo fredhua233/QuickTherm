@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../Utils/UserInfo.dart';
-import '../Pages/ConnectingDevicesPage.dart';
+import '../../Utils/UserInfo.dart';
+import '../ConnectingDevicesPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 ///FIXME: Change the format of some fields
