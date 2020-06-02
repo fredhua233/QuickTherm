@@ -126,7 +126,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.address += val)
+                          onSaved: (val) => setState(() => _user.address = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -220,7 +220,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.managerName += val)
+                          onSaved: (val) => setState(() => _user.managerName = val)
                       ),
                       CheckboxListTile(
                           title: const Text('I have pre-existing health condition'),
