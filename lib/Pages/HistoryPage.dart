@@ -576,7 +576,6 @@ class HistoryPageState extends State<HistoryPage> {
       },
     );
   }
-
   @override
   void dispose() {
     _textController.dispose();

@@ -59,7 +59,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.Name = val)
+                          onSaved: (val) => setState(() => _user.name = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
