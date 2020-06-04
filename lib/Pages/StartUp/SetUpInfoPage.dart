@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../Utils/UserInfo.dart';
 import '../ConnectingDevicesPage.dart';
+import 'ChooseIdentityPage.dart';
+import 'package:quicktherm/Utils/Utils.dart'; //
 import 'package:shared_preferences/shared_preferences.dart';
 
 ///FIXME: Change the format of some fields
@@ -17,7 +19,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   Illness _condition;
   bool _preExist = false;
   TimeOfDay _remindAM, _remindNOON, _remindPM, _picked;
-
+  SharedPreferences _pref;
 
   Future<void> selectTime(BuildContext context, TimeOfDay _timeOfDay) async {
     _timeOfDay = TimeOfDay.now();
@@ -30,6 +32,9 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
     });
   }
 
+  getPref () async{
+    _pref = await Utils().pref;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +64,10 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.name = val)
+                          onSaved: (val) => setState(() {
+                            _user.name = val;
+                            _pref.setString('name', val);
+                          })
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -284,15 +292,30 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           DropdownButton<Illness>(
                             items: [
                               DropdownMenuItem<Illness>(
-                                child: Text('Healthy'),
+                                child: Row(
+                                  children: [
+                                    Text("  " , style: new TextStyle(color: Colors.white)),
+                                    Text('Healthy'),
+                                  ],
+                                ),
                                 value: Illness.healthy,
                               ),
                               DropdownMenuItem<Illness>(
-                                child: Text('Potential'),
+                                child: Row(
+                                  children: [
+                                    Text("  " , style: new TextStyle(color: Colors.black26)),
+                                    Text('Potential'),
+                                  ],
+                                ),
                                 value: Illness.potential,
                               ),
                               DropdownMenuItem<Illness>(
-                                child: Text('Severe'),
+                                child: Row(
+                                  children: [
+                                    Text("  " , style: new TextStyle(color: Colors.black)),
+                                    Text('Severe'),
+                                  ],
+                                ),
                                 value: Illness.severe,
                               ),
                             ],
@@ -312,6 +335,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           if (form.validate()) {
                             form.save();
                             _user.save();
+                            SharedPreferences _pref = await SharedPreferences.getInstance();
+                            print('My id is' + _pref.getString('id'));
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) => ConnectingDevicesPage(
                                     title: "Available Devices",
