@@ -17,7 +17,7 @@ import 'HistoryPage.dart';
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
-// TODO:  fix navigator, find bugs,
+// TODO:  fix navigator, find bugs, get measered status
 // FIXME: Maybe take temperature for a minute( or some time) and get its average
 /**
  * The current state of measurement, constant or discreet
@@ -419,19 +419,23 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   */
   _deleteData() {
     Map<String, dynamic> temps = _data["Temperature"];
+    List<String> date = temps.keys.toList();
+    date.sort((a, b) => a.compareTo(b));
     if (_pref.containsKey("LastTemp")) {
       double temp = _pref.getDouble("LastTemp");
       _deleteDataDialog(temp);
       if (!save) {
         try {
           temps.remove(_pref.getString("LastMeasTime"));
+          date.removeLast();
         } catch (e) {
           _utils.errDialog(
               "Unable to delete", "Last Data already deleted", context);
         }
       }
     }
-    _log.updateData({"Temperature": temps});
+    _log.updateData({"Temperature": temps,
+                     "Last Measured Time" : date.last});
   }
 
   /*
@@ -439,34 +443,40 @@ class TempMonitorPageState extends State<TempMonitorPage> {
    */
   Future<bool> _pushData(double temp, DateTime now) async {
     //FIXME: Change if set up format during SetUp info page,  5/31: its ok to use update, as userinfo uses set, link: https://stackoverflow.com/questions/46597327/difference-between-set-with-merge-true-and-update
+    var ltime = _pref.getString("LastMeasTime");
     if (!_data.containsKey("Primary Tag") &&
         !_data.containsKey("Secondary Tag") &&
         !_data.containsKey("Health Msg")) {
       _data.addAll({
         "Primary Tag": _primaryTag.toString(),
         "Secondary Tag": _secondaryTag.toString(),
-        "Health Msg": _healthMsg
+        "Health Msg": _healthMsg,
+        "Last Measured Time" : ltime
       });
     }
     Map<String, dynamic> temps = _data["Temperature"];
     temps.addAll({now.toString(): temp});
-    _log.updateData({
+    await _log.updateData({
       "Temperature": temps,
       "Primary Tag": _primaryTag.toString(),
       "Secondary Tag": _secondaryTag.toString(),
-      "Health Msg": _healthMsg
+      "Health Msg": _healthMsg,
+      "Last Measured Time" : ltime
     });
+    _updateUnitStatus();
     return true;
   }
 
   _pushDataMap(Map<String, dynamic> tempMap) async {
+    var ltime = _pref.getString("LastMeasTime");
     if (!_data.containsKey("Primary Tag") &&
         !_data.containsKey("Secondary Tag") &&
         !_data.containsKey("Health Msg")) {
       _data.addAll({
         "Primary Tag": _primaryTag.toString(),
         "Secondary Tag": _secondaryTag.toString(),
-        "Health Msg": _healthMsg
+        "Health Msg": _healthMsg,
+        "Last Measured Time" : ltime
       });
     }
     Map<String, dynamic> temps = _data["Temperature"];
@@ -475,7 +485,37 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       "Temperature": temps,
       "Primary Tag": _primaryTag.toString(),
       "Secondary Tag": _secondaryTag.toString(),
-      "Health Msg": _healthMsg
+      "Health Msg": _healthMsg,
+      "Last Measured Time" : ltime
+    });
+    _updateUnitStatus();
+  }
+
+  //Updates unit status base on the health status of people living in the same unit as the individual
+  _updateUnitStatus() async {
+    await _user.fireStore.runTransaction((transaction) async {
+      String unitStatus = "";
+      bool potential, ill, healthy = false;
+      QuerySnapshot individuals = await _user.mates.getDocuments();
+      for (var doc in individuals.documents) {
+        if (doc.data["Primary Tag"] == Colors.black.toString()) {
+          ill = true;
+        } else if (doc.data["Primary Tag"] == Colors.black45.toString()) {
+          potential = true;
+        } else if (doc.data["Primary Tag"] == Colors.white.toString()) {
+          healthy = true;
+        }
+      }
+      if (healthy && !potential && !ill) {
+        unitStatus = "healthy";
+      } else if (ill) {
+        unitStatus = "ill";
+      } else if (potential && !ill) {
+        unitStatus = "potentially ill";
+      } else {
+        unitStatus = "unknown";
+      }
+      await transaction.update(_user.unit, {"Unit Status" : unitStatus});
     });
   }
 

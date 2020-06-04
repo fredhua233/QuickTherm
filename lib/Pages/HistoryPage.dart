@@ -19,6 +19,9 @@ String _time = "N/A";
 String _temp = "N/A";
 
 
+
+//FIXME: replace dash with slash
+
 class HistoryPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => HistoryPageState();

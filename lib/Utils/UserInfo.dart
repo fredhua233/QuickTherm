@@ -23,10 +23,20 @@ class UserInfo {
   ///NOTE: SharedPreference put in Utils
   Firestore _firestore = Firestore.instance;
   DocumentReference _userInfoCF;
+  DocumentReference _unitInfo;
+  CollectionReference _unitmates;
   Map<String, dynamic> _userProfile = new Map<String, dynamic>();
 
-  DocumentReference get log => _userInfoCF;
+  UserInfo() {
+    _userInfoCF = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name");
+    _unitInfo = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber");
+    _unitmates = _firestore.collection("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals");
+  }
 
+
+  CollectionReference get mates => _unitmates;
+  DocumentReference get unit => _unitInfo;
+  DocumentReference get log => _userInfoCF;
   Firestore get fireStore => _firestore;
 
   save() async {
