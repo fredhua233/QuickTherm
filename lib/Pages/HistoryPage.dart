@@ -29,7 +29,7 @@ class HistoryPage extends StatefulWidget {
 
 // Graph of previous temperatures, time window, 1 month, 1 week, 1 day, 1 hour
 class HistoryPageState extends State<HistoryPage> {
-  UserInfo _user = new UserInfo();
+  UserInfo _user = new UserInfo.defined();
   Utils _utils = new Utils();
   DocumentReference _log;
   Map<String, dynamic> _data;

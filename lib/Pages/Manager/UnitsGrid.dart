@@ -11,7 +11,7 @@ class UnitsGrid extends StatefulWidget {
 
 class UnitsGridState extends State<UnitsGrid> {
   Utils _utils = new Utils();
-  UserInfo _user = new UserInfo();
+  UserInfo _user = new UserInfo.defined();
   CollectionReference _units;
 
   @override

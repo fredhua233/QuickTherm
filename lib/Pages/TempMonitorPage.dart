@@ -46,7 +46,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
 
   SharedPreferences _pref;
   Utils _utils = new Utils();
-  UserInfo _user = new UserInfo();
+  UserInfo _user = new UserInfo.defined();
   var _monitorState = _State.discreet;
   var _constantMode = _Therm.stopped;
   bool save = true;
@@ -442,7 +442,6 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   Handles pushing data to cloud
    */
   Future<bool> _pushData(double temp, DateTime now) async {
-    //FIXME: Change if set up format during SetUp info page,  5/31: its ok to use update, as userinfo uses set, link: https://stackoverflow.com/questions/46597327/difference-between-set-with-merge-true-and-update
     var ltime = _pref.getString("LastMeasTime");
     if (!_data.containsKey("Primary Tag") &&
         !_data.containsKey("Secondary Tag") &&

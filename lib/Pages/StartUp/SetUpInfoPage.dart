@@ -19,7 +19,6 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   Illness _condition;
   bool _preExist = false;
   TimeOfDay _remindAM, _remindNOON, _remindPM, _picked;
-  SharedPreferences _pref;
 
   Future<void> selectTime(BuildContext context, TimeOfDay _timeOfDay) async {
     _timeOfDay = TimeOfDay.now();
@@ -32,9 +31,6 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
     });
   }
 
-  getPref () async{
-    _pref = await Utils().pref;
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,10 +60,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() {
-                            _user.name = val;
-                            _pref.setString('name', val);
-                          })
+                          onSaved: (val) => setState(() => _user.name = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -292,36 +285,26 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           DropdownButton<Illness>(
                             items: [
                               DropdownMenuItem<Illness>(
-                                child: Row(
-                                  children: [
-                                    Text("  " , style: new TextStyle(color: Colors.white)),
-                                    Text('Healthy'),
-                                  ],
-                                ),
+                                child: Text('Healthy'),
                                 value: Illness.healthy,
                               ),
                               DropdownMenuItem<Illness>(
-                                child: Row(
-                                  children: [
-                                    Text("  " , style: new TextStyle(color: Colors.black26)),
-                                    Text('Potential'),
-                                  ],
-                                ),
+                                child: Text('Potential'),
                                 value: Illness.potential,
                               ),
                               DropdownMenuItem<Illness>(
-                                child: Row(
-                                  children: [
-                                    Text("  " , style: new TextStyle(color: Colors.black)),
-                                    Text('Severe'),
-                                  ],
-                                ),
+                                child: Text('Severe'),
                                 value: Illness.severe,
                               ),
                             ],
                             onChanged: (Illness value) {
                               setState(() {
-                                _condition= value;
+                                _condition = value;
+                                _user.primaryTag = Colors.white.toString(); // initialize firestore
+                                _user.secondaryTag = Colors.green.toString(); // initialize firestore
+                                _user.healthMsg = 'N/A'; // initialize firestore
+                                _user.temperature = 'N/A';
+                                _user.lastMeasured = 'N/A';
                               });
                             },
                             hint: Text('condition'),
@@ -336,7 +319,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             form.save();
                             _user.save();
                             SharedPreferences _pref = await SharedPreferences.getInstance();
-                            print('My id is' + _pref.getString('id'));
+                            print(_pref.getString('id'));
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) => ConnectingDevicesPage(
                                     title: "Available Devices",
