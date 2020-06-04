@@ -13,7 +13,7 @@ class ChooseIdentityPage extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('I am a:'),
             selectIdentity(),
@@ -40,9 +40,9 @@ class _selectIdentityState extends State<selectIdentity> {
     // TODO: implement initState
     super.initState();
     getPref();
-
   }
-  getPref () async {
+
+  getPref () async{
     _pref = await Utils().pref;
   }
   String getDropDownItem() {
@@ -56,8 +56,8 @@ class _selectIdentityState extends State<selectIdentity> {
     _pref.setString(key, value);
   }
 
-  String getValueSF() {
-    return _pref.getString('id');
+  String getValueSF(String key) {
+    return _pref.getString(key);
   }
 
   bool isPresent() {
@@ -66,7 +66,7 @@ class _selectIdentityState extends State<selectIdentity> {
 
   autoLogin() {
     if (isPresent() != null) {
-      switch (getValueSF()) {
+      switch (getValueSF('id')) {
         case 'resident':
           Navigator.push(
               context,
@@ -126,6 +126,7 @@ class _selectIdentityState extends State<selectIdentity> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => setUpInfoPage()));
+                  print('My identity is' + getValueSF('id'));
                   ///key: id, value: resident
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page
