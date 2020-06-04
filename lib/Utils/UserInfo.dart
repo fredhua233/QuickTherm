@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class UserInfo {
-  String name, //
+  static String name, //
       address, //
       phoneNumber, //
       managerName, //
@@ -18,12 +18,12 @@ class UserInfo {
       primaryTag,
       secondaryTag,
       healthMsg,
-      temperature,
       lastMeasured;
 
-  bool priorHealth;
-  Illness condition;
-  TimeOfDay remindTimeAM, remindTimePM, remindTimeNOON;
+  static Map<String,dynamic> temperature = new Map<String, dynamic>();
+  static bool priorHealth;
+  static Illness condition;
+  static TimeOfDay remindTimeAM, remindTimePM, remindTimeNOON;
 
   ///where to put persistence? here or Utils?
   ///NOTE: SharedPreference put in Utils

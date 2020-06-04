@@ -24,7 +24,7 @@ class UnitsGridState extends State<UnitsGrid> {
   void _init() {
 //      Change below
 //    _units = _user.fireStore.collection("/Organizations/" + _user.address + "/Buildings/" + _user.address + "/Units");
-    _units = _user.fireStore.collection("/Organizations/" + _user.address + "/Buildings/" + _user.address + "/Units");
+    _units = _user.fireStore.collection("/Organizations/" + UserInfo.address + "/Buildings/" + UserInfo.address + "/Units");
   }
 
   @override

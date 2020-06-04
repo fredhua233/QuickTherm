@@ -443,16 +443,16 @@ class TempMonitorPageState extends State<TempMonitorPage> {
    */
   Future<bool> _pushData(double temp, DateTime now) async {
     var ltime = _pref.getString("LastMeasTime");
-    if (!_data.containsKey("Primary Tag") &&
-        !_data.containsKey("Secondary Tag") &&
-        !_data.containsKey("Health Msg")) {
-      _data.addAll({
-        "Primary Tag": _primaryTag.toString(),
-        "Secondary Tag": _secondaryTag.toString(),
-        "Health Msg": _healthMsg,
-        "Last Measured Time" : ltime
-      });
-    }
+//    if (!_data.containsKey("Primary Tag") &&
+//        !_data.containsKey("Secondary Tag") &&
+//        !_data.containsKey("Health Msg")) {
+//      _data.addAll({
+//        "Primary Tag": _primaryTag.toString(),
+//        "Secondary Tag": _secondaryTag.toString(),
+//        "Health Msg": _healthMsg,
+//        "Last Measured Time" : ltime
+//      });
+//    }
     Map<String, dynamic> temps = _data["Temperature"];
     temps.addAll({now.toString(): temp});
     await _log.updateData({

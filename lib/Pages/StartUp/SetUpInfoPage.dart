@@ -60,7 +60,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.name = val)
+                          onSaved: (val) => setState(() => UserInfo.name = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -75,7 +75,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.phoneNumber = val)
+                          onSaved: (val) => setState(() => UserInfo.phoneNumber = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -90,7 +90,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             return null;
                           },
                           onSaved: (val) => setState(() {
-                            _user.DOB = val;
+                            UserInfo.DOB = val;
                           })
                       ),
                       RadioListTile(
@@ -100,7 +100,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           onChanged: (value) => {
                             setState(() {
                               _groupValue = value;
-                              _user.sex = value;
+                              UserInfo.sex = value;
                             })
                           }
                       ),
@@ -111,7 +111,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           onChanged: (value) => {
                             setState(() {
                               _groupValue = value;
-                              _user.sex = value;
+                              UserInfo.sex = value;
                             })
                           }
                       ),
@@ -127,7 +127,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.address = val)
+                          onSaved: (val) => setState(() => UserInfo.address = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -140,7 +140,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.address += ', ' + val)
+                          onSaved: (val) => setState(() => UserInfo.address += ', ' + val)
                       ),
                       Row(
                         children: [
@@ -156,7 +156,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                                   }
                                   return null;
                                 },
-                                onSaved: (val) => setState(() => _user.address += ', ' + val)
+                                onSaved: (val) => setState(() => UserInfo.address += ', ' + val)
                             ),
                           ),
                           Expanded(
@@ -175,7 +175,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                                   }
                                   return null;
                                 },
-                                onSaved: (val) => setState(() => _user.address += ' ' + val)
+                                onSaved: (val) => setState(() => UserInfo.address += ' ' + val)
                             ),
                           )
                         ],
@@ -195,7 +195,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.roomNumber = val)
+                          onSaved: (val) => setState(() => UserInfo.roomNumber = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -208,7 +208,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.organization = val)
+                          onSaved: (val) => setState(() => UserInfo.organization = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -221,7 +221,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => _user.managerName = val)
+                          onSaved: (val) => setState(() => UserInfo.managerName = val)
                       ),
                       CheckboxListTile(
                           title: const Text('I have pre-existing health condition'),
@@ -229,7 +229,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           onChanged: (bool value) {
                             setState(() {
                               _preExist = value;
-                              _user.priorHealth = value;
+                              UserInfo.priorHealth = value;
                             });
                           }
                       ),
@@ -248,7 +248,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           return null;
                         },
                         onChanged: (val) => setState(() {
-                          _user.healthHistory = val;
+                          UserInfo.healthHistory = val;
                         }) ,
                       ),
                       ///FIXME: show time picked on screen for remind times
@@ -300,11 +300,11 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             onChanged: (Illness value) {
                               setState(() {
                                 _condition = value;
-                                _user.primaryTag = Colors.white.toString(); // initialize firestore
-                                _user.secondaryTag = Colors.green.toString(); // initialize firestore
-                                _user.healthMsg = 'N/A'; // initialize firestore
-                                _user.temperature = 'N/A';
-                                _user.lastMeasured = 'N/A';
+                                UserInfo.primaryTag = Colors.white.toString(); // initialize firestore
+                                UserInfo.secondaryTag = Colors.green.toString(); // initialize firestore
+                                UserInfo.healthMsg = 'N/A'; // initialize firestore
+//                                _user.temperature = 'N/A';
+                                UserInfo.lastMeasured = 'N/A';
                               });
                             },
                             hint: Text('condition'),
