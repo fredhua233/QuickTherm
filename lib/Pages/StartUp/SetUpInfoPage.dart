@@ -14,23 +14,40 @@ class setUpInfoPage extends StatefulWidget {
 
 class _setUpInfoPageState extends State<setUpInfoPage> {
   final _formKey = new GlobalKey<FormState>();
-  final _user = UserInfo();
+  UserInfo _user = new UserInfo();
   String _groupValue;
   Illness _condition;
   bool _preExist = false;
-  TimeOfDay _remindAM, _remindNOON, _remindPM, _picked;
+  bool _selectedAM = false;
+  bool _selectedPM = false;
+  bool _selectedNOON = false;
+  TimeOfDay _remindAM, _remindNOON, _remindPM;
+  TimeOfDay _time = TimeOfDay.now();
 
-  Future<void> selectTime(BuildContext context, TimeOfDay _timeOfDay) async {
-    _timeOfDay = TimeOfDay.now();
-    _picked = await showTimePicker(
+  Future<void> selectTime(BuildContext context, int i) async {
+    final _picked = await showTimePicker(
         context: context,
-        initialTime: _timeOfDay
+        initialTime: _time
     );
-    setState(() {
-      _timeOfDay = _picked;
-    });
+    if (_picked != null && _picked != _time) {
+      if (i == 1) {
+        setState(() {
+          _remindAM = _picked;
+          _selectedAM = true;
+        });
+      } else if (i == 2) {
+        setState(() {
+          _remindNOON = _picked;
+          _selectedNOON = true;
+        });
+      } else {
+        setState(() {
+          _remindPM = _picked;
+          _selectedPM = true;
+        });
+      }
+    }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,7 +136,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           decoration: InputDecoration(
                               icon: Icon(Icons.home),
                               hintText: 'Ex. 1 Main st.',
-                              labelText: 'Street Address'
+                              labelText: 'Your street address'
                           ),
                           validator: (value){
                             if(value.isEmpty){
@@ -179,6 +196,16 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             ),
                           )
                         ],
+                      ),
+                      CheckboxListTile(
+                          title: const Text('Check if I have '),
+                          value: _preExist,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _preExist = value;
+                              UserInfo.priorHealth = value;
+                            });
+                          }
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -241,12 +268,6 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         enabled: _preExist,
-                        validator: (value) {
-                          if(value.isEmpty){
-                            return 'Please briefly describe your conditions';
-                          }
-                          return null;
-                        },
                         onChanged: (val) => setState(() {
                           UserInfo.healthHistory = val;
                         }) ,
@@ -257,8 +278,11 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             Text('Morning Remind time'),
                             IconButton(
                               icon: Icon(Icons.alarm),
-                              onPressed: () => selectTime(context, _remindAM),
-                            )
+                              onPressed: () {
+                                selectTime(context, 1);
+                              }
+                            ),
+                             _selectedAM ? Text('${_remindAM.toString()}'.substring(10, 15), style: TextStyle(fontSize: 20)) : SizedBox()
                           ]
                       ),
                       Row(
@@ -266,8 +290,9 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             Text('Noon Remind time'),
                             IconButton(
                               icon: Icon(Icons.alarm),
-                              onPressed: () => selectTime(context, _remindNOON),
-                            )
+                              onPressed: () => selectTime(context, 2),
+                            ),
+                            _selectedNOON ? Text('${_remindNOON.toString()}'.substring(10, 15), style: TextStyle(fontSize: 20)) : SizedBox()
                           ]
                       ),
                       Row(
@@ -275,8 +300,9 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             Text('Evening Remind time'),
                             IconButton(
                               icon: Icon(Icons.alarm),
-                              onPressed: () => selectTime(context, _remindPM),
-                            )
+                              onPressed: () => selectTime(context, 3),
+                            ),
+                            _selectedPM ? Text('${_remindPM.toString()}'.substring(10, 15), style: TextStyle(fontSize: 20)) : SizedBox()
                           ]
                       ),
                       Row(
@@ -303,7 +329,6 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                                 UserInfo.primaryTag = Colors.white.toString(); // initialize firestore
                                 UserInfo.secondaryTag = Colors.green.toString(); // initialize firestore
                                 UserInfo.healthMsg = 'N/A'; // initialize firestore
-//                                _user.temperature = 'N/A';
                                 UserInfo.lastMeasured = 'N/A';
                               });
                             },
@@ -316,15 +341,20 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                         onPressed: () async {
                           final form = _formKey.currentState;
                           if (form.validate()) {
-                            form.save();
-                            _user.save();
-                            SharedPreferences _pref = await SharedPreferences.getInstance();
-                            print(_pref.getString('id'));
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => ConnectingDevicesPage(
-                                    title: "Available Devices",
-                                    storage: NameStorage(),
-                                    autoConnect: true)));
+                            if(!_preExist){
+                              setState(() {
+                                UserInfo.priorHealth = false;
+                              });
+                              form.save();
+                              _user.save();
+                              SharedPreferences _pref = await SharedPreferences.getInstance();
+                              print(_pref.getString('id'));
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => ConnectingDevicesPage(
+                                      title: "Available Devices",
+                                      storage: NameStorage(),
+                                      autoConnect: true)));
+                            }
                           }
                         },
                         child: Text('Save'),

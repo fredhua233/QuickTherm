@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfo {
   static String name, //
@@ -7,10 +8,8 @@ class UserInfo {
       phoneNumber, //
       managerName, //
       sex, //
-      healthHistory, //
       DOB,
       age,
-
   ///doing this later
       identity,
       organization,
@@ -18,20 +17,21 @@ class UserInfo {
       primaryTag,
       secondaryTag,
       healthMsg,
+      path,
       lastMeasured;
-
+  static String healthHistory = 'None';
   static Map<String,dynamic> temperature = new Map<String, dynamic>();
   static bool priorHealth;
   static Illness condition;
   static TimeOfDay remindTimeAM, remindTimePM, remindTimeNOON;
-
+  static SharedPreferences pref;
   ///where to put persistence? here or Utils?
   ///NOTE: SharedPreference put in Utils
-  Firestore _firestore = Firestore.instance;
+  static Firestore _firestore = Firestore.instance;
+  static Map<String, dynamic> _userProfile = new Map<String, dynamic>();
   DocumentReference _userInfoCF;
   DocumentReference _unitInfo;
   CollectionReference _unitmates;
-  Map<String, dynamic> _userProfile = new Map<String, dynamic>();
 
   UserInfo();
 
@@ -49,15 +49,31 @@ class UserInfo {
   DocumentReference get log => _userInfoCF;
   Firestore get fireStore => _firestore;
 
+  dummyField() async {
+    String temp = '/Organizations/$organization';
+    await _firestore.document(temp).setData({'name' : organization});
+    temp += '/Buildings/$address';
+    await _firestore.document(temp).setData({'name' : address});
+    temp += '/Units/$roomNumber';
+    await _firestore.document(temp).setData({'name' : roomNumber});
+    print('dummy added');
+  }
+
   save() async {
-    _userInfoCF = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name");
+    dummyField();
+    path = '/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name';
+    pref = await SharedPreferences.getInstance();
+    pref.setString('path', path);
+    _userInfoCF = _firestore.document(path);
+    print(pref.getString('path'));
+
     _userProfile = {
       'Name': name,
       'Contact': phoneNumber,
       'Sex': sex,
       /// doing this later 'Age' : age,
       'Manager': managerName,
-      'Primany Tag' : primaryTag,
+      'Primary Tag' : primaryTag,
       'Secondary Tag' : secondaryTag,
       'Health Message' : healthMsg,
       'Temperature' : temperature,

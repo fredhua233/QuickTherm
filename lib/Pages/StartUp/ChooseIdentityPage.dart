@@ -126,7 +126,7 @@ class _selectIdentityState extends State<selectIdentity> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => setUpInfoPage()));
-                  print('My identity is' + getValueSF('id'));
+                  print('My identity is ' + getValueSF('id'));
                   ///key: id, value: resident
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page
