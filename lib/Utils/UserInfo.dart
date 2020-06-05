@@ -36,9 +36,12 @@ class UserInfo {
   UserInfo();
 
   UserInfo.defined(){
-    _userInfoCF = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name");
-    _unitInfo = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber");
-    _unitmates = _firestore.collection("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals");
+//    _userInfoCF = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name");
+//    _unitInfo = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber");
+//    _unitmates = _firestore.collection("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals");
+    _userInfoCF = _firestore.document("/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals/JohnWhite");
+    _unitInfo = _firestore.document("/Organizations/Testing/Buildings/Building1/Units/Unit1");
+    _unitmates = _firestore.collection("/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals");
   }
 
   CollectionReference get mates => _unitmates;
