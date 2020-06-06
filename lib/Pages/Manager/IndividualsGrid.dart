@@ -64,7 +64,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
           "C";
     }
     String name = info["Name"];
-    String age = info.containsKey("Age") ? info["Age"] : "";
+    String age = info.containsKey("Age") ? info["Age"].toString() : "";
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
     if (ptag == Colors.black) {
@@ -154,5 +154,4 @@ class IndividualsGridState extends State<IndividualsGrid> {
     if (c == Colors.blue.toString())
       return Colors.blue;
   }
-
 }

@@ -435,7 +435,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       }
     }
     _log.updateData({"Temperature": temps,
-                     "Last Measured Time" : date.last});
+                     "Last Measured" : date.last});
   }
 
   /*
@@ -460,7 +460,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       "Primary Tag": _primaryTag.toString(),
       "Secondary Tag": _secondaryTag.toString(),
       "Health Msg": _healthMsg,
-      "Last Measured Time" : ltime
+      "Last Measured" : ltime
     });
     _updateUnitStatus();
     return true;
@@ -494,7 +494,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   _updateUnitStatus() async {
     await _user.fireStore.runTransaction((transaction) async {
       String unitStatus = "";
-      bool potential, ill, healthy = false;
+      bool potential = false;
+      bool ill = false;
+      bool healthy = false;
       QuerySnapshot individuals = await _user.mates.getDocuments();
       for (var doc in individuals.documents) {
         if (doc.data["Primary Tag"] == Colors.black.toString()) {

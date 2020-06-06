@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
@@ -15,7 +17,7 @@ class UnitsGridState extends State<UnitsGrid> {
   _ModeUnits _mode = _ModeUnits.all;
   String _name = "";
   TextEditingController _search = new TextEditingController();
-
+  static List<DocumentSnapshot> _snapShots = new List<DocumentSnapshot>();
   @override
   void initState() {
     super.initState();
@@ -40,6 +42,19 @@ class UnitsGridState extends State<UnitsGrid> {
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
+                    tag: "Remind",
+                    child: IconButton(
+                      icon: Icon(Icons.notifications),
+                      tooltip: "Search For Specific Unit/Individual",
+                      onPressed: () {
+                        setState(() {
+                          _mode = _ModeUnits.remind;
+                        });
+                      }
+                      ))),
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: Hero(
                   tag: "Search",
                   child: IconButton(
                     icon: Icon(Icons.search),
@@ -50,14 +65,14 @@ class UnitsGridState extends State<UnitsGrid> {
                         builder: (BuildContext context) {
                           // return object of type Dialog
                           return AlertDialog(
-                            title: new Text("Input Date"),
+                            title: new Text("Search specific unit/individual"),
                             content: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
                                   controller: _search,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(),
-                                    labelText: 'Type in Unit name',
+                                    labelText: 'Type in Unit/Individual name',
                                   ),
                                 )
                             ),
@@ -152,7 +167,7 @@ class UnitsGridState extends State<UnitsGrid> {
         body: TabBarView(
           children: [
             _viewController(context, _mode, name: _name),
-            Icon(Icons.directions_transit),
+            _viewControllerInd(context, _mode, name: _name)
           ]
         ),
       )
@@ -177,9 +192,9 @@ class UnitsGridState extends State<UnitsGrid> {
       str = _units.where("Name", isEqualTo: name).snapshots();
     } else {
       str = m == _ModeUnits.all? _units.snapshots() :
-            m == _ModeUnits.healthy ? _units.where("Unit Status", isEqualTo: "Healthy").snapshots() :
-            m == _ModeUnits.ill ? _units.where("Unit Status", isEqualTo: "Ill").snapshots() :
-            m == _ModeUnits.potential ? _units.where("Unit Status", isEqualTo: "Potential").snapshots() :
+            m == _ModeUnits.healthy ? _units.where("Unit Status", isEqualTo: "healthy").snapshots() :
+            m == _ModeUnits.ill ? _units.where("Unit Status", isEqualTo: "ill").snapshots() :
+            m == _ModeUnits.potential ? _units.where("Unit Status", isEqualTo: "potentially ill").snapshots() :
             _units.snapshots();
     }
     return StreamBuilder<QuerySnapshot>(
@@ -218,18 +233,250 @@ class UnitsGridState extends State<UnitsGrid> {
 
   // Gets color of the cells base on their status
   Color _getColor(String c) {
-    if (c == "Ill")
+    if (c == "ill")
       return Colors.black;
-    if (c == "Potential")
+    if (c == "potentially ill")
       return Colors.black45;
-    if (c == "Healthy")
+    if (c == "healthy")
       return Colors.white;
   }
 
-  //Below is the code for showing this grid view of individuals
-  Widget _individualView(BuildContext context) {
+  Widget _viewControllerInd(BuildContext context, _ModeUnits m, {String name}) {
+    if (m != _ModeUnits.selfDefined) {
+      return FutureBuilder(
+        future: _individualView(context, _mode, name: _name),
+        builder: (context, snap) {
+          if (snap.hasData) {
+            return snap.data;
+          }
+          return LinearProgressIndicator();
+        },
+      );
+    } else {
+      return FutureBuilder(
+        future: _individualView(context, _mode),
+        builder: (context, snap) {
+          if (snap.hasData) {
+            return snap.data;
+          }
+          return LinearProgressIndicator();
+        },
+      );
+    }
 
   }
+
+  //Below is the code for showing this grid view of individuals
+  Future<Widget> _individualView(BuildContext context, _ModeUnits m, {String name}) async {
+    QuerySnapshot units = m == _ModeUnits.all? await _units.getDocuments() :
+    m == _ModeUnits.healthy ? await _units.where("Unit Status", isEqualTo: "healthy").getDocuments():
+    m == _ModeUnits.ill ? await _units.where("Unit Status", isEqualTo: "ill").getDocuments() :
+    m == _ModeUnits.potential ? await _units.where("Unit Status", isEqualTo: "potentially ill").getDocuments() :
+    await _units.getDocuments();
+    List<DocumentSnapshot> ppl = [];
+    for (var unit in units.documents) {
+      QuerySnapshot inds;
+      switch (m) {
+        case _ModeUnits.all :
+          inds = await unit.reference.collection("Individuals").getDocuments();
+          break;
+        case _ModeUnits.healthy:
+          inds = await unit.reference.collection("Individuals").where("Primary Tag", isEqualTo: Colors.white.toString()).getDocuments();
+          break;
+        case _ModeUnits.ill:
+          inds = await unit.reference.collection("Individuals").where("Primary Tag", isEqualTo: Colors.black.toString()).getDocuments();
+          break;
+        case _ModeUnits.potential:
+          inds = await unit.reference.collection("Individuals").where("Primary Tag", isEqualTo: Colors.black45.toString()).getDocuments();
+          break;
+        case _ModeUnits.remind:
+          DateTime limit = DateTime.now().subtract(Duration(hours: 48));
+          inds = await unit.reference.collection("Individuals").where("Last Measured", isLessThan: limit.toString()).getDocuments();
+          break;
+        case _ModeUnits.selfDefined:
+          inds = await unit.reference.collection("Individuals").where("Name", isEqualTo: name).getDocuments();
+          break;
+      }
+      print("running");
+      ppl.addAll(inds.documents);
+    }
+    return GridView.builder(
+        itemCount: ppl.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2),
+        itemBuilder: (context, index) {
+          return _buildIndCell(context, ppl[index]);
+        }
+    );
+  }
+
+//   Stream<DocumentSnapshot> _getSnapShot(List<DocumentSnapshot> l, _ModeUnits m, {String name}) async* {
+//    for (var doc in l) {
+//      QuerySnapshot q = await doc.reference.collection("Individuals").getDocuments();
+//      for (var doc in q.documents) {
+//        setState(() {
+//          _snapShots.add(doc);
+//        });
+//        yield doc;
+//      }
+//    }
+//      yield q;
+//      for (var p in q.documents) {
+//        if (filter(p, m, name: name)) {
+//          var a = new List<DocumentSnapshot>();
+//          a.add(p);
+//          yield a;
+//        }
+//      }
+//      }
+
+  //Filter function
+//  bool filter(DocumentSnapshot doc, _ModeUnits m, {String name}) {
+//    if (m == _ModeUnits.all) {
+//      return true;
+//    } else if (m == _ModeUnits.healthy) {
+//      if (doc.data["Primary Tag"] == Colors.white.toString()) {
+//        return true;
+//      } else {
+//        return false;
+//      }
+//    } else if (m == _ModeUnits.potential) {
+//      if (doc.data["Primary Tag"] == Colors.black45.toString()) {
+//        return true;
+//      } else {
+//        return false;
+//      }
+//    } else if (m == _ModeUnits.ill) {
+//      if (doc.data["Primary Tag"] == Colors.black.toString()) {
+//        return true;
+//      } else {
+//        return false;
+//      }
+//    } else if (m == _ModeUnits.selfDefined) {
+//      if (doc.data["Name"] == name) {
+//        return true;
+//      } else {
+//        return false;
+//      }
+//    } else {
+//      DateTime lm = DateTime.parse(doc.data["Last Measured"]);
+//      if (DateTime.now().difference(lm).inHours > 12) {
+//        return true;
+//      } else {
+//        return false;
+//      }
+//    }
+//  }
+
+  //Create the view of individual cell
+  Widget _buildIndCell(BuildContext context, DocumentSnapshot data) {
+
+    Map<String, dynamic> info = data.data;
+    Map<String, dynamic> temps = info["Temperature"];
+    List<String> date = temps.keys.toList();
+    date.sort((a, b) => a.compareTo(b));
+    String lastTemp = temps[date.last].toString();
+    Icon trend = Icon(Icons.sentiment_satisfied, color:  Colors.green);
+    if (lastTemp.length > 5) {
+      lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +
+          "C";
+    } else {
+      lastTemp = lastTemp + String.fromCharCode(0x00B0) +
+          "C";
+    }
+    String name = info["Name"];
+    String age = info.containsKey("Age") ? info["Age"].toString() : "";
+    String unitName = info["Unit Number"];
+    Color ptag = _getPColor(info["Primary Tag"]);
+    Color stag = _getSColor(info["Secondary Tag"]);
+    if (ptag == Colors.black) {
+      if (stag == Colors.red && temps[date.last] > temps[date[date.length - 2]]) {
+        trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+      }
+      if (stag == Colors.blue && temps[date.last] < temps[date[date.length - 2]]) {
+        trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+      }
+    }
+//    return Card(child: Center(child: Text(data["Name"]),),);
+    return GestureDetector(
+      onTap: () {
+
+      },
+      child: Card(
+          child: Container(
+            child: Column(
+              children: [
+                Center(
+                    child: Text(name, style: TextStyle(fontSize: 20))
+                ),
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: Text(lastTemp, style: TextStyle(fontSize: 30, color: stag)),
+                    )
+                ),
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(unitName),
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Text(age),
+                          )
+                        ]
+                    )
+                ),
+                Stack(
+                    children: [
+                      Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                  color: ptag,
+                                  border: Border.all(
+                                      color: Colors.black,
+                                      width: 2,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(5)))
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: trend,
+                      )
+                    ]
+                )
+              ],
+            ),
+          )
+      ),
+    );
+  }
+
+  // Gets color of the cells base on their status
+  Color _getPColor(String c) {
+    if (c == Colors.black.toString())
+      return Colors.black;
+    if (c == Colors.black45.toString())
+      return Colors.black45;
+    if (c == Colors.white.toString())
+      return Colors.white;
+  }
+
+  Color _getSColor(String c) {
+    if (c == Colors.red.toString())
+      return Colors.red;
+    if (c == Colors.green.toString())
+      return Colors.green;
+    if (c == Colors.blue.toString())
+      return Colors.blue;
+  }
+
 
   @override
   void dispose() {
@@ -239,5 +486,5 @@ class UnitsGridState extends State<UnitsGrid> {
 }
 
 enum _ModeUnits {
-  ill, potential, healthy, all, selfDefined
+  ill, potential, healthy, all, selfDefined, remind
 }
