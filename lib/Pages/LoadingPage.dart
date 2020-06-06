@@ -4,10 +4,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 class LoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blue,
+      color: Colors.white,
       child: Center(
         child: SpinKitFoldingCube(
-          color: Colors.white,
+          color: Colors.blue,
           size: 50.0,
         ),
       ),

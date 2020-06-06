@@ -2,22 +2,27 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
-import '../../Utils/UserInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UnitsGrid extends StatefulWidget {
+  UnitsGrid(
+      {Key key, @required this.units})
+      : super(key: key);
+
+  final CollectionReference units;
+
   @override
   State<StatefulWidget> createState() => UnitsGridState();
 }
 
 class UnitsGridState extends State<UnitsGrid> {
-  UserInfo _user = new UserInfo.defined();
   CollectionReference _units;
   _ModeUnits _mode = _ModeUnits.all;
   String _name = "";
   TextEditingController _search = new TextEditingController();
-  static List<DocumentSnapshot> _snapShots = new List<DocumentSnapshot>();
+
   @override
   void initState() {
     super.initState();
@@ -26,13 +31,12 @@ class UnitsGridState extends State<UnitsGrid> {
 
   //Sets up firebase
   void _init() {
-//      Change below
-//    _units = _user.fireStore.collection("/Organizations/" + _user.address + "/Buildings/" + _user.address + "/Units");
-    _units = _user.fireStore.collection("/Organizations/Testing/Buildings/Building1/Units");
+    _units = widget.units;
   }
 
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -135,7 +139,7 @@ class UnitsGridState extends State<UnitsGrid> {
                         PopupMenuItem(
                             value: "All",
                             child: Text(
-                              "Show all units",
+                              "Show all",
                             )),
                         PopupMenuItem(
                             value: "Healthy",
@@ -242,24 +246,30 @@ class UnitsGridState extends State<UnitsGrid> {
   }
 
   Widget _viewControllerInd(BuildContext context, _ModeUnits m, {String name}) {
-    if (m != _ModeUnits.selfDefined) {
+    if (m == _ModeUnits.selfDefined) {
       return FutureBuilder(
-        future: _individualView(context, _mode, name: _name),
+        future: _individualView(context, m, name: _name),
         builder: (context, snap) {
           if (snap.hasData) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return LoadingPage();
+            }
             return snap.data;
           }
-          return LinearProgressIndicator();
+          return LoadingPage();
         },
       );
     } else {
       return FutureBuilder(
-        future: _individualView(context, _mode),
+        future: _individualView(context, m, name: _name),
         builder: (context, snap) {
           if (snap.hasData) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return LoadingPage();
+            }
             return snap.data;
           }
-          return LinearProgressIndicator();
+          return LoadingPage();
         },
       );
     }
@@ -297,7 +307,6 @@ class UnitsGridState extends State<UnitsGrid> {
           inds = await unit.reference.collection("Individuals").where("Name", isEqualTo: name).getDocuments();
           break;
       }
-      print("running");
       ppl.addAll(inds.documents);
     }
     return GridView.builder(
@@ -309,66 +318,6 @@ class UnitsGridState extends State<UnitsGrid> {
         }
     );
   }
-
-//   Stream<DocumentSnapshot> _getSnapShot(List<DocumentSnapshot> l, _ModeUnits m, {String name}) async* {
-//    for (var doc in l) {
-//      QuerySnapshot q = await doc.reference.collection("Individuals").getDocuments();
-//      for (var doc in q.documents) {
-//        setState(() {
-//          _snapShots.add(doc);
-//        });
-//        yield doc;
-//      }
-//    }
-//      yield q;
-//      for (var p in q.documents) {
-//        if (filter(p, m, name: name)) {
-//          var a = new List<DocumentSnapshot>();
-//          a.add(p);
-//          yield a;
-//        }
-//      }
-//      }
-
-  //Filter function
-//  bool filter(DocumentSnapshot doc, _ModeUnits m, {String name}) {
-//    if (m == _ModeUnits.all) {
-//      return true;
-//    } else if (m == _ModeUnits.healthy) {
-//      if (doc.data["Primary Tag"] == Colors.white.toString()) {
-//        return true;
-//      } else {
-//        return false;
-//      }
-//    } else if (m == _ModeUnits.potential) {
-//      if (doc.data["Primary Tag"] == Colors.black45.toString()) {
-//        return true;
-//      } else {
-//        return false;
-//      }
-//    } else if (m == _ModeUnits.ill) {
-//      if (doc.data["Primary Tag"] == Colors.black.toString()) {
-//        return true;
-//      } else {
-//        return false;
-//      }
-//    } else if (m == _ModeUnits.selfDefined) {
-//      if (doc.data["Name"] == name) {
-//        return true;
-//      } else {
-//        return false;
-//      }
-//    } else {
-//      DateTime lm = DateTime.parse(doc.data["Last Measured"]);
-//      if (DateTime.now().difference(lm).inHours > 12) {
-//        return true;
-//      } else {
-//        return false;
-//      }
-//    }
-//  }
-
-  //Create the view of individual cell
   Widget _buildIndCell(BuildContext context, DocumentSnapshot data) {
 
     Map<String, dynamic> info = data.data;

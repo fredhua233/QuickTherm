@@ -19,7 +19,6 @@ class GeneratePageState extends State<GeneratePage> {
   Widget build(BuildContext context) {
     UserInfo _user = new UserInfo();
     Firestore firestore = _user.fireStore;
-    Random random = new Random();
 
     return Scaffold(
       appBar: AppBar(
@@ -28,57 +27,40 @@ class GeneratePageState extends State<GeneratePage> {
       body: Text("Generate"),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            CollectionReference units = firestore.collection("/Organizations/Testing/Buildings/Building1/Units");
+            CollectionReference units = firestore.collection("/Organizations/Testing/Buildings/Building2/Units");
             String manager = mockName();
-            for (int i = 0; i < 500; i++) {
-              //For generating new ppl
-//              var st = random.nextInt(3);
-//              await units.document("Unit$i").setData({"Name" : "Unit $i",
-//                                                "Unit Status" : st == 0 ? "Ill" : st == 1 ? "Potential" : "Healthy"});
-              CollectionReference inds = units.document("Unit$i").collection("Individuals");
+            for (int i = 3; i <= 30; i++) {
+              String unitStatus = "";
+              bool potential = false;
+              bool ill = false;
+              bool healthy = false;
               var names = [];
-              QuerySnapshot ppl = await inds.getDocuments();
-              for (var p in ppl.documents) {
-                names.add(p.data["Name"]);
+              CollectionReference inds = units.document("Unit$i").collection("Individuals");
+              for (int j = 0; j < 3; j++) {
+                Individual person = new Individual(manager, i);
+                String name = person.info["Name"];
+                names.add(name);
+                if (person.info["Primary Tag"] == Colors.black.toString()) {
+                  ill = true;
+                } else if (person.info["Primary Tag"] == Colors.black45.toString()) {
+                  potential = true;
+                } else if (person.info["Primary Tag"] == Colors.white.toString()) {
+                  healthy = true;
+                }
+                if (healthy && !potential && !ill) {
+                  unitStatus = "healthy";
+                } else if (ill) {
+                  unitStatus = "ill";
+                } else if (potential && !ill) {
+                  unitStatus = "potentially ill";
+                } else {
+                  unitStatus = "unknown";
+                }
+                await inds.document(name).setData(person.info);
               }
-              var unit = await units.document("Unit$i").get();
-              var data = unit.data;
-              data.addAll({"Residents" : names});
-              units.document("Unit$i").updateData(data);
-//              String unitStatus = "";
-//              bool potential = false;
-//              bool ill = false;
-//              bool healthy = false;
-//              for (var ind in ppl.documents) {
-//                Map<String, dynamic> data = ind.data;
-//                data.addAll({"Age" : mockInteger(60, 90),
-//                              "Unit Number" : "Unit $i"});
-//                data.update("Last Measured", (value) => mockDate(DateTime.parse("2020-06-04 14:13:04"), DateTime.now()).toString());
-//                if (ind.data["Primary Tag"] == Colors.black.toString()) {
-//                  ill = true;
-//                } else if (ind.data["Primary Tag"] == Colors.black45.toString()) {
-//                  potential = true;
-//                } else if (ind.data["Primary Tag"] == Colors.white.toString()) {
-//                  healthy = true;
-//                }
-//                if (healthy && !potential && !ill) {
-//                  unitStatus = "healthy";
-//                } else if (ill) {
-//                  unitStatus = "ill";
-//                } else if (potential && !ill) {
-//                  unitStatus = "potentially ill";
-//                } else {
-//                  unitStatus = "unknown";
-//                }
-//                ind.reference.updateData(data);
-//              }
-//              units.document("Unit$i").updateData({"Unit Status" : unitStatus});
-              // For generating new ppl
-//              for (int j = 0; j < 2; j++) {
-//                Individual person = new Individual(manager);
-//                String name = person.info["Name"];
-//                await inds.document(name).setData(person.info);
-//              }
+              await units.document("Unit$i").setData({"Name" : "Unit $i",
+                                                      "Unit Status" : unitStatus,
+                                                      "Residents" : names});
             }
           },
           label: Text("Generate")),
@@ -90,10 +72,12 @@ class Individual {
     Map<String, dynamic> _info = new Map<String, dynamic>();
     Random _random = new Random();
 
-    Individual(String manager) {
-      _info.addAll({"Contacts" : "123-456-7890",
+    Individual(String manager, int i) {
+      _info.addAll({"Age" : mockInteger(60, 90),
+                    "Contacts" : "123-456-7890",
                     "Health Message" : "N/A",
-                    "Last Measured" : "N/A",
+                    "Last Measured" : mockDate(DateTime.parse("2020-06-04 14:13:04"), DateTime.now()).toString(),
+                    "Unit Number" : "Unit $i",
                     "Manager Name": manager,
                     "Name" : mockName(),
                     "Prior Medical Condition" : "N/A",
