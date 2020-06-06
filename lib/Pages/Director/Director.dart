@@ -55,14 +55,13 @@ class DirectorState extends State<Director> {
 
   //Create the view of director cell
   Widget _buildDirCell(BuildContext context, DocumentSnapshot data) {
-    return Card(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => UnitsGrid(units: data.reference.collection("Units"))));
+      },
+      child: Card(
         color: Colors.white,
-        child: Container(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => UnitsGrid(units: data.reference.collection("Units"))));
-            },
-            child: Column(
+        child: Column(
               children: [
                 Center(
                     child: Text(data["Name"], style: TextStyle(fontSize: 20))
@@ -82,8 +81,36 @@ class DirectorState extends State<Director> {
               ],
             ),
           )
-
-        )
     );
+//    return Card(
+//        color: Colors.white,
+//        child: Container(
+//          child: GestureDetector(
+//            onTap: () {
+//              Navigator.push(context, MaterialPageRoute(builder: (context) => UnitsGrid(units: data.reference.collection("Units"))));
+//            },
+//            child: Column(
+//              children: [
+//                Center(
+//                    child: Text(data["Name"], style: TextStyle(fontSize: 20))
+//                ),
+//                Padding(
+//                    padding: EdgeInsets.only(top: 20),
+//                    child: Center(
+//                      child: Text("# of Residents", style: TextStyle(fontSize: 18)),
+//                    )
+//                ),
+//                Padding(
+//                    padding: EdgeInsets.only(top: 20),
+//                    child: Center(
+//                      child: Text(data["Num of Res"].toString(), style: TextStyle(fontSize: 16)),
+//                    )
+//                ),
+//              ],
+//            ),
+//          )
+//
+//        )
+//    );
   }
 }

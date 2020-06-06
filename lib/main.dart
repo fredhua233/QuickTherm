@@ -26,8 +26,8 @@ class BLETherometer extends StatelessWidget {
         //FIXME: Change below to ChooseIdentity
 //        home: GeneratePage()
 //        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Testing/Buildings/Building1/Units"))
-//      home: Director()
-        home: ProfilePage(),
+      home: Director()
+//        home: ProfilePage(),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quicktherm/Utils/Utils.dart';
 
 class UnitsGrid extends StatefulWidget {
   UnitsGrid(
@@ -212,6 +213,18 @@ class UnitsGridState extends State<UnitsGrid> {
   }
 
   Widget _buildUnitsGrid(BuildContext context, List<DocumentSnapshot> snapshot) {
+    if (snapshot.length == 0) {
+      return Center(
+        child: Container(
+          child: Column(
+            children: [
+              Icon(Icons.sentiment_dissatisfied, size: 100, color: Colors.black26),
+              Text("No such unit found, sorry!", style: TextStyle(fontSize: 22),)
+            ],
+          )
+        ),
+      );
+    }
     return GridView.builder(
       itemCount: snapshot.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -300,7 +313,7 @@ class UnitsGridState extends State<UnitsGrid> {
           inds = await unit.reference.collection("Individuals").where("Primary Tag", isEqualTo: Colors.black45.toString()).getDocuments();
           break;
         case _ModeUnits.remind:
-          DateTime limit = DateTime.now().subtract(Duration(hours: 48));
+          DateTime limit = DateTime.now().subtract(Duration(hours: 12));
           inds = await unit.reference.collection("Individuals").where("Last Measured", isLessThan: limit.toString()).getDocuments();
           break;
         case _ModeUnits.selfDefined:
@@ -308,6 +321,18 @@ class UnitsGridState extends State<UnitsGrid> {
           break;
       }
       ppl.addAll(inds.documents);
+    }
+    if (ppl.length == 0) {
+      return Center(
+        child: Container(
+            child: Column(
+              children: [
+                Icon(Icons.sentiment_dissatisfied, size: 100, color: Colors.black26),
+                Text("No such person found, sorry!", style: TextStyle(fontSize: 20),)
+              ],
+            )
+        ),
+      );
     }
     return GridView.builder(
         itemCount: ppl.length,

@@ -71,17 +71,18 @@ class GeneratePageState extends State<GeneratePage> {
 class Individual {
     Map<String, dynamic> _info = new Map<String, dynamic>();
     Random _random = new Random();
+    String _sex = Random().nextInt(2) == 0 ? "Male" :"Female";
 
     Individual(String manager, int i) {
-      _info.addAll({"Age" : mockInteger(60, 90),
-                    "Contacts" : "123-456-7890",
+      _info.addAll({"Date of Birth" : mockDate(DateTime.parse("1930-06-04"), DateTime.parse("1960-06-04")).toString(),
+                    "Contacts" : mockInteger(100, 999).toString() + "-" + mockInteger(100, 999).toString() + "-" + mockInteger(1000, 9999).toString(),
                     "Health Message" : "N/A",
                     "Last Measured" : mockDate(DateTime.parse("2020-06-04 14:13:04"), DateTime.now()).toString(),
                     "Unit Number" : "Unit $i",
                     "Manager Name": manager,
-                    "Name" : mockName(),
+                    "Name" : mockName(_sex),
                     "Prior Medical Condition" : "N/A",
-                    "Sex" : "N/A",
+                    "Sex" : _sex,
                     "Temperature" : _genTemp()});
       _genTags();
     }
