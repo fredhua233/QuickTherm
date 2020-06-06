@@ -8,25 +8,23 @@ class UserInfo {
       phoneNumber, //
       managerName, //
       sex, //
-      DOB,
-      age,
-  ///doing this later
       identity,
       organization,
+//      buildingNumber,
       roomNumber,
       primaryTag,
       secondaryTag,
       healthMsg,
       path,
       lastMeasured;
+  static int age;
+  static DateTime Bday;
   static String healthHistory = 'None';
   static Map<String,dynamic> temperature = new Map<String, dynamic>();
   static bool priorHealth;
   static Illness condition;
   static TimeOfDay remindTimeAM, remindTimePM, remindTimeNOON;
   static SharedPreferences pref;
-  ///where to put persistence? here or Utils?
-  ///NOTE: SharedPreference put in Utils
   static Firestore _firestore = Firestore.instance;
   static Map<String, dynamic> _userProfile = new Map<String, dynamic>();
   DocumentReference _userInfoCF;
@@ -39,7 +37,7 @@ class UserInfo {
 //    _userInfoCF = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name");
 //    _unitInfo = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber");
 //    _unitmates = _firestore.collection("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals");
-    _userInfoCF = _firestore.document("/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals/JohnWhite");
+    _userInfoCF = _firestore.document("/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals/Alexa");
     _unitInfo = _firestore.document("/Organizations/Testing/Buildings/Building1/Units/Unit1");
     _unitmates = _firestore.collection("/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals");
   }
@@ -70,8 +68,12 @@ class UserInfo {
     _userProfile = {
       'Name': name,
       'Contact': phoneNumber,
+      'Unit Number' : roomNumber,
+      'Organization' : organization,
+      'Address' : address,
       'Sex': sex,
-      /// doing this later 'Age' : age,
+      'Date of birth' : Bday.toString(),
+      'Age' : age,
       'Manager': managerName,
       'Primary Tag' : primaryTag,
       'Secondary Tag' : secondaryTag,
@@ -85,5 +87,5 @@ class UserInfo {
   }
 
 }
-enum Illness { severe, potential, healthy }
+  enum Illness { severe, potential, healthy }
 

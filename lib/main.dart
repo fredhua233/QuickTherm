@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:quicktherm/Generate.dart';
 import 'package:quicktherm/Pages/Director/Director.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
+import 'package:quicktherm/Pages/ProfilePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Pages/StartUp/ChooseIdentityPage.dart';
 import 'Pages/ConnectingDevicesPage.dart';
@@ -25,7 +26,8 @@ class BLETherometer extends StatelessWidget {
         //FIXME: Change below to ChooseIdentity
 //        home: GeneratePage()
 //        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Testing/Buildings/Building1/Units"))
-      home: Director()
+//      home: Director()
+        home: ProfilePage(),
     );
   }
 }

@@ -21,6 +21,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   bool _selectedAM = false;
   bool _selectedPM = false;
   bool _selectedNOON = false;
+//  bool _sameAddress = false;
   TimeOfDay _remindAM, _remindNOON, _remindPM;
   TimeOfDay _time = TimeOfDay.now();
 
@@ -97,17 +98,23 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       TextFormField(
                           decoration: InputDecoration(
                               icon: Icon(Icons.calendar_today),
-                              hintText: 'Ex. MM/DD/YYYY',
+                              hintText: 'Ex. MM-DD-YYYY',
                               labelText: 'Date of Birth'
                           ),
+                          keyboardType: TextInputType.datetime,
                           validator: (value){
-                            if(value.isEmpty || !value.contains('/')){
-                              return 'Please enter in correct format: MM/DD/YYYY';
+                            if(value.isEmpty || !value.contains('-')){
+                              return 'Please enter in correct format: MM-DD-YYYY';
                             }
                             return null;
                           },
                           onSaved: (val) => setState(() {
-                            UserInfo.DOB = val;
+                            String temp = val.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+                            String tempYr = temp.substring(6);
+                            String tempMo = temp.substring(3, 4) == '0' ? temp.substring(4, 5) : temp.substring(3, 5);
+                            String tempDa = temp.substring(0, 1) == '0' ? temp.substring(1, 2) : temp.substring(0, 2);
+                            UserInfo.Bday = DateTime(int.parse(tempYr), int.parse(tempMo), int.parse(tempDa));
+                            UserInfo.age =  (DateTime.now().difference(UserInfo.Bday).inDays/365).floor();
                           })
                       ),
                       RadioListTile(
@@ -136,7 +143,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           decoration: InputDecoration(
                               icon: Icon(Icons.home),
                               hintText: 'Ex. 1 Main st.',
-                              labelText: 'Your street address'
+                              labelText: 'Your Organization address:'
                           ),
                           validator: (value){
                             if(value.isEmpty){
@@ -197,16 +204,22 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           )
                         ],
                       ),
-                      CheckboxListTile(
-                          title: const Text('Check if I have '),
-                          value: _preExist,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _preExist = value;
-                              UserInfo.priorHealth = value;
-                            });
-                          }
-                      ),
+//                      SizedBox(),
+//                      Text('Your info in Organization'),
+//                      SizedBox(),
+//                      TextFormField(
+//                          decoration: InputDecoration(
+//                              hintText: 'Ex. 100',
+//                              labelText: "Building info"
+//                          ),
+//                          validator: (value){
+//                            if(value.isEmpty){
+//                              return "Please enter your Building info";
+//                            }
+//                            return null;
+//                          },
+//                          onSaved: (val) => setState(() => UserInfo.roomNumber = val)
+//                      ),
                       TextFormField(
                           decoration: InputDecoration(
                               hintText: 'Ex. 100',
@@ -226,7 +239,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       TextFormField(
                           decoration: InputDecoration(
-                              hintText: 'Ex. CCDC',
+                              hintText: 'Ex. CCDC/',
                               labelText: 'Organization of your SRO'
                           ),
                           validator: (value){

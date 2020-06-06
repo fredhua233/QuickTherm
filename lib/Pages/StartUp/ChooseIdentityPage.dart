@@ -42,7 +42,7 @@ class _selectIdentityState extends State<selectIdentity> {
     getPref();
   }
 
-  getPref () async{
+  getPref () async {
     _pref = await Utils().pref;
   }
   String getDropDownItem() {
