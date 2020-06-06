@@ -37,9 +37,9 @@ class UserInfo {
 //    _userInfoCF = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name");
 //    _unitInfo = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber");
 //    _unitmates = _firestore.collection("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals");
-    _userInfoCF = _firestore.document("/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals/Alexa");
-    _unitInfo = _firestore.document("/Organizations/Testing/Buildings/Building1/Units/Unit1");
-    _unitmates = _firestore.collection("/Organizations/Testing/Buildings/Building1/Units/Unit1/Individuals");
+    _userInfoCF = _firestore.document("/Organizations/Testing/Buildings/Building2/Units/Unit1/Individuals/Charles");
+    _unitInfo = _firestore.document("/Organizations/Testing/Buildings/Building2/Units/Unit1");
+    _unitmates = _firestore.collection("/Organizations/Testing/Buildings/Building2/Units/Unit1/Individuals");
   }
 
   CollectionReference get mates => _unitmates;
@@ -67,14 +67,13 @@ class UserInfo {
 
     _userProfile = {
       'Name': name,
-      'Contact': phoneNumber,
-      'Unit Number' : roomNumber,
+      'Contacts': phoneNumber,
+      'Unit Name' : roomNumber,
       'Organization' : organization,
       'Address' : address,
       'Sex': sex,
       'Date of birth' : Bday.toString(),
-      'Age' : age,
-      'Manager': managerName,
+      'Manager Name': managerName,
       'Primary Tag' : primaryTag,
       'Secondary Tag' : secondaryTag,
       'Health Message' : healthMsg,

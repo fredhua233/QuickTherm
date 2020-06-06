@@ -84,7 +84,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           decoration: InputDecoration(
                               icon: Icon(Icons.phone),
                               hintText: 'Ex. 123-456-7890',
-                              labelText: 'Phone Number'
+                              labelText: 'Contact'
                           ),
                           keyboardType: TextInputType.phone,
                           validator: (value){
