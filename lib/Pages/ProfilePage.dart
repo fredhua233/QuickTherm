@@ -15,11 +15,9 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   final _formKey = new GlobalKey<FormState>();
   UserInfo _user = new UserInfo.defined();
-  String _path;
   double _lastTemp;
   Map<String, dynamic> _userInfo;
   DocumentReference _log;
-  static Firestore _firestore = Firestore.instance;
   bool _edit = false;
   bool gotFS;
 
@@ -33,24 +31,23 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Future<Map<String, dynamic>> getPathData() async {
-
-//    SharedPreferences _pref = await Utils().pref;
-//    _path = _pref.getString('path');
-//    print(_path);
     _log = _user.log;
     DocumentSnapshot _userInfoSS = await _log.get();
     _userInfo = _userInfoSS.data;
-    _lastTemp = 36.0;
+    _lastTemp = 34.0;
     return _userInfoSS.data;
   }
 
   Widget profileView(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>>(
       future: getPathData(),
-      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot){
-        if(!snapshot.hasData) return LoadingPage();
-        return buildProfPage();
-      },
+      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        if (!snapshot.hasData) {
+          return LoadingPage();
+        } else {
+          return buildProfPage();
+        }
+      }
     );
   }
 
@@ -63,33 +60,188 @@ class ProfilePageState extends State<ProfilePage> {
           child: Padding(
             padding: EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
-                Text(_userInfo['Unit Number'] != null ? _userInfo['Unit Numeber'] : "DEFAULT"),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Column(
+                          children: [
+                            Text('Unit Name: ',  style: TextStyle(fontSize: 20)),
+                            SizedBox(height: 10),
+                            Text(' ', style: TextStyle(fontSize: 20) ),
+                            Text(_userInfo['Unit Name'] != null ? _userInfo['Unit Name'] : "N/A",  style: TextStyle(fontSize: 40)),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.start,
+                        ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text('Last Measured: ', style: TextStyle(fontSize: 20)),
+                          SizedBox(height: 10),
+                          Text(_userInfo['Last Measured'].toString().substring(0, 10), style: TextStyle(fontSize: 20) ),
+                          Text((_lastTemp.toString() + String.fromCharCode(0x00B0) + 'C' ),
+                              style: _lastTemp < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
+                              _lastTemp > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
+                              TextStyle(fontSize: 40, color: Colors.green)),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 20),
                 TextFormField(
                   initialValue: _userInfo['Name'],
                   decoration: InputDecoration(
                       icon: Icon(Icons.person),
                       hintText: 'Ex. John Doe',
-                      labelText: 'Name'
+                      labelText: 'Name',
                   ),
                   enabled: _edit,
+                  autovalidate: true,
                   validator: (value) {
                     if (value.isEmpty || !value.contains(' ')){
                       return "Please enter in correct format: 'first last'";
                     }
                     return null;
                   },
+                  onSaved: (val) => setState((){
+                    _userInfo['Name'] = val;
+                  })
+                ),
+                TextFormField(
+                  initialValue: _userInfo['Contact'],
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.phone),
+                        hintText: 'Ex. 123-456-7890',
+                        labelText: 'Contact'
+                    ),
+                    enabled: _edit,
+                    keyboardType: TextInputType.phone,
+                    validator: (value){
+                      if(value.isEmpty || value.length != 12 || !value.contains('-')){
+                        return 'Please enter in correct format: xxx-xxx-xxxx';
+                      }
+                      return null;
+                    },
+                    onSaved: (val) => setState(() => _userInfo['Contacts'] = val)
+                ),
+                TextFormField(
+                  initialValue: _userInfo['Date of birth'],
+                  decoration: InputDecoration(
+                      icon: Icon(Icons.calendar_today),
+                      hintText: 'Ex. MM-DD-YYYY',
+                      labelText: 'Date of Birth'
+                  ),
+                  enabled: _edit,
+                  autovalidate: true,
+                  validator: (value){
+                    if(value.isEmpty || !value.contains('-')){
+                      return 'Please enter in correct format: MM-DD-YYYY';
+                    }
+                    return null;
+                  },
+                  keyboardType: TextInputType.datetime,
+                  onSaved: (val) => setState((){
+                    String temp = val.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+                    String tempYr = temp.substring(6);
+                    String tempMo = temp.substring(3, 4) == '0' ? temp.substring(4, 5) : temp.substring(3, 5);
+                    String tempDa = temp.substring(0, 1) == '0' ? temp.substring(1, 2) : temp.substring(0, 2);
+                    _userInfo['Date of birth'] = DateTime(int.parse(tempYr), int.parse(tempMo), int.parse(tempDa));
+                    _userInfo['Age'] =  (DateTime.now().difference(UserInfo.Bday).inDays/365).floor();
+                  }),
                 ),
                 Text(_userInfo['Age'].toString()),
-                Text(_userInfo['Sex'] != null ? _userInfo['Sex'] : "Sex"),
-                Text('Last Measured: '),
-                SizedBox(height: 10),
-                Text(_userInfo['Last Measured'].toString().substring(0, 10)),
-                Text((_lastTemp.toString() + String.fromCharCode(0x00B0) + 'C' ),
-                    style: _lastTemp < 35 ? TextStyle(fontSize: 50, color: Colors.blue) :
-                    _lastTemp > 37.5 ? TextStyle(fontSize: 50, color: Colors.red) :
-                    TextStyle(fontSize: 50, color: Colors.green)),
+                TextFormField(
+                  initialValue: _userInfo['Sex'] != null ? _userInfo['Sex'] : "N/A",
+                  decoration: InputDecoration(
+                      hintText: 'Ex. Male/Female',
+                      labelText: 'Sex'
+                  ),
+                  keyboardType: TextInputType.text,
+                  enabled: _edit,
+                  autovalidate: true,
+                  validator: (value) {
+                    if (value.isEmpty || value != 'Male' || value != 'Female'){
+                      return "Please enter either 'Male' or 'Female'";
+                    }
+                      return null;
+                    },
+                  onSaved: (val) => setState((){
+                    _userInfo['Sex'] = val;
+                  }),
+                ),
+                TextFormField(
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.home),
+                        hintText: 'Ex. 1 Main st.',
+                        labelText: 'Your address in ${_userInfo['organization']}: '
+                    ),
+                    enabled: _edit,
+                    validator: (value){
+                      if(value.isEmpty){
+                        return 'Please enter your street address';
+                      }
+                      return null;
+                    },
+                    onSaved: (val) => setState(() => UserInfo.address = val)
+                ),
+                TextFormField(
+                    decoration: InputDecoration(
+                        hintText: 'Ex. San Francisco',
+                        labelText: 'City'
+                    ),
+                    enabled: _edit,
+                    validator: (value){
+                      if(value.isEmpty){
+                        return 'Please enter your city';
+                      }
+                      return null;
+                    },
+                    onSaved: (val) => setState(() => UserInfo.address += ', ' + val)
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                          decoration: InputDecoration(
+                              hintText: 'Ex. CA',
+                              labelText: 'State'
+                          ),
+                          enabled: _edit,
+                          validator: (value){
+                            if(value.isEmpty || value.length > 2){
+                              return 'Please enter your state';
+                            }
+                            return null;
+                          },
+                          onSaved: (val) => setState(() => UserInfo.address += ', ' + val)
+                      ),
+                    ),
+                    Expanded(
+                      child: TextFormField(
+                          decoration: InputDecoration(
+                              hintText: 'Ex. 94105',
+                              labelText: 'Zip code'
+                          ),
+                          keyboardType: TextInputType.phone,
+                          enabled: _edit,
+                          validator: (value){
+                            if(value.isEmpty || value.length != 5){
+                              return 'Please enter your zip code';
+                            }
+                            return null;
+                          },
+                          onSaved: (val) => setState(() => UserInfo.address += ' ' + val)
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Text(_userInfo['Health Message']),
+                Text(_userInfo['Primary Tag']),
+                Text(_userInfo['Secondary Tag']),
               ],
             ),
           ),
@@ -110,6 +262,7 @@ class ProfilePageState extends State<ProfilePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
+            tooltip: 'Edit my info',
             onPressed: () {
               setState(() {
               _edit = !_edit;
