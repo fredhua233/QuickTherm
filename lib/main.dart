@@ -9,7 +9,6 @@ import 'Pages/StartUp/ChooseIdentityPage.dart';
 import 'Pages/ConnectingDevicesPage.dart';
 import 'Utils/Utils.dart';
 import 'Utils/UserInfo.dart';
-//Menu menu = new Menu();
 
 void main() => runApp(BLETherometer());
 
@@ -25,8 +24,8 @@ class BLETherometer extends StatelessWidget {
         ),
         //FIXME: Change below to ChooseIdentity
 //        home: GeneratePage()
-//        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Testing/Buildings/Building1/Units"))
-      home: Director()
+//        home: UnitsGrid(units: UserInfo().fireStore.collection(/Organizations/Santa's Toy Factory/Managers/John White/Units))
+      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
 //        home: ProfilePage(),
     );
   }

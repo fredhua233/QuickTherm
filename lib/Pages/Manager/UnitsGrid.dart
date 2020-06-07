@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
+import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:quicktherm/Utils/Utils.dart';
 
 class UnitsGrid extends StatefulWidget {
   UnitsGrid(
@@ -37,7 +37,6 @@ class UnitsGridState extends State<UnitsGrid> {
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -50,7 +49,7 @@ class UnitsGridState extends State<UnitsGrid> {
                     tag: "Remind",
                     child: IconButton(
                       icon: Icon(Icons.notifications),
-                      tooltip: "Search For Specific Unit/Individual",
+                      tooltip: "See who needs to be reminded",
                       onPressed: () {
                         setState(() {
                           _mode = _ModeUnits.remind;
@@ -344,7 +343,6 @@ class UnitsGridState extends State<UnitsGrid> {
     );
   }
   Widget _buildIndCell(BuildContext context, DocumentSnapshot data) {
-
     Map<String, dynamic> info = data.data;
     Map<String, dynamic> temps = info["Temperature"];
     List<String> date = temps.keys.toList();
@@ -359,8 +357,9 @@ class UnitsGridState extends State<UnitsGrid> {
           "C";
     }
     String name = info["Name"];
-    String age = info.containsKey("Age") ? info["Age"].toString() : "";
+    String age = info.containsKey("Date of Birth") ? (DateTime.now().difference(DateTime.parse(info["Date of Birth"])).inDays/365).floor().toString() : "";
     String unitName = info["Unit Number"];
+    String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + unitName;
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
     if (ptag == Colors.black) {
@@ -371,10 +370,9 @@ class UnitsGridState extends State<UnitsGrid> {
         trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
       }
     }
-//    return Card(child: Center(child: Text(data["Name"]),),);
     return GestureDetector(
       onTap: () {
-
+        Navigator.push(context, MaterialPageRoute(builder: (context) => IndividualPage(data.reference, Firestore.instance.document(unitPath))));
       },
       child: Card(
           child: Container(
