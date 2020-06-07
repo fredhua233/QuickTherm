@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quicktherm/Generate.dart';
 import 'package:quicktherm/Pages/Director/Director.dart';
+import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
 import 'package:quicktherm/Pages/ProfilePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +26,8 @@ class BLETherometer extends StatelessWidget {
         //FIXME: Change below to ChooseIdentity
 //        home: GeneratePage()
 //        home: UnitsGrid(units: UserInfo().fireStore.collection(/Organizations/Santa's Toy Factory/Managers/John White/Units))
-      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
+//      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
+        home: HelpPage(),
 //        home: ProfilePage(),
     );
   }

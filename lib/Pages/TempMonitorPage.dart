@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Utils/UserInfo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -527,6 +528,22 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                     },
                     child: Icon(
                       Icons.timeline,
+                    ),
+                  ),
+                )),
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: Hero(
+                  tag: "Help",
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpPage()));
+                    },
+                    child: Icon(
+                      Icons.help_outline,
                     ),
                   ),
                 )),

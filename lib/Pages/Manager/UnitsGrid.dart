@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
@@ -159,6 +160,22 @@ class UnitsGridState extends State<UnitsGrid> {
                       ],
                       icon: Icon(Icons.remove_red_eye),
                     )
+                )),
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: Hero(
+                  tag: "Help",
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpPage()));
+                    },
+                    child: Icon(
+                      Icons.help_outline,
+                    ),
+                  ),
                 )),
           ],
           bottom: TabBar(
