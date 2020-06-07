@@ -98,21 +98,21 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       TextFormField(
                           decoration: InputDecoration(
                               icon: Icon(Icons.calendar_today),
-                              hintText: 'Ex. MM-DD-YYYY',
+                              hintText: 'Ex. YYYY-MM-DD',
                               labelText: 'Date of Birth'
                           ),
                           keyboardType: TextInputType.datetime,
                           validator: (value){
                             if(value.isEmpty || !value.contains('-')){
-                              return 'Please enter in correct format: MM-DD-YYYY';
+                              return 'Please enter in correct format: YYYY-MM-DD';
                             }
                             return null;
                           },
                           onSaved: (val) => setState(() {
                             String temp = val.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-                            String tempYr = temp.substring(6);
-                            String tempMo = temp.substring(3, 4) == '0' ? temp.substring(4, 5) : temp.substring(3, 5);
-                            String tempDa = temp.substring(0, 1) == '0' ? temp.substring(1, 2) : temp.substring(0, 2);
+                            String tempYr = temp.substring(0, 4);
+                            String tempMo = temp.substring(5, 6) == '0' ? temp.substring(6, 7) : temp.substring(5, 7);
+                            String tempDa = temp.substring(8, 9) == '0' ? temp.substring(9, 10) : temp.substring(8, 10);
                             UserInfo.Bday = DateTime(int.parse(tempYr), int.parse(tempMo), int.parse(tempDa));
                             UserInfo.age =  (DateTime.now().difference(UserInfo.Bday).inDays/365).floor();
                           })
