@@ -19,14 +19,15 @@ class ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic> _userInfo;
   DocumentReference _log;
   bool _edit = false;
-  bool gotFS;
+  bool _gotFS;
+  String _street, _city, _state, _zip, _address;
 
   @override
   void initState() {
     super.initState();
     getPathData();
     setState(() {
-      gotFS = true;
+      _gotFS = true;
     });
   }
 
@@ -34,6 +35,15 @@ class ProfilePageState extends State<ProfilePage> {
     _log = _user.log;
     DocumentSnapshot _userInfoSS = await _log.get();
     _userInfo = _userInfoSS.data;
+//    _address = _userInfo['Address'].replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+//    int countComma = 0;
+//    for(int i = 0; i < _address.length; i++){
+//      if(_address[i] == ','){
+//        _street = _address.substring(countComma, i);
+//        countComma = i;
+//      }
+//
+//    }
     _lastTemp = 34.0;
     return _userInfoSS.data;
   }
@@ -111,7 +121,7 @@ class ProfilePageState extends State<ProfilePage> {
                   })
                 ),
                 TextFormField(
-                  initialValue: _userInfo['Contact'],
+                  initialValue: _userInfo['Contacts'],
                     decoration: InputDecoration(
                         icon: Icon(Icons.phone),
                         hintText: 'Ex. 123-456-7890',
@@ -128,7 +138,7 @@ class ProfilePageState extends State<ProfilePage> {
                     onSaved: (val) => setState(() => _userInfo['Contacts'] = val)
                 ),
                 TextFormField(
-                  initialValue: _userInfo['Date of birth'],
+                  initialValue: _userInfo['Date of Birth'],
                   decoration: InputDecoration(
                       icon: Icon(Icons.calendar_today),
                       hintText: 'Ex. MM-DD-YYYY',
@@ -148,11 +158,18 @@ class ProfilePageState extends State<ProfilePage> {
                     String tempYr = temp.substring(6);
                     String tempMo = temp.substring(3, 4) == '0' ? temp.substring(4, 5) : temp.substring(3, 5);
                     String tempDa = temp.substring(0, 1) == '0' ? temp.substring(1, 2) : temp.substring(0, 2);
-                    _userInfo['Date of birth'] = DateTime(int.parse(tempYr), int.parse(tempMo), int.parse(tempDa));
-                    _userInfo['Age'] =  (DateTime.now().difference(UserInfo.Bday).inDays/365).floor();
+                    _userInfo['Date of Birth'] = DateTime(int.parse(tempYr), int.parse(tempMo), int.parse(tempDa));
+                    _userInfo['Age'] =  (DateTime.now().difference(_userInfo['Date of Birth']).inDays/365).floor();
                   }),
                 ),
-                Text(_userInfo['Age'].toString()),
+                TextFormField(
+                  initialValue: (DateTime.now().difference(DateTime.parse(_userInfo['Date of Birth'])).inDays/365).floor().toString(),
+                  decoration: InputDecoration(
+                    labelText: 'Age',
+                    hintText: (DateTime.now().difference(DateTime.parse(_userInfo['Date of Birth'])).inDays/365).floor().toString()
+                  ),
+                  enabled: false,
+                ),
                 TextFormField(
                   initialValue: _userInfo['Sex'] != null ? _userInfo['Sex'] : "N/A",
                   decoration: InputDecoration(
@@ -176,7 +193,7 @@ class ProfilePageState extends State<ProfilePage> {
                     decoration: InputDecoration(
                         icon: Icon(Icons.home),
                         hintText: 'Ex. 1 Main st.',
-                        labelText: 'Your address in ${_userInfo['organization']}: '
+                        labelText: 'Your address in ${_userInfo['Organization']}: '
                     ),
                     enabled: _edit,
                     validator: (value){
