@@ -73,6 +73,7 @@ class UserInfo {
       'Organization' : organization,
       'Address' : address,
       'Sex': sex,
+      'Age' : age,
       'Date of Birth' : Bday.toString(),
       'Manager Name': managerName,
       'Primary Tag' : primaryTag,
