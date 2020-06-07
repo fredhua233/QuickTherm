@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
-import 'package:quicktherm/Pages/LoadingPage.dart';
 
 class IndividualPage extends StatefulWidget {
   DocumentReference IndividualDoc;

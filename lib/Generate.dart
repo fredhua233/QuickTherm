@@ -27,40 +27,45 @@ class GeneratePageState extends State<GeneratePage> {
       body: Text("Generate"),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            CollectionReference units = firestore.collection("/Organizations/Testing/Buildings/Building2/Units");
-            String manager = mockName();
-            for (int i = 3; i <= 30; i++) {
-              String unitStatus = "";
-              bool potential = false;
-              bool ill = false;
-              bool healthy = false;
-              var names = [];
-              CollectionReference inds = units.document("Unit$i").collection("Individuals");
-              for (int j = 0; j < 3; j++) {
-                Individual person = new Individual(manager, i);
-                String name = person.info["Name"];
-                names.add(name);
-                if (person.info["Primary Tag"] == Colors.black.toString()) {
-                  ill = true;
-                } else if (person.info["Primary Tag"] == Colors.black45.toString()) {
-                  potential = true;
-                } else if (person.info["Primary Tag"] == Colors.white.toString()) {
-                  healthy = true;
+            CollectionReference managers = firestore.collection("/Organizations/Santa's Toy Factory/Managers");
+            for (int i = 1; i <= 1; i++) {
+              String managerName = mockName();
+              DocumentReference manager = managers.document(managerName);
+              await manager.setData({"Name" : managerName, "Num of Res" : 50});
+              CollectionReference units = manager.collection("Units");
+              for (int j = 1; j <= 25; j++) {
+                String unitStatus = "";
+                bool potential = false;
+                bool ill = false;
+                bool healthy = false;
+                var names = [];
+                CollectionReference inds = units.document("Unit$j").collection("Individuals");
+                for (int k = 0; k < 2; k++) {
+                  Individual person = new Individual(managerName, j);
+                  String name = person.info["Name"];
+                  names.add(name);
+                  if (person.info["Primary Tag"] == Colors.black.toString()) {
+                    ill = true;
+                  } else if (person.info["Primary Tag"] == Colors.black45.toString()) {
+                    potential = true;
+                  } else if (person.info["Primary Tag"] == Colors.white.toString()) {
+                    healthy = true;
+                  }
+                  if (healthy && !potential && !ill) {
+                    unitStatus = "healthy";
+                  } else if (ill) {
+                    unitStatus = "ill";
+                  } else if (potential && !ill) {
+                    unitStatus = "potentially ill";
+                  } else {
+                    unitStatus = "unknown";
+                  }
+                  await inds.document(name).setData(person.info);
                 }
-                if (healthy && !potential && !ill) {
-                  unitStatus = "healthy";
-                } else if (ill) {
-                  unitStatus = "ill";
-                } else if (potential && !ill) {
-                  unitStatus = "potentially ill";
-                } else {
-                  unitStatus = "unknown";
-                }
-                await inds.document(name).setData(person.info);
+                await units.document("Unit$j").setData({"Name" : "Unit $j",
+                  "Unit Status" : unitStatus,
+                  "Residents" : names});
               }
-              await units.document("Unit$i").setData({"Name" : "Unit $i",
-                                                      "Unit Status" : unitStatus,
-                                                      "Residents" : names});
             }
           },
           label: Text("Generate")),
@@ -71,56 +76,75 @@ class GeneratePageState extends State<GeneratePage> {
 class Individual {
     Map<String, dynamic> _info = new Map<String, dynamic>();
     Random _random = new Random();
-
+    String _sex = Random().nextInt(2) == 0 ? "Male" :"Female";
     Individual(String manager, int i) {
-      _info.addAll({"Age" : mockInteger(60, 90),
-                    "Contacts" : "123-456-7890",
-                    "Health Message" : "N/A",
-                    "Last Measured" : mockDate(DateTime.parse("2020-06-04 14:13:04"), DateTime.now()).toString(),
-                    "Unit Number" : "Unit $i",
+      _info.addAll({"Date of Birth" : mockDate(DateTime.parse("1930-06-04"), DateTime.parse("1960-06-04")).toString().substring(0, 10),
+                    "Contacts" : mockInteger(100, 999).toString() + "-" + mockInteger(100, 999).toString() + "-" + mockInteger(1000, 9999).toString(),
+                    "Unit Name" : "Unit $i",
                     "Manager Name": manager,
-                    "Name" : mockName(),
-                    "Prior Medical Condition" : "N/A",
-                    "Sex" : "N/A",
+                    "Name" : mockName(_sex.toLowerCase()),
+                    "Sex" : _sex,
+                    "Address" : "123 North Pole Ave., Santa's Secret Village, NP, 10001",
+                    "Organization" : "Santa's Toy Factory",
                     "Temperature" : _genTemp()});
       _genTags();
     }
 
     _genTags() {
-      switch (_random.nextInt(3)) {
+      String _primaryTag, _secondaryTag, _healthMsg;
+      Map temps = _info["Temperature"];
+      var dates = temps.keys.toList();
+      dates.sort((a, b) => a.compareTo(b));
+      String lm = dates.last;
+      double temp = temps[dates.last];
+      if (temp < 35) {
+          _primaryTag = Colors.black.toString();
+          _secondaryTag = Colors.blue.toString();
+          _healthMsg = "Ill, potential hypothermia ";
+      } else if (temp > 37.5) {
+          _primaryTag = Colors.black.toString();
+          _secondaryTag = Colors.red.toString();
+          _healthMsg = "Ill, potential fever";
+      } else {
+        int c = _random.nextInt(2);
+        _primaryTag = c == 1 ? Colors.black45.toString() : Colors.white.toString();
+        _healthMsg = c == 0 ?
+             "Healthy, normal temperature"
+            : "Potential illness/recovery, \n normal temperature";
+        _secondaryTag = Colors.green.toString();
+      }
+      var pHlthCond = _getPCond();
+      _info.addAll({"Prior Medical Condition" : pHlthCond,
+                    "Last Measured" : lm,
+                    "Health Message" : _healthMsg,
+                    "Primary Tag" : _primaryTag,
+                    "Secondary Tag" : _secondaryTag});
+    }
+
+    _getPCond() {
+      switch (_random.nextInt(2)) {
         case 0:
-          String stag = "";
-          String ptag = Colors.black.toString();
-          switch (_random.nextInt(2)) {
-            case 0:
-              stag = Colors.red.toString();
-              break;
-            case 1:
-              stag = Colors.blue.toString();
-              break;
-          }
-          _info.addAll({"Primary Tag" : ptag,
-                         "Secondary Tag" : stag});
-          break;
+          return false;
         case 1:
-          String ptag = Colors.black45.toString();
-          String stag = Colors.green.toString();
-          _info.addAll({"Primary Tag" : ptag,
-            "Secondary Tag" : stag});
-          break;
-        case 2:
-          String ptag = Colors.white.toString();
-          String stag = Colors.green.toString();
-          _info.addAll({"Primary Tag" : ptag,
-            "Secondary Tag" : stag});
+          switch (_random.nextInt(4)) {
+            case 0:
+              return "Diabetes";
+            case 1:
+              return "High blood pressure";
+            case 2:
+              return "Allergic to antibiotics";
+            case 3:
+              return "Major surgery before";
+          }
           break;
       }
     }
 
+
     Map<String, dynamic> _genTemp() {
       Map<String, dynamic> temps = new Map<String, dynamic>();
       for (int i = 0; i < 1000; i ++) {
-        double temp = _random.nextDouble() + _random.nextInt(6) + 35;
+        double temp = _random.nextDouble() + _random.nextInt(4) + 34;
         temps.addAll({mockDate(DateTime.parse("2020-05-21 15:39:04"), DateTime.now()).toString() : temp});
       }
       return temps;

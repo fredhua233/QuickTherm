@@ -17,7 +17,7 @@ import 'HistoryPage.dart';
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
 // T for discrete, C for constant monitor, S for stop constant monitoring
 
-// TODO:  fix navigator, find bugs, get measered status
+// TODO:  find bugs,
 // FIXME: Maybe take temperature for a minute( or some time) and get its average
 /**
  * The current state of measurement, constant or discreet
@@ -343,9 +343,6 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           _secondaryTag = Colors.green;
         });
       }
-//      _pref.setString("HealthMsg", _healthMsg);
-//      _pref.setString("1stTag", _primaryTag.toString());
-//      _pref.setString("2ndTag", _secondaryTag.toString());
       if (p > 0) {
         _saveData(temp);
       }
@@ -443,16 +440,6 @@ class TempMonitorPageState extends State<TempMonitorPage> {
    */
   Future<bool> _pushData(double temp, DateTime now) async {
     var ltime = _pref.getString("LastMeasTime");
-//    if (!_data.containsKey("Primary Tag") &&
-//        !_data.containsKey("Secondary Tag") &&
-//        !_data.containsKey("Health Msg")) {
-//      _data.addAll({
-//        "Primary Tag": _primaryTag.toString(),
-//        "Secondary Tag": _secondaryTag.toString(),
-//        "Health Msg": _healthMsg,
-//        "Last Measured Time" : ltime
-//      });
-//    }
     Map<String, dynamic> temps = _data["Temperature"];
     temps.addAll({now.toString(): temp});
     await _log.updateData({

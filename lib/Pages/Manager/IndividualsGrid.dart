@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../Utils/UserInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 
 class IndividualsGrid extends StatefulWidget {
   IndividualsGrid(
@@ -64,9 +64,10 @@ class IndividualsGridState extends State<IndividualsGrid> {
           "C";
     }
     String name = info["Name"];
-    String age = info.containsKey("Age") ? info["Age"].toString() : "";
+    String age = info.containsKey("Date of Birth") ? (DateTime.now().difference(DateTime.parse(info["Date of Birth"])).inDays/365).floor().toString() : "";
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
+    String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + widget.unitName;
     if (ptag == Colors.black) {
       if (stag == Colors.red && temps[date.last] > temps[date[date.length - 2]]) {
         trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
@@ -78,7 +79,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
 
     return GestureDetector(
       onTap: () {
-
+        Navigator.push(context, MaterialPageRoute(builder: (context) => IndividualPage(data.reference, Firestore.instance.document(unitPath))));
       },
       child: Card(
         child: Container(

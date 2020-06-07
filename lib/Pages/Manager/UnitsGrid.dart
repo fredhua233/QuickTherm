@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
+import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -36,7 +37,6 @@ class UnitsGridState extends State<UnitsGrid> {
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -49,7 +49,7 @@ class UnitsGridState extends State<UnitsGrid> {
                     tag: "Remind",
                     child: IconButton(
                       icon: Icon(Icons.notifications),
-                      tooltip: "Search For Specific Unit/Individual",
+                      tooltip: "See who needs to be reminded",
                       onPressed: () {
                         setState(() {
                           _mode = _ModeUnits.remind;
@@ -212,6 +212,18 @@ class UnitsGridState extends State<UnitsGrid> {
   }
 
   Widget _buildUnitsGrid(BuildContext context, List<DocumentSnapshot> snapshot) {
+    if (snapshot.length == 0) {
+      return Center(
+        child: Container(
+          child: Column(
+            children: [
+              Icon(Icons.sentiment_dissatisfied, size: 100, color: Colors.black26),
+              Text("No such unit found, sorry!", style: TextStyle(fontSize: 22),)
+            ],
+          )
+        ),
+      );
+    }
     return GridView.builder(
       itemCount: snapshot.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -300,7 +312,7 @@ class UnitsGridState extends State<UnitsGrid> {
           inds = await unit.reference.collection("Individuals").where("Primary Tag", isEqualTo: Colors.black45.toString()).getDocuments();
           break;
         case _ModeUnits.remind:
-          DateTime limit = DateTime.now().subtract(Duration(hours: 48));
+          DateTime limit = DateTime.now().subtract(Duration(hours: 12));
           inds = await unit.reference.collection("Individuals").where("Last Measured", isLessThan: limit.toString()).getDocuments();
           break;
         case _ModeUnits.selfDefined:
@@ -308,6 +320,18 @@ class UnitsGridState extends State<UnitsGrid> {
           break;
       }
       ppl.addAll(inds.documents);
+    }
+    if (ppl.length == 0) {
+      return Center(
+        child: Container(
+            child: Column(
+              children: [
+                Icon(Icons.sentiment_dissatisfied, size: 100, color: Colors.black26),
+                Text("No such person found, sorry!", style: TextStyle(fontSize: 20),)
+              ],
+            )
+        ),
+      );
     }
     return GridView.builder(
         itemCount: ppl.length,
@@ -319,7 +343,6 @@ class UnitsGridState extends State<UnitsGrid> {
     );
   }
   Widget _buildIndCell(BuildContext context, DocumentSnapshot data) {
-
     Map<String, dynamic> info = data.data;
     Map<String, dynamic> temps = info["Temperature"];
     List<String> date = temps.keys.toList();
@@ -334,8 +357,9 @@ class UnitsGridState extends State<UnitsGrid> {
           "C";
     }
     String name = info["Name"];
-    String age = info.containsKey("Age") ? info["Age"].toString() : "";
+    String age = info.containsKey("Date of Birth") ? (DateTime.now().difference(DateTime.parse(info["Date of Birth"])).inDays/365).floor().toString() : "";
     String unitName = info["Unit Number"];
+    String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + unitName;
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
     if (ptag == Colors.black) {
@@ -346,10 +370,9 @@ class UnitsGridState extends State<UnitsGrid> {
         trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
       }
     }
-//    return Card(child: Center(child: Text(data["Name"]),),);
     return GestureDetector(
       onTap: () {
-
+        Navigator.push(context, MaterialPageRoute(builder: (context) => IndividualPage(data.reference, Firestore.instance.document(unitPath))));
       },
       child: Card(
           child: Container(
