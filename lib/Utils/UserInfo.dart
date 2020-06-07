@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class UserInfo {
   static String name, //
       address, //
@@ -37,9 +38,9 @@ class UserInfo {
 //    _userInfoCF = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name");
 //    _unitInfo = _firestore.document("/Organizations/$organization/Buildings/$address/Units/$roomNumber");
 //    _unitmates = _firestore.collection("/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals");
-    _userInfoCF = _firestore.document("/Organizations/Testing/Buildings/Building2/Units/Unit1/Individuals/Charles");
-    _unitInfo = _firestore.document("/Organizations/Testing/Buildings/Building2/Units/Unit1");
-    _unitmates = _firestore.collection("/Organizations/Testing/Buildings/Building2/Units/Unit1/Individuals");
+    _userInfoCF = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony");
+    _unitInfo = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1");
+    _unitmates = _firestore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals");
   }
 
   CollectionReference get mates => _unitmates;
@@ -72,7 +73,7 @@ class UserInfo {
       'Organization' : organization,
       'Address' : address,
       'Sex': sex,
-      'Date of birth' : Bday.toString(),
+      'Date of Birth' : Bday.toString(),
       'Manager Name': managerName,
       'Primary Tag' : primaryTag,
       'Secondary Tag' : secondaryTag,
