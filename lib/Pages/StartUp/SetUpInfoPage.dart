@@ -141,13 +141,26 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       TextFormField(
                           decoration: InputDecoration(
-                              icon: Icon(Icons.home),
-                              hintText: 'Ex. 1 Main st.',
-                              labelText: 'Your Organization address:'
+                              hintText: 'Ex. CCDC',
+                              labelText: 'Your Organization'
                           ),
                           validator: (value){
                             if(value.isEmpty){
-                              return 'Please enter your street address';
+                              return 'Please enter the organization that you belong to';
+                            }
+                            return null;
+                          },
+                          onSaved: (val) => setState(() => UserInfo.organization = val)
+                      ),
+                      TextFormField(
+                          decoration: InputDecoration(
+                              icon: Icon(Icons.home),
+                              hintText: 'Ex. 1 Main st.',
+                              labelText: 'Your address' + UserInfo.organization != null ? 'in ${UserInfo.organization}:' : ' '
+                          ),
+                          validator: (value){
+                            if(value.isEmpty){
+                              return 'Please enter your address in your organization';
                             }
                             return null;
                           },
@@ -236,19 +249,6 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             return null;
                           },
                           onSaved: (val) => setState(() => UserInfo.roomNumber = val)
-                      ),
-                      TextFormField(
-                          decoration: InputDecoration(
-                              hintText: 'Ex. CCDC/',
-                              labelText: 'Organization of your SRO'
-                          ),
-                          validator: (value){
-                            if(value.isEmpty){
-                              return 'Please enter the organization of your SRO';
-                            }
-                            return null;
-                          },
-                          onSaved: (val) => setState(() => UserInfo.organization = val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(

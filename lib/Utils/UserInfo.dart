@@ -17,6 +17,7 @@ class UserInfo {
       secondaryTag,
       healthMsg,
       path,
+      managerPath,
       lastMeasured;
   static int age;
   static DateTime Bday;
@@ -60,11 +61,12 @@ class UserInfo {
 
   save() async {
     dummyField();
-    path = '/Organizations/$organization/Buildings/$address/Units/$roomNumber/Individuals/$name';
+    path = '/Organizations/$organization/Manager/$managerName/Units/$roomNumber/Individuals/$name';
+    managerPath = '/Organizations/$organization/Manager/$managerName';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', path);
     _userInfoCF = _firestore.document(path);
-    print(pref.getString('path'));
+
 
     _userProfile = {
       'Name': name,
