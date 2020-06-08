@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:quicktherm/Generate.dart';
 import 'package:quicktherm/Pages/Director/Director.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
+import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
 import 'package:quicktherm/Pages/ProfilePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Pages/StartUp/ChooseIdentityPage.dart';
+import 'Pages/StartUp/SetUpInfoPage.dart';
 import 'Pages/ConnectingDevicesPage.dart';
 import 'Utils/Utils.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'Utils/UserInfo.dart';
 
 void main() => runApp(BLETherometer());
@@ -27,54 +30,71 @@ class BLETherometer extends StatelessWidget {
 //        home: GeneratePage()
 //        home: UnitsGrid(units: UserInfo().fireStore.collection(/Organizations/Santa's Toy Factory/Managers/John White/Units))
 //      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
-        home: HelpPage(),
+//        home: HelpPage(),
+//    home: Initialize(),
+    home: setUpInfoPage(),
 //        home: ProfilePage(),
     );
   }
 }
 
 
-//class Initialize extends StatefulWidget{
-//  Initialize({Key key}) : super(key: key);
-//  @override
-//  State<StatefulWidget> createState() => InitializeState();
-//}
-//
-//class InitializeState extends State<Initialize> {
-//  Future<SharedPreferences> _prefs = Utils().pref;
-//  Future<String> _identity;
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    _identity = _prefs.then((SharedPreferences prefs) {
-//      return (prefs.getString('id') ?? "");
-//    });
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//      return FutureBuilder<String>(
-//        future: _identity,
-//        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-//          switch (snapshot.connectionState) {
-//            case ConnectionState.waiting:
-//              return const LinearProgressIndicator();
-//            default:
-//              if (snapshot.hasError) {
-//                return Text('Error: ${snapshot.error}');
-//              } else {
-//                String id = snapshot.data;
-//                switch (id) {
-//                  case "resident":
-//                    return ConnectingDevicesPage(title: "Avaliable Devices", storage: NameStorage(), autoConnect: true);
-//                  case "":
-//                    return ChooseIdentityPage();
-//                  default:
-//                    return Container();
-//                }
-//              }
-//          }
-//        });
-//  }
-//}
+class Initialize extends StatefulWidget{
+  Initialize({Key key}) : super(key: key);
+  @override
+  State<StatefulWidget> createState() => InitializeState();
+}
+
+class InitializeState extends State<Initialize> {
+  Future<SharedPreferences> _prefs = Utils().pref;
+  String _identity;
+  String _path;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void>_init() async {
+//    SharedPreferences pref = await _prefs;
+    setState(() {
+//      _identity = pref.getString('id') ?? "";
+    _identity = "";
+//      _path = pref.getString("path") ?? "";
+      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
+      UserInfo.path = _path;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+      return FutureBuilder<void>(
+        future: _init(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return LoadingPage();
+            default:
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                switch (_identity) {
+                  case "resident":
+                    return ConnectingDevicesPage(title: "Available Devices", storage: NameStorage(), autoConnect: true);
+                  case "manager":
+//                    return UnitsGrid(units: UserInfo().fireStore.collection(_path));
+                    return UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/John White/Units"));
+                  case "director":
+//                    return Director(managers: UserInfo().fireStore.collection(_path));
+                    return Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"));
+                  case "":
+                    return ChooseIdentityPage();
+                  default:
+                    return Container();
+                }
+              }
+          }
+        });
+  }
+}

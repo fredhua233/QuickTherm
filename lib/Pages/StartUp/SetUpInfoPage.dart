@@ -5,6 +5,7 @@ import '../ConnectingDevicesPage.dart';
 import 'ChooseIdentityPage.dart';
 import 'package:quicktherm/Utils/Utils.dart'; //
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 ///FIXME: Change the format of some fields
 class setUpInfoPage extends StatefulWidget {
@@ -24,6 +25,51 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
 //  bool _sameAddress = false;
   TimeOfDay _remindAM, _remindNOON, _remindPM;
   TimeOfDay _time = TimeOfDay.now();
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  @override
+  void initState() {
+    super.initState();
+    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+    // If you have skipped STEP 3 then change app_icon to @mipmap/ic_launcher
+    var initializationSettingsAndroid =
+    new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: (payload) { return onSelectNotification(payload);} );
+  }
+
+  Future<void> _showDailyAtTime() async {
+    var time = Time(16, 45, 0);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'repeatDailyAtTime channel id',
+        'repeatDailyAtTime channel name',
+        'repeatDailyAtTime description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showDailyAtTime(
+        0,
+        'Time to measure your temperature!',
+        'Be sure to open Quick Temp and update your temperature!',
+        time,
+        platformChannelSpecifics);
+  }
+
+  Future onSelectNotification(String payload) async {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return new AlertDialog(
+          title: Text("PayLoad"),
+          content: Text("Payload : $payload"),
+        );
+      },
+    );
+  }
 
   Future<void> selectTime(BuildContext context, int i) async {
     final _picked = await showTimePicker(
@@ -156,7 +202,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           decoration: InputDecoration(
                               icon: Icon(Icons.home),
                               hintText: 'Ex. 1 Main st.',
-                              labelText: 'Your address' + UserInfo.organization != null ? 'in ${UserInfo.organization}:' : ' '
+                              labelText: 'Your address' + (UserInfo.organization != null ? 'in ${UserInfo.organization}:' : ' ')
                           ),
                           validator: (value){
                             if(value.isEmpty){
@@ -358,8 +404,9 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               setState(() {
                                 UserInfo.priorHealth = false;
                               });
-                              form.save();
-                              _user.save();
+                              await form.save();
+                              await _user.save();
+                              await _showDailyAtTime();
                               SharedPreferences _pref = await SharedPreferences.getInstance();
                               print(_pref.getString('id'));
                               Navigator.push(context, MaterialPageRoute(

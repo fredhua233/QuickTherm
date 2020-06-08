@@ -74,7 +74,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   //initalizes all variable displaying data of the last measurement
   _initialize() async {
     // Sets up fire base
-    _log = _user.log;
+    _pref = await _utils.pref;
+    String path = _pref.getString("path");
+    _log = _user.fireStore.document(path);
     DocumentSnapshot doc = await _log.get();
     if (doc != null) {
       _data = doc.data;
@@ -83,7 +85,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     }
 
     //Sets up shared persistence
-    _pref = await _utils.pref;
+
     String text, time, hmsg, ptag, stag = "";
     if (_pref.containsKey("LastTemp")) {
       text = _pref.containsKey("LastTemp")
