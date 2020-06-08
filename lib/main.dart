@@ -31,8 +31,8 @@ class BLETherometer extends StatelessWidget {
 //        home: UnitsGrid(units: UserInfo().fireStore.collection(/Organizations/Santa's Toy Factory/Managers/John White/Units))
 //      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
 //        home: HelpPage(),
-//    home: Initialize(),
-    home: setUpInfoPage(),
+        home: Initialize(),
+//    home: setUpInfoPage(),
 //        home: ProfilePage(),
     );
   }
@@ -57,12 +57,12 @@ class InitializeState extends State<Initialize> {
   }
 
   Future<void>_init() async {
-//    SharedPreferences pref = await _prefs;
+    SharedPreferences pref = await _prefs;
     setState(() {
-//      _identity = pref.getString('id') ?? "";
-    _identity = "";
-//      _path = pref.getString("path") ?? "";
-      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
+      _identity = pref.getString('id') ?? "";
+//    _identity = "";
+      _path = pref.getString("path") ?? "";
+//      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
       UserInfo.path = _path;
     });
   }
@@ -83,11 +83,11 @@ class InitializeState extends State<Initialize> {
                   case "resident":
                     return ConnectingDevicesPage(title: "Available Devices", storage: NameStorage(), autoConnect: true);
                   case "manager":
-//                    return UnitsGrid(units: UserInfo().fireStore.collection(_path));
-                    return UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/John White/Units"));
+                    return UnitsGrid(units: UserInfo().fireStore.collection(_path));
+//                    return UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/John White/Units"));
                   case "director":
-//                    return Director(managers: UserInfo().fireStore.collection(_path));
-                    return Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"));
+                    return Director(managers: UserInfo().fireStore.collection(_path));
+//                    return Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"));
                   case "":
                     return ChooseIdentityPage();
                   default:

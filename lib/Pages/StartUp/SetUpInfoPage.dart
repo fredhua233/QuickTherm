@@ -43,20 +43,48 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   }
 
   Future<void> _showDailyAtTime() async {
-    var time = Time(16, 45, 0);
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'repeatDailyAtTime channel id',
-        'repeatDailyAtTime channel name',
-        'repeatDailyAtTime description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var timeMorning = Time(_remindAM.hour, _remindAM.minute, 0);
+    var timeNoon = Time(_remindNOON.hour, _remindNOON.minute, 0);
+    var timeAfternoon = Time(_remindPM.hour, _remindPM.minute, 0);
+    var androidPlatformChannelSpecificsM = AndroidNotificationDetails(
+        '0',
+        'Morning',
+        'Morning remind time');
+    var iOSPlatformChannelSpecificsM = IOSNotificationDetails();
+    var platformChannelSpecificsM = NotificationDetails(
+        androidPlatformChannelSpecificsM, iOSPlatformChannelSpecificsM);
     await flutterLocalNotificationsPlugin.showDailyAtTime(
         0,
         'Time to measure your temperature!',
         'Be sure to open Quick Temp and update your temperature!',
-        time,
-        platformChannelSpecifics);
+        timeMorning,
+        platformChannelSpecificsM);
+    var androidPlatformChannelSpecificsN = AndroidNotificationDetails(
+        '1',
+        'Noon',
+        'Noon remind time');
+    var iOSPlatformChannelSpecificsN = IOSNotificationDetails();
+    var platformChannelSpecificsN = NotificationDetails(
+        androidPlatformChannelSpecificsN, iOSPlatformChannelSpecificsN);
+    await flutterLocalNotificationsPlugin.showDailyAtTime(
+        1,
+        'Time to measure your temperature!',
+        'Be sure to open Quick Temp and update your temperature!',
+        timeNoon,
+        platformChannelSpecificsN);
+    var androidPlatformChannelSpecificsA = AndroidNotificationDetails(
+        '2',
+        'Afternoon',
+        'Afternoon remind time');
+    var iOSPlatformChannelSpecificsA = IOSNotificationDetails();
+    var platformChannelSpecificsA = NotificationDetails(
+        androidPlatformChannelSpecificsA, iOSPlatformChannelSpecificsA);
+    await flutterLocalNotificationsPlugin.showDailyAtTime(
+        2,
+        'Time to measure your temperature!',
+        'Be sure to open Quick Temp and update your temperature!',
+        timeAfternoon,
+        platformChannelSpecificsA);
   }
 
   Future onSelectNotification(String payload) async {
@@ -404,11 +432,10 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               setState(() {
                                 UserInfo.priorHealth = false;
                               });
-                              await form.save();
+                              form.save();
                               await _user.save();
                               await _showDailyAtTime();
                               SharedPreferences _pref = await SharedPreferences.getInstance();
-                              print(_pref.getString('id'));
                               Navigator.push(context, MaterialPageRoute(
                                   builder: (context) => ConnectingDevicesPage(
                                       title: "Available Devices",
