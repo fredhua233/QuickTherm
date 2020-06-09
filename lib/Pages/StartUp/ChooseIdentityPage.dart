@@ -124,7 +124,7 @@ class _selectIdentityState extends State<selectIdentity> {
                 case 'resident':
                   //addStringToSF('id', 'manager');
                   addStringToSF('id', 'resident');
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => setUpInfoPage()));
@@ -135,10 +135,10 @@ class _selectIdentityState extends State<selectIdentity> {
                   break;
                 case 'manager':
                   addStringToSF('id', 'manager');
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => setUpInfoPage()));
+                          builder: (context) => managerSetUpInfo()));
                   ///key: id, value: manager
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page

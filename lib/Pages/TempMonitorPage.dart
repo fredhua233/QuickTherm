@@ -228,7 +228,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                       await characteristic.setNotifyValue(true);
                       await characteristic.write(utf8.encode("C"));
                       StreamSubscription sub;
-                      Map<String, dynamic> rec = new Map<String, dynamic>();
+//                      Map<String, dynamic> rec = new Map<String, dynamic>();
                       sub = characteristic.value.listen((value) {
                         if (value.length > 0 && value != null) {
                           String reading = utf8.decode(value);
@@ -255,7 +255,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                                   .getString("LastMeasTime")
                                   .substring(0, 19);
                             });
-                            rec.addAll({now.toString(): Temp});
+//                            rec.addAll({now.toString(): Temp});
+                            _saveData(Temp);
                             _checkingForHealth(Temp, 0, 0);
                             if (Vcc < 3300) {
                               _utils.errDialog(
@@ -265,7 +266,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                             }
                           }
                           if (reading == "Terminate") {
-                            _pushDataMap(rec);
+//                            _pushDataMap(rec);
                             sub.cancel();
                           }
                         }

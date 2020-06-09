@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
@@ -14,7 +15,7 @@ class managerSetUpInfo extends StatefulWidget {
 
 class _managerSetUpInfoState extends State<managerSetUpInfo> {
   final _formKey = new GlobalKey<FormState>();
-  Map<String, dynamic> _managerInfo;
+  Map<String, dynamic> _managerInfo = new Map<String, dynamic>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,7 +186,10 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                             if (form.validate()) {
                               form.save();
                               _managerInfo['Num of Res'] = 0;
-                              Navigator.push(context, MaterialPageRoute(
+                              UserInfo.path = "/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}/Units";
+                              Firestore.instance.document("/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}").setData(_managerInfo);
+//                              UserInfo().save();
+                              Navigator.pushReplacement(context, MaterialPageRoute(
                                   builder: (context) => UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}/Units"))));
                             }
                           },

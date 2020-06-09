@@ -33,10 +33,10 @@ class BLETherometer extends StatelessWidget {
         //FIXME: Change below to ChooseIdentity
 //        home: GeneratePage()
 //        home: ChooseIdentityPage(),
-        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units"))
+//        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units"))
 //      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
 //        home: HelpPage(),
-//        home: Initialize(),
+        home: Initialize(),
 //    home: setUpInfoPage(),
 //        home: ProfilePage(),
 //        home: IndividualPage(UserInfo.defined().log, UserInfo.defined().unit)
@@ -64,14 +64,12 @@ class InitializeState extends State<Initialize> {
   }
 
   Future<void>_init() async {
-    SharedPreferences pref = await _prefs;
-    setState(() {
+    SharedPreferences pref = await SharedPreferences.getInstance();
       _identity = pref.getString('id') ?? "";
 //    _identity = "";
       _path = pref.getString("path") ?? "";
 //      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
       UserInfo.path = _path;
-    });
   }
 
   @override

@@ -38,19 +38,19 @@ class UserInfo {
   UserInfo();
 
   UserInfo.defined() {
-//    String unitPath = "";
-//    String unitMates = "";
-//    _userInfoCF = _firestore.document(path);
-//    var directories = path.split("/");
-//    for (var folder in directories.sublist(0, directories.length - 2)) {
-//      unitPath += "/$folder";
-//    }
-//    unitMates = unitPath + "/Individuals";
-//    _unitInfo = _firestore.document(unitPath);
-//    _unitmates = _firestore.collection(unitMates);
-    _userInfoCF = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony");
-    _unitInfo = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1");
-    _unitmates = _firestore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals");
+    String unitPath = "";
+    String unitMates = "";
+    _userInfoCF = _firestore.document(path);
+    var directories = path.split("/");
+    for (var folder in directories.sublist(0, directories.length - 2)) {
+      unitPath += "/$folder";
+    }
+    unitMates = unitPath.substring(1) + "/Individuals";
+    _unitInfo = _firestore.document(unitPath);
+    _unitmates = _firestore.collection(unitMates);
+//    _userInfoCF = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony");
+//    _unitInfo = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1");
+//    _unitmates = _firestore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals");
   }
 
   CollectionReference get mates => _unitmates;
@@ -61,7 +61,7 @@ class UserInfo {
   dummyField() async {
     String temp = '/Organizations/$organization';
     await _firestore.document(temp).setData({'name' : organization});
-    temp += '/manager/$managerName';
+    temp += '/Managers/$managerName';
     await _firestore.document(temp).setData({'name' : managerName});
     temp += '/Units/$unitName';
     await _firestore.document(temp).setData({'name' : unitName});
@@ -71,13 +71,14 @@ class UserInfo {
   save() async {
     dummyField();
     path = '/Organizations/$organization/Manager/$managerName/Units/$unitName/Individuals/$name';
-    _managerPath = '/Organizations/$organization/Manager/$managerName';
+    _managerPath = '/Organizations/$organization/Managers/$managerName';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', path);
     _managerInfoCF = _firestore.document(_managerPath);
     _userInfoCF = _firestore.document(path);
     DocumentSnapshot current = await _managerInfoCF.get();
     currentNumRes = current.data['Num of Res'];
+    print("Happening");
 
     _userProfile = {
       'Name': name,
@@ -99,7 +100,7 @@ class UserInfo {
     priorHealth ? healthHistory : priorHealth;
     await _userInfoCF.setData(_userProfile);
     _managerInfoCF.updateData({
-      "Num of Res" : currentNumRes + 1
+      "Num of Res" : FieldValue.increment(1)
     });
   }
 

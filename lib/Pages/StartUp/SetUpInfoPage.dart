@@ -432,21 +432,24 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       RaisedButton(
                         onPressed: () async {
                           final form = _formKey.currentState;
+
                           if (form.validate()) {
                             if(!_preExist){
+                              print("hi");
                               setState(() {
-                                UserInfo.priorHealth = false;
+                              UserInfo.priorHealth = false;
                               });
-                              form.save();
-                              await _user.save();
-                              await _showDailyAtTime();
-                              SharedPreferences _pref = await SharedPreferences.getInstance();
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => ConnectingDevicesPage(
-                                      title: "Available Devices",
-                                      storage: NameStorage(),
-                                      autoConnect: true)));
                             }
+                            form.save();
+                            _user.save();
+                            _showDailyAtTime();
+//                            SharedPreferences _pref = await SharedPreferences.getInstance();
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => ConnectingDevicesPage(
+                                    title: "Available Devices",
+                                    storage: NameStorage(),
+                                    autoConnect: true)));
+
                           }
                         },
                         child: Text('Save'),
