@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -12,14 +13,14 @@ class UserInfo {
       identity,
       organization,
 //      buildingNumber,
-      roomNumber,
+      unitName,
       primaryTag,
       secondaryTag,
       healthMsg,
       path,
-      managerPath,
+      _managerPath,
       lastMeasured;
-  static int age;
+  static int age, currentNumRes;
   static DateTime Bday;
   static String healthHistory = 'None';
   static Map<String,dynamic> temperature = new Map<String, dynamic>();
@@ -30,25 +31,26 @@ class UserInfo {
   static Firestore _firestore = Firestore.instance;
   static Map<String, dynamic> _userProfile = new Map<String, dynamic>();
   DocumentReference _userInfoCF;
+  DocumentReference _managerInfoCF;
   DocumentReference _unitInfo;
   CollectionReference _unitmates;
 
   UserInfo();
 
   UserInfo.defined() {
-    String unitPath = "";
-    String unitMates = "";
-    _userInfoCF = _firestore.document(path);
-    var directories = path.split("/");
-    for (var folder in directories.sublist(0, directories.length - 2)) {
-      unitPath += "/$folder";
-    }
-    unitMates = unitPath + "/Individuals";
-    _unitInfo = _firestore.document(unitPath);
-    _unitmates = _firestore.collection(unitMates);
-//    _userInfoCF = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony");
-//    _unitInfo = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1");
-//    _unitmates = _firestore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals");
+//    String unitPath = "";
+//    String unitMates = "";
+//    _userInfoCF = _firestore.document(path);
+//    var directories = path.split("/");
+//    for (var folder in directories.sublist(0, directories.length - 2)) {
+//      unitPath += "/$folder";
+//    }
+//    unitMates = unitPath + "/Individuals";
+//    _unitInfo = _firestore.document(unitPath);
+//    _unitmates = _firestore.collection(unitMates);
+    _userInfoCF = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony");
+    _unitInfo = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1");
+    _unitmates = _firestore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals");
   }
 
   CollectionReference get mates => _unitmates;
@@ -59,26 +61,28 @@ class UserInfo {
   dummyField() async {
     String temp = '/Organizations/$organization';
     await _firestore.document(temp).setData({'name' : organization});
-    temp += '/Buildings/$address';
-    await _firestore.document(temp).setData({'name' : address});
-    temp += '/Units/$roomNumber';
-    await _firestore.document(temp).setData({'name' : roomNumber});
+    temp += '/manager/$managerName';
+    await _firestore.document(temp).setData({'name' : managerName});
+    temp += '/Units/$unitName';
+    await _firestore.document(temp).setData({'name' : unitName});
     print('dummy added');
   }
 
   save() async {
     dummyField();
-    path = '/Organizations/$organization/Manager/$managerName/Units/$roomNumber/Individuals/$name';
-    managerPath = '/Organizations/$organization/Manager/$managerName';
+    path = '/Organizations/$organization/Manager/$managerName/Units/$unitName/Individuals/$name';
+    _managerPath = '/Organizations/$organization/Manager/$managerName';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', path);
+    _managerInfoCF = _firestore.document(_managerPath);
     _userInfoCF = _firestore.document(path);
-
+    DocumentSnapshot current = await _managerInfoCF.get();
+    currentNumRes = current.data['Num of Res'];
 
     _userProfile = {
       'Name': name,
       'Contacts': phoneNumber,
-      'Unit Name' : roomNumber,
+      'Unit Name' : unitName,
       'Organization' : organization,
       'Address' : address,
       'Sex': sex,
@@ -94,6 +98,9 @@ class UserInfo {
     _userProfile['Prior Medical Condition'] =
     priorHealth ? healthHistory : priorHealth;
     await _userInfoCF.setData(_userProfile);
+    _managerInfoCF.updateData({
+      "Num of Res" : currentNumRes + 1
+    });
   }
 
 }

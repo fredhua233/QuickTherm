@@ -185,7 +185,6 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                             if (form.validate()) {
                               form.save();
                               _managerInfo['Num of Res'] = 0;
-
                               Navigator.push(context, MaterialPageRoute(
                                   builder: (context) => UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}/Units"))));
                             }

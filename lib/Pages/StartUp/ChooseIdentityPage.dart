@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'SetUpInfoPage.dart';
+import 'ManagerSetUpInfo.dart';
 import '../ConnectingDevicesPage.dart';
+import 'package:quicktherm/Pages/Director/Director.dart';
 
 class ChooseIdentityPage extends StatelessWidget {
   @override
@@ -79,7 +81,7 @@ class _selectIdentityState extends State<selectIdentity> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => setUpInfoPage()));
+                  builder: (context) => managerSetUpInfo()));
 //                      ConnectingDevicesPage(
 //                      title: "Available Devices", storage: NameStorage())));
           break;
@@ -142,7 +144,12 @@ class _selectIdentityState extends State<selectIdentity> {
                   //go to profile page TODO: finish profile page
                   break;
 //                case 'hospital':
-//                go to checking building page
+//                  addStringToSF('id', 'director');
+//                  Navigator.push(
+//                      context,
+//                      MaterialPageRoute(
+//                          builder: (context) => ));
+//                  break;
               }
             }
           },

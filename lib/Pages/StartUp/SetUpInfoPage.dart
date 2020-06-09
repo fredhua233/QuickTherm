@@ -19,6 +19,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   String _groupValue;
   Illness _condition;
   bool _preExist = false;
+  bool changed = false;
   bool _selectedAM = false;
   bool _selectedPM = false;
   bool _selectedNOON = false;
@@ -175,7 +176,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               hintText: 'Ex. YYYY-MM-DD',
                               labelText: 'Date of Birth'
                           ),
-                          keyboardType: TextInputType.datetime,
+                          keyboardType: TextInputType.phone,
                           validator: (value){
                             if(value.isEmpty || !value.contains('-')){
                               return 'Please enter in correct format: YYYY-MM-DD';
@@ -224,13 +225,16 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => UserInfo.organization = val)
+                          onSaved: (val) => setState(() {
+                            UserInfo.organization = val;
+                            changed = true;
+                          })
                       ),
                       TextFormField(
                           decoration: InputDecoration(
                               icon: Icon(Icons.home),
                               hintText: 'Ex. 1 Main st.',
-                              labelText: 'Your address' + (UserInfo.organization != null ? 'in ${UserInfo.organization}:' : ' ')
+                              labelText: changed ? 'Your address in ${UserInfo.organization}:' : 'Your address'
                           ),
                           validator: (value){
                             if(value.isEmpty){
@@ -322,7 +326,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             }
                             return null;
                           },
-                          onSaved: (val) => setState(() => UserInfo.roomNumber = val)
+                          onSaved: (val) => setState(() => UserInfo.unitName = 'Unit ' + val)
                       ),
                       TextFormField(
                           decoration: InputDecoration(
@@ -330,7 +334,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               labelText: "Manager's Name"
                           ),
                           validator: (value){
-                            if(value.isEmpty || !value.contains(' ')){
+                            if(value.isEmpty){
+//                              || !value.contains(' ')
                               return "Please enter your Building manager's name";
                             }
                             return null;

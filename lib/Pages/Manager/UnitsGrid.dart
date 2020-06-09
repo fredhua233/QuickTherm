@@ -221,7 +221,7 @@ class UnitsGridState extends State<UnitsGrid> {
     return StreamBuilder<QuerySnapshot>(
       stream: str,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return CircularProgressIndicator();
+        if (!snapshot.hasData) return LoadingPage();
         snapshot.data.documents.sort((a,b) => a["Name"].compareTo(b["Name"]));
         return _buildUnitsGrid(context, snapshot.data.documents);
       },

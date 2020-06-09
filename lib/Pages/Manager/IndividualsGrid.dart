@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 
 class IndividualsGrid extends StatefulWidget {
@@ -35,7 +36,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
     return StreamBuilder<QuerySnapshot>(
       stream: widget.individuals.snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return CircularProgressIndicator();
+        if (!snapshot.hasData) return LoadingPage();
         return GridView.builder(
           itemCount: snapshot.data.documents.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
