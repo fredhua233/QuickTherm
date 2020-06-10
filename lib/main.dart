@@ -69,7 +69,7 @@ class InitializeState extends State<Initialize> {
 //    _identity = "";
       _path = pref.getString("path") ?? "";
 //      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
-      UserInfo.path = _path;
+//      UserInfo.path = _path;
   }
 
   @override
@@ -88,10 +88,10 @@ class InitializeState extends State<Initialize> {
                   case "resident":
                     return ConnectingDevicesPage(title: "Available Devices", storage: NameStorage(), autoConnect: true);
                   case "manager":
-                    return UnitsGrid(units: UserInfo().fireStore.collection(_path));
+                    return UnitsGrid(units: UserInfo().fireStore.collection(_path + "/Units"));
 //                    return UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/John White/Units"));
                   case "director":
-                    return Director(managers: UserInfo().fireStore.collection(_path));
+                    return Director(managers: UserInfo().fireStore.collection(_path + "/Managers"));
 //                    return Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"));
                   case "":
                     return ChooseIdentityPage();
