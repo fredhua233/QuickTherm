@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "821907371699",
+    "firebase_url": "https://bletempsensor.firebaseio.com",
+    "project_id": "bletempsensor",
+    "storage_bucket": "bletempsensor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821907371699:android:470d0383f52d3ad110e2c6",
+        "android_client_info": {
+          "package_name": "com.ansuefrhua.quicktherm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "821907371699-fk360ekmtuptvarhfud1osrmb5rse4pc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVEO2WYt0OxuFtwlOVgEpOB1JknXRZiDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "821907371699-fk360ekmtuptvarhfud1osrmb5rse4pc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

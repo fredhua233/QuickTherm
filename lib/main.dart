@@ -1,126 +1,106 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:quicktherm/Generate.dart';
+import 'package:quicktherm/Pages/Director/Director.dart';
+import 'package:quicktherm/Pages/HelpPage.dart';
+import 'package:quicktherm/Pages/LoadingPage.dart';
+import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
+import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
+import 'package:quicktherm/Pages/ProfilePage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'Pages/StartUp/ChooseIdentityPage.dart';
+import 'Pages/StartUp/SetUpInfoPage.dart';
+import 'Pages/ConnectingDevicesPage.dart';
+import 'Utils/Utils.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'Utils/UserInfo.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'Pages/HistoryPage.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(BLETherometer());
 
-/* Problems:
-1. How to add the spread-collection to console？ ----------- switch to master branch(from beta) and upgrade
-2. The app does not refresh(devices still remains on the app even when turned off)
-*/
+//TODO：If the user already set up info, move choose devices, which moves to temperature else move to choose identity page
+//Clean Data base aka only keep recent 2 weeks
+class BLETherometer extends StatelessWidget {
 
-class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BLE Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: "Flutter BLE Demo"),
+        title: 'BLE Thermometer',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        //FIXME: Change below to ChooseIdentity
+//        home: GeneratePage()
+//        home: ChooseIdentityPage(),
+//        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units"))
+//      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
+//        home: HelpPage(),
+        home: Initialize(),
+//    home: setUpInfoPage(),
+//        home: ProfilePage(),
+//        home: IndividualPage(UserInfo.defined().log, UserInfo.defined().unit)
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
 
-  final String title;
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
-  final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
-
+class Initialize extends StatefulWidget{
+  Initialize({Key key}) : super(key: key);
   @override
-  _MyHomePageState createState() => _MyHomePageState();
-
-
+  State<StatefulWidget> createState() => InitializeState();
 }
 
-class _MyHomePageState extends State<MyHomePage>{
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar:AppBar(
-      title: Text(widget.title),
-    ),
-    body: _buildListViewOfDevices(),
-  );
-
-  _addDeviceTolist(final BluetoothDevice device) {
-    if (!widget.devicesList.contains(device)) {
-      setState(() {
-        widget.devicesList.add(device);
-      });
-    }
-  }
+class InitializeState extends State<Initialize> {
+  Future<SharedPreferences> _prefs = Utils().pref;
+  String _identity;
+  String _path;
+  Firestore _firestore = Firestore.instance;
 
   @override
   void initState() {
     super.initState();
-    widget.flutterBlue.connectedDevices
-    .asStream()
-    .listen((List<BluetoothDevice> devices) {
-      for (BluetoothDevice device in devices) {
-        _addDeviceTolist(device);
-      }
-    });
-    widget.flutterBlue.scanResults.listen((List<ScanResult> results){
-      for(ScanResult result in results) {
-        _addDeviceTolist(result.device);
-      }
-    });
-    widget.flutterBlue.startScan();
+    _init();
   }
-  ListView _buildListViewOfDevices(){
-    List<Container> containers = new List<Container>();
-    for (BluetoothDevice device in widget.devicesList) {
-      containers.add(
-        Container(
-          height: 50,
-          child :Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(device.name == '' ? '(unknown device)' : device.name),
 
-                    Text(device.id.toString()),
+  Future<void>_init() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+      _identity = pref.getString('id') ?? "";
+//    _identity = "";
+      _path = pref.getString("path") ?? "";
+//      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
+//      UserInfo.path = _path;
+  }
 
-                  ],
-                ),
-              ),
-              FlatButton(
-                color: Colors.blue,
-                child: Text(
-                  'Connect',
-                  style: TextStyle(color:Colors.white),
-
-                ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    return ListView(
-      padding: const EdgeInsets.all(8),
-      children: <Widget>[
-        ...containers,
-      ],
-    );
+  @override
+  Widget build(BuildContext context) {
+      return FutureBuilder<void>(
+        future: _init(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return LoadingPage();
+            default:
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                switch (_identity) {
+                  case "resident":
+                    return ConnectingDevicesPage(title: "Available Devices", storage: NameStorage(), autoConnect: true);
+                  case "manager":
+                    return UnitsGrid(units: UserInfo().fireStore.collection(_path + "/Units"));
+//                    return UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/John White/Units"));
+                  case "director":
+                    return Director(managers: UserInfo().fireStore.collection(_path + "/Managers"));
+//                    return Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"));
+                  case "":
+                    return ChooseIdentityPage();
+                  default:
+                    return Container();
+                }
+              }
+          }
+        });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
