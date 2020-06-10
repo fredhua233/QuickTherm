@@ -1,25 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class UserInfo {
-  static String name, //
-      address, //
-      phoneNumber, //
-      managerName, //
-      sex, //
-      identity,
-      organization,
-//      buildingNumber,
-      unitName,
-      primaryTag,
-      secondaryTag,
-      healthMsg,
-      path,
-      _managerPath,
-      lastMeasured;
+  static String name,
+                address,
+                phoneNumber,
+                managerName,
+                sex,
+                identity,
+                organization,
+                unitName,
+                primaryTag,
+                secondaryTag,
+                healthMsg,
+                lastMeasured,
+                path,
+                managerPath,
+                directorPath;
   static int age, currentNumRes;
   static DateTime Bday;
   static String healthHistory = 'None';
@@ -32,6 +31,7 @@ class UserInfo {
   static Map<String, dynamic> _userProfile = new Map<String, dynamic>();
   DocumentReference _userInfoCF;
   DocumentReference _managerInfoCF;
+  DocumentReference _directorInfoCF;
   DocumentReference _unitInfo;
   CollectionReference _unitmates;
 
@@ -58,27 +58,26 @@ class UserInfo {
   DocumentReference get log => _userInfoCF;
   Firestore get fireStore => _firestore;
 
-  dummyField() async {
-    String temp = '/Organizations/$organization';
-    await _firestore.document(temp).setData({'name' : organization});
-    temp += '/Managers/$managerName';
-    await _firestore.document(temp).setData({'name' : managerName});
-    temp += '/Units/$unitName';
-    await _firestore.document(temp).setData({'name' : unitName});
-    print('dummy added');
-  }
+//  dummyField() async {
+//    String temp = '/Organizations/$organization';
+//    await _firestore.document(temp).setData({'name' : organization});
+//    temp += '/Managers/$managerName';
+//    await _firestore.document(temp).setData({'name' : managerName});
+//    temp += '/Units/$unitName';
+//    await _firestore.document(temp).setData({'name' : unitName});
+//    print('dummy added');
+//deleted because individuals will set up last
 
-  save() async {
-    dummyField();
+  individualSave() async {
+
     path = '/Organizations/$organization/Managers/$managerName/Units/$unitName/Individuals/$name';
-    _managerPath = '/Organizations/$organization/Managers/$managerName';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', path);
-    _managerInfoCF = _firestore.document(_managerPath);
+    _managerInfoCF = _firestore.document(managerPath);
     _userInfoCF = _firestore.document(path);
-    DocumentSnapshot current = await _managerInfoCF.get();
-    currentNumRes = current.data['Num of Res'];
-    print("Happening");
+//    DocumentSnapshot current = await _managerInfoCF.get();
+//    currentNumRes = current.data['Num of Res'];
+    print('Happening');
 
     _userProfile = {
       'Name': name,
@@ -103,7 +102,23 @@ class UserInfo {
       "Num of Res" : FieldValue.increment(1)
     });
   }
+  managerSave(Map<String, dynamic> managerMap) async {
+    path = '/Organizations/${managerMap['Organization']}/Managers/${managerMap['Name']}';
+    pref = await SharedPreferences.getInstance();
+    pref.setString('path', managerPath);
+    _managerInfoCF = _firestore.document(managerPath);
 
+    await _managerInfoCF.setData(managerMap);
+  }
+  directorSave(Map<String, dynamic> directorMap) async {
+    directorPath = '/Organizations/${directorMap['Organization']}';
+    pref = await SharedPreferences.getInstance();
+    pref.setString('path', directorPath);
+    _directorInfoCF = _firestore.document(directorPath);
+
+    await _directorInfoCF.setData(directorMap);
+  }
 }
+
   enum Illness { severe, potential, healthy }
 

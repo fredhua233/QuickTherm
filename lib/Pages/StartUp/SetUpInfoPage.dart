@@ -441,7 +441,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               });
                             }
                             form.save();
-                            _user.save();
+                            _user.individualSave();
                             _showDailyAtTime();
 //                            SharedPreferences _pref = await SharedPreferences.getInstance();
                             Navigator.push(context, MaterialPageRoute(

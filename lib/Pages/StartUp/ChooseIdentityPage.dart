@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quicktherm/Pages/StartUp/DirectorSetUpInfo.dart';
 import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'SetUpInfoPage.dart';
@@ -74,18 +75,20 @@ class _selectIdentityState extends State<selectIdentity> {
               context,
               MaterialPageRoute(
                  builder: (context) =>  setUpInfoPage()));
-//                  ConnectingDevicesPage(
-//                      title: "Available Devices", storage: NameStorage())));
           break;
         case 'manager':
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => managerSetUpInfo()));
-//                      ConnectingDevicesPage(
-//                      title: "Available Devices", storage: NameStorage())));
           break;
-      }
+        case 'director':
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => directorSetUpInfo()));
+          break;
+        }
     }
   }
   @override
@@ -96,16 +99,16 @@ class _selectIdentityState extends State<selectIdentity> {
         DropdownButton<String>(
           items: [
             DropdownMenuItem<String>(
-              child: Text('SRO Resident'),
+              child: Text('Resident'),
               value: 'resident',
             ),
             DropdownMenuItem<String>(
-              child: Text('SRO Manager'),
+              child: Text('Manager'),
               value: 'manager',
             ),
             DropdownMenuItem<String>(
-              child: Text('Hospital'),
-              value: 'hospital',
+              child: Text('Director'),
+              value: 'director',
             ),
           ],
           onChanged: (String value) {
@@ -143,13 +146,13 @@ class _selectIdentityState extends State<selectIdentity> {
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page
                   break;
-//                case 'hospital':
-//                  addStringToSF('id', 'director');
-//                  Navigator.push(
-//                      context,
-//                      MaterialPageRoute(
-//                          builder: (context) => ));
-//                  break;
+                case 'hospital':
+                  addStringToSF('id', 'director');
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => directorSetUpInfo()));
+                  break;
               }
             }
           },
