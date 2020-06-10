@@ -34,6 +34,7 @@ class UnitsGridState extends State<UnitsGrid> {
   //Sets up firebase
   void _init() {
     _units = widget.units;
+    print(_units.path);
   }
 
   @override

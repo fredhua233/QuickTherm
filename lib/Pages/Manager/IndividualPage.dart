@@ -338,9 +338,6 @@ class IndividualPageState extends State<IndividualPage> {
     } else {
       _utils.errDialog("Unable to get data", "Incorrect path", context);
     }
-    setState(() {
-      _line = _getData(_displayMode);
-    });
     return _userInfoSS.data;
   }
 
@@ -353,7 +350,8 @@ class IndividualPageState extends State<IndividualPage> {
           } else {
             return buildProfPage();
           }
-        });
+        }
+        );
   }
 
   Widget buildProfPage() {
@@ -432,7 +430,7 @@ class IndividualPageState extends State<IndividualPage> {
                                       'Potentially sick or recovering, Medical attention suggested')
                                 ])
                               : Column(
-                                  children: [Text('Healthy, Saty safe!')])),
+                                  children: [Text('Healthy, Stay safe!')])),
                   _tag(_primaryTag())
                 ],
               ),
@@ -601,22 +599,6 @@ class IndividualPageState extends State<IndividualPage> {
                       width: 350,
                       height: 400,
                       child: _graph())),
-//              Row(
-//                children: [
-//                  Text('Other people that are in this unit:'),
-//                  Spacer()
-//                ],
-//              ),
-//              SizedBox(height:10),
-//              GridView.builder(
-//                itemCount: snapshot.data.documents.length,
-//                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                    crossAxisCount: 2),
-//                itemBuilder: (BuildContext context, int index) {
-//                  return _buildIndCell(context, snapshot.data.documents[index]);
-//                },
-//              )
-
             ],
           ),
           ),
@@ -634,3 +616,4 @@ class IndividualPageState extends State<IndividualPage> {
     );
   }
 }
+
