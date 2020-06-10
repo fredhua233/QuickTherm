@@ -187,8 +187,10 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                               form.save();
                               _managerInfo['Num of Res'] = 0;
                               UserInfo.path = "/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}/Units";
+                              SharedPreferences pref = await SharedPreferences.getInstance();
                               Firestore.instance.document("/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}").setData(_managerInfo);
-//                              UserInfo().save();
+                              pref.setString("path", UserInfo.path);
+                              //                              UserInfo().save();
                               Navigator.pushReplacement(context, MaterialPageRoute(
                                   builder: (context) => UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}/Units"))));
                             }
