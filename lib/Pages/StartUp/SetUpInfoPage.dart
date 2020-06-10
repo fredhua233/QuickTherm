@@ -23,7 +23,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   bool _selectedAM = false;
   bool _selectedPM = false;
   bool _selectedNOON = false;
-//  bool _sameAddress = false;
+//  Map<String, dynamic> info;
   TimeOfDay _remindAM, _remindNOON, _remindPM;
   TimeOfDay _time = TimeOfDay.now();
 

@@ -58,19 +58,11 @@ class UserInfo {
   DocumentReference get log => _userInfoCF;
   Firestore get fireStore => _firestore;
 
-//  dummyField() async {
-//    String temp = '/Organizations/$organization';
-//    await _firestore.document(temp).setData({'name' : organization});
-//    temp += '/Managers/$managerName';
-//    await _firestore.document(temp).setData({'name' : managerName});
-//    temp += '/Units/$unitName';
-//    await _firestore.document(temp).setData({'name' : unitName});
-//    print('dummy added');
-//deleted because individuals will set up last
 
   individualSave() async {
 
     path = '/Organizations/$organization/Managers/$managerName/Units/$unitName/Individuals/$name';
+    managerPath = '/Organizations/$organization/Managers/$managerName';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', path);
     _managerInfoCF = _firestore.document(managerPath);

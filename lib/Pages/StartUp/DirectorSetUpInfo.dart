@@ -79,7 +79,7 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
                             if (form.validate()) {
                               form.save();
                               _user.directorSave(_directorInfo);
-                              Navigator.push(context, MaterialPageRoute(
+                              Navigator.pushReplacement(context, MaterialPageRoute(
                                   builder: (context) => Director(managers: UserInfo().fireStore.collection("/Organizations/${_directorInfo['Organization']}/Managers"),)));
                             }
                           },
