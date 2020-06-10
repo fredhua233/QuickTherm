@@ -27,6 +27,7 @@ class BLETherometer extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'BLE Thermometer',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
