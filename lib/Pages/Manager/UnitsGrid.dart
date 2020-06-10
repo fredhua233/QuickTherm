@@ -355,10 +355,12 @@ class UnitsGridState extends State<UnitsGrid> {
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2),
         itemBuilder: (context, index) {
+          print(ppl[index].runtimeType);
           return _buildIndCell(context, ppl[index]);
         }
     );
   }
+
   Widget _buildIndCell(BuildContext context, DocumentSnapshot data) {
     Map<String, dynamic> info = data.data;
     Map<String, dynamic> temps = info["Temperature"];
@@ -375,7 +377,7 @@ class UnitsGridState extends State<UnitsGrid> {
     }
     String name = info["Name"];
     String age = info.containsKey("Date of Birth") ? (DateTime.now().difference(DateTime.parse(info["Date of Birth"])).inDays/365).floor().toString() : "";
-    String unitName = info["Unit Number"];
+    String unitName = info["Unit Name"];
     String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + unitName;
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);

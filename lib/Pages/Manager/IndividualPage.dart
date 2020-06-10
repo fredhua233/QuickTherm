@@ -508,7 +508,7 @@ class IndividualPageState extends State<IndividualPage> {
                   Icon(Icons.calendar_today),
                   Text('Date of birth: '),
                   Spacer(),
-                  Text(_userInfo['Date of Birth'])
+                  Text((_userInfo['Date of Birth'] as String).substring(0,10))
                 ],
               ),
               SizedBox(height: 10),
@@ -552,7 +552,7 @@ class IndividualPageState extends State<IndividualPage> {
                   DropdownButton<String>(
                     value: dropdownValue,
                     icon: Icon(Icons.arrow_downward),
-                    iconSize: 24,
+                    iconSize: 14,
                     elevation: 16,
                     style: cup.TextStyle(color: Colors.black),
                     onChanged: (String newValue) {

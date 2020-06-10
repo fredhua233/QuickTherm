@@ -42,10 +42,10 @@ class UserInfo {
     String unitMates = "";
     _userInfoCF = _firestore.document(path);
     var directories = path.split("/");
-    for (var folder in directories.sublist(0, directories.length - 2)) {
+    for (var folder in directories.sublist(1, directories.length - 2)) {
       unitPath += "/$folder";
     }
-    unitMates = unitPath.substring(1) + "/Individuals";
+    unitMates = unitPath + "/Individuals";
     _unitInfo = _firestore.document(unitPath);
     _unitmates = _firestore.collection(unitMates);
 //    _userInfoCF = _firestore.document("/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony");
@@ -70,7 +70,7 @@ class UserInfo {
 
   save() async {
     dummyField();
-    path = '/Organizations/$organization/Manager/$managerName/Units/$unitName/Individuals/$name';
+    path = '/Organizations/$organization/Managers/$managerName/Units/$unitName/Individuals/$name';
     _managerPath = '/Organizations/$organization/Managers/$managerName';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', path);
