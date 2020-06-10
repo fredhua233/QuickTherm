@@ -103,7 +103,7 @@ class UserInfo {
     });
   }
   managerSave(Map<String, dynamic> managerMap) async {
-    path = '/Organizations/${managerMap['Organization']}/Managers/${managerMap['Name']}';
+    managerPath = '/Organizations/${managerMap['Organization']}/Managers/${managerMap['Name']}';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', managerPath);
     _managerInfoCF = _firestore.document(managerPath);

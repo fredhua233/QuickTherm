@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import '../../Utils/UserInfo.dart';
+import '../Director/Director.dart';
 import '../ConnectingDevicesPage.dart';
 import 'ChooseIdentityPage.dart';
 import 'package:quicktherm/Utils/Utils.dart'; //
@@ -79,7 +80,7 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
                               form.save();
                               _user.directorSave(_directorInfo);
                               Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => LoadingPage()));
+                                  builder: (context) => Director(managers: UserInfo().fireStore.collection("/Organizations/${_directorInfo['Organization']}/Managers"),)));
                             }
                           },
                           child: Text('Save'),

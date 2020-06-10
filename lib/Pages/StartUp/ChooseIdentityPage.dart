@@ -4,6 +4,7 @@ import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'SetUpInfoPage.dart';
 import 'ManagerSetUpInfo.dart';
+import 'DirectorSetUpInfo.dart';
 import '../ConnectingDevicesPage.dart';
 import 'package:quicktherm/Pages/Director/Director.dart';
 
@@ -146,7 +147,7 @@ class _selectIdentityState extends State<selectIdentity> {
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                   //go to profile page TODO: finish profile page
                   break;
-                case 'hospital':
+                case 'director':
                   addStringToSF('id', 'director');
                   Navigator.pushReplacement(
                       context,

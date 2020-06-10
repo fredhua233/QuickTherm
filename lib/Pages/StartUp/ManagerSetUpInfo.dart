@@ -62,6 +62,19 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                             },
                             onSaved: (val) => setState(() => _managerInfo['Contacts'] = val)
                         ),
+                        TextFormField(
+                            decoration: InputDecoration(
+                                hintText: 'Ex. CCDC',
+                                labelText: 'Your Organization'
+                            ),
+                            validator: (value){
+                              if(value.isEmpty){
+                                return 'Please enter your organization name';
+                              }
+                              return null;
+                            },
+                            onSaved: (val) => setState(() => _managerInfo['Organization'] = val)
+                        ),
                       ///FIXME: add functionality for one or more building address
                         TextFormField(
                             decoration: InputDecoration(
@@ -127,19 +140,6 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                               ),
                             )
                           ],
-                        ),
-                        TextFormField(
-                            decoration: InputDecoration(
-                                hintText: 'Ex. CCDC',
-                                labelText: 'Your Organization'
-                            ),
-                            validator: (value){
-                              if(value.isEmpty){
-                                return 'Please enter your organization name';
-                              }
-                              return null;
-                            },
-                            onSaved: (val) => setState(() => _managerInfo['Organization'] = val)
                         ),
                         RaisedButton(
                           onPressed: () async {

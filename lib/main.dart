@@ -36,7 +36,7 @@ class BLETherometer extends StatelessWidget {
 //        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units"))
 //      home: Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"))
 //        home: HelpPage(),
-        home: ChooseIdentityPage(),
+        home: Initialize(),
 //    home: setUpInfoPage(),
 //        home: ProfilePage(),
 //        home: IndividualPage(UserInfo.defined().log, UserInfo.defined().unit)
