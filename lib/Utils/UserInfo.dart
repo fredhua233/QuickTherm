@@ -17,6 +17,7 @@ class UserInfo {
                 healthMsg,
                 lastMeasured,
                 path,
+                unitPath,
                 managerPath,
                 directorPath;
   static int age, currentNumRes;
@@ -60,13 +61,14 @@ class UserInfo {
 
 
   individualSave() async {
-
     path = '/Organizations/$organization/Managers/$managerName/Units/$unitName/Individuals/$name';
+    unitPath = '/Organizations/$organization/Managers/$managerName/Units/$unitName';
     managerPath = '/Organizations/$organization/Managers/$managerName';
     pref = await SharedPreferences.getInstance();
     pref.setString('path', path);
     _managerInfoCF = _firestore.document(managerPath);
     _userInfoCF = _firestore.document(path);
+    _unitInfo = _firestore.document(unitPath);
 //    DocumentSnapshot current = await _managerInfoCF.get();
 //    currentNumRes = current.data['Num of Res'];
     print('Happening');
@@ -89,6 +91,10 @@ class UserInfo {
     };
     _userProfile['Prior Medical Condition'] =
     priorHealth ? healthHistory : priorHealth;
+    await _unitInfo.setData({
+      'Name' : '$unitName',
+      'Unit Status' : 'N/A'
+    });
     await _userInfoCF.setData(_userProfile);
     _managerInfoCF.updateData({
       "Num of Res" : FieldValue.increment(1)
