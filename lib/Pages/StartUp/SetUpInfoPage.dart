@@ -374,7 +374,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                                 selectTime(context, 1);
                               }
                             ),
-                             _selectedAM ? Text('${_remindAM.toString()}'.substring(10, 15), style: TextStyle(fontSize: 20)) : SizedBox()
+                            Spacer(),
+                            _selectedAM ? Text('${_remindAM.toString()}'.substring(10, 15), style: TextStyle(fontSize: 20)) : SizedBox()
                           ]
                       ),
                       Row(
@@ -384,6 +385,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               icon: Icon(Icons.alarm),
                               onPressed: () => selectTime(context, 2),
                             ),
+                            Spacer(),
                             _selectedNOON ? Text('${_remindNOON.toString()}'.substring(10, 15), style: TextStyle(fontSize: 20)) : SizedBox()
                           ]
                       ),
@@ -394,6 +396,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               icon: Icon(Icons.alarm),
                               onPressed: () => selectTime(context, 3),
                             ),
+                            Spacer(),
                             _selectedPM ? Text('${_remindPM.toString()}'.substring(10, 15), style: TextStyle(fontSize: 20)) : SizedBox()
                           ]
                       ),
@@ -444,7 +447,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             _user.individualSave();
                             _showDailyAtTime();
 //                            SharedPreferences _pref = await SharedPreferences.getInstance();
-                            Navigator.push(context, MaterialPageRoute(
+                            Navigator.pushReplacement(context, MaterialPageRoute(
                                 builder: (context) => ConnectingDevicesPage(
                                     title: "Available Devices",
                                     storage: NameStorage(),
