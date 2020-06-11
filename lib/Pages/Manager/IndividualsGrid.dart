@@ -55,7 +55,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
     Map<String, dynamic> temps = info["Temperature"];
     List<String> date = temps.keys.toList();
     date.sort((a, b) => a.compareTo(b));
-    String lastTemp = temps[date.last].toString();
+    String lastTemp = temps == null || date.length == 0? 'N/A' : temps[date.last].toString();
     Icon trend = Icon(Icons.sentiment_satisfied, color:  Colors.green);
     if (lastTemp.length > 5) {
       lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +

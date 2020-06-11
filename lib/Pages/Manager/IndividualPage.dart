@@ -345,7 +345,7 @@ class IndividualPageState extends State<IndividualPage> {
     return FutureBuilder<Map<String, dynamic>>(
         future: getUserData(),
         builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-          if (!snapshot.hasData && snapshot.data['Temperature'].isEmpty) {
+          if (!snapshot.hasData || snapshot.data['Temperature'].isEmpty) {
             return LoadingPage();
           } else {
             return buildProfPage();
