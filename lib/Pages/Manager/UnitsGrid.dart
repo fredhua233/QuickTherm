@@ -403,7 +403,7 @@ class UnitsGridState extends State<UnitsGrid> {
     String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + unitName;
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
-    if (temps != null && date.length != 0) {
+    if (temps != null && date.length > 2) {
       if (ptag == Colors.black) {
         if (stag == Colors.red &&
             temps[date.last] > temps[date[date.length - 2]]) {

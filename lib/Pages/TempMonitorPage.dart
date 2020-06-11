@@ -99,7 +99,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           ? _pref.getString("LastMeasTime").substring(0, 19)
           : "";
     }
-    hmsg = _data.containsKey("Health Msg") ? _data["Health Msg"] : "";
+    hmsg = _data.containsKey("Health Message") ? _data["Health Message"] : "";
     ptag = _data.containsKey("Primary Tag") ? _data["Primary Tag"] : "";
     stag = _data.containsKey("Secondary Tag") ? _data["Secondary Tag"] : "";
     setState(() {
@@ -450,36 +450,36 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       "Temperature": temps,
       "Primary Tag": _primaryTag.toString(),
       "Secondary Tag": _secondaryTag.toString(),
-      "Health Msg": _healthMsg,
+      "Health Message": _healthMsg,
       "Last Measured" : ltime
     });
     _updateUnitStatus();
     return true;
   }
 
-  _pushDataMap(Map<String, dynamic> tempMap) async {
-    var ltime = _pref.getString("LastMeasTime");
-    if (!_data.containsKey("Primary Tag") &&
-        !_data.containsKey("Secondary Tag") &&
-        !_data.containsKey("Health Msg")) {
-      _data.addAll({
-        "Primary Tag": _primaryTag.toString(),
-        "Secondary Tag": _secondaryTag.toString(),
-        "Health Msg": _healthMsg,
-        "Last Measured Time" : ltime
-      });
-    }
-    Map<String, dynamic> temps = _data["Temperature"];
-    temps.addAll(tempMap);
-    await _log.updateData({
-      "Temperature": temps,
-      "Primary Tag": _primaryTag.toString(),
-      "Secondary Tag": _secondaryTag.toString(),
-      "Health Msg": _healthMsg,
-      "Last Measured Time" : ltime
-    });
-    _updateUnitStatus();
-  }
+//  _pushDataMap(Map<String, dynamic> tempMap) async {
+//    var ltime = _pref.getString("LastMeasTime");
+//    if (!_data.containsKey("Primary Tag") &&
+//        !_data.containsKey("Secondary Tag") &&
+//        !_data.containsKey("Health Msg")) {
+//      _data.addAll({
+//        "Primary Tag": _primaryTag.toString(),
+//        "Secondary Tag": _secondaryTag.toString(),
+//        "Health Msg": _healthMsg,
+//        "Last Measured Time" : ltime
+//      });
+//    }
+//    Map<String, dynamic> temps = _data["Temperature"];
+//    temps.addAll(tempMap);
+//    await _log.updateData({
+//      "Temperature": temps,
+//      "Primary Tag": _primaryTag.toString(),
+//      "Secondary Tag": _secondaryTag.toString(),
+//      "Health Msg": _healthMsg,
+//      "Last Measured Time" : ltime
+//    });
+//    _updateUnitStatus();
+//  }
 
   //Updates unit status base on the health status of people living in the same unit as the individual
   _updateUnitStatus() async {

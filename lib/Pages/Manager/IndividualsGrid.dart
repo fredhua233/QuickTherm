@@ -73,7 +73,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
     String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + widget.unitName;
-    if (temps != null && date.length != 0) {
+    if (temps != null && date.length > 2) {
       if (ptag == Colors.black) {
         if (stag == Colors.red && temps[date.last] > temps[date[date.length - 2]]) {
           trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);

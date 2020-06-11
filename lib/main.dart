@@ -72,7 +72,7 @@ class InitializeState extends State<Initialize> {
       _path = pref.getString("path") ?? "";
       PATH = _path;
 //      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
-//      UserInfo.path = _path;
+      UserInfo.path = _path;
   }
 
   @override
