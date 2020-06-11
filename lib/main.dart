@@ -19,6 +19,7 @@ import 'Pages/HistoryPage.dart';
 
 void main() => runApp(BLETherometer());
 
+String PATH;
 //TODO：If the user already set up info, move choose devices, which moves to temperature else move to choose identity page
 //Clean Data base aka only keep recent 2 weeks
 class BLETherometer extends StatelessWidget {
@@ -69,6 +70,7 @@ class InitializeState extends State<Initialize> {
       _identity = pref.getString('id') ?? "";
 //    _identity = "";
       _path = pref.getString("path") ?? "";
+      PATH = _path;
 //      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
 //      UserInfo.path = _path;
   }

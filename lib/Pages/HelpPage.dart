@@ -382,6 +382,21 @@ class HelpPageState extends State<HelpPage> {
                 ],
               ),
             ),
+            Card(
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: Icon(Icons.refresh, size: 40),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    child: Text("Pull down page to refresh data. Please remember to do so before viewing a specific individual.", style: TextStyle(color: Colors.black54)),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       )

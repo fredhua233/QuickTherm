@@ -110,9 +110,7 @@ class UnitsGridState extends State<UnitsGrid> {
                 )),
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: Hero(
-                    tag: "views",
-                    child: PopupMenuButton<String>(
+                child: PopupMenuButton<String>(
                       onSelected: (value) async {
                         switch (value) {
                           case "All":
@@ -161,7 +159,7 @@ class UnitsGridState extends State<UnitsGrid> {
                       ],
                       icon: Icon(Icons.remove_red_eye),
                     )
-                )),
+                ),
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
@@ -188,14 +186,26 @@ class UnitsGridState extends State<UnitsGrid> {
         ),
         body: TabBarView(
           children: [
-            _viewController(context, _mode, name: _name),
-            _viewControllerInd(context, _mode, name: _name)
+            RefreshIndicator(
+              child: _viewController(context, _mode, name: _name),
+              onRefresh: refresh,
+            ),
+            RefreshIndicator(
+              child: _viewControllerInd(context, _mode, name: _name),
+              onRefresh: refresh,
+            )
           ]
         ),
       )
     );
   }
 
+  Future<String> refresh() async {
+    setState(() {
+      _mode = _mode;
+    });
+    return 'finished';
+  }
   // Below is the functions for displaying unit view
 
   //Controlling view base on _mode
@@ -276,43 +286,54 @@ class UnitsGridState extends State<UnitsGrid> {
   }
 
   Widget _viewControllerInd(BuildContext context, _ModeUnits m, {String name}) {
-    if (m == _ModeUnits.selfDefined) {
-      return FutureBuilder(
-        future: _individualView(context, m, name: _name),
-        builder: (context, snap) {
-          if (snap.hasData) {
-            if (snap.connectionState == ConnectionState.waiting) {
+//    if (m == _ModeUnits.selfDefined) {
+//      return FutureBuilder(
+//        future: _individualView(context, m, name: _name),
+//        builder: (context, snap) {
+//          if (snap.hasData) {
+//            if (snap.connectionState == ConnectionState.waiting) {
+//              return LoadingPage();
+//            }
+//            return snap.data;
+//          }
+//          return LoadingPage();
+//        },
+//      );
+//    } else {
+          Stream<QuerySnapshot> units = m == _ModeUnits.all?  _units.snapshots() :
+    m == _ModeUnits.healthy ? _units.where("Unit Status", isEqualTo: "healthy").snapshots():
+    m == _ModeUnits.ill ? _units.where("Unit Status", isEqualTo: "ill").snapshots() :
+    m == _ModeUnits.potential ? _units.where("Unit Status", isEqualTo: "potentially ill").snapshots() :
+    _units.snapshots();
+      return StreamBuilder<QuerySnapshot> (
+        stream: units,
+        builder: (context, unit) {
+          if (!unit.hasData) return LoadingPage();
+          return FutureBuilder(
+            future: _individualView(context, m, unit.data, name: _name),
+            builder: (context, snap) {
+              if (snap.hasData) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return LoadingPage();
+                }
+                return snap.data;
+              }
               return LoadingPage();
-            }
-            return snap.data;
-          }
-          return LoadingPage();
+            },
+          );
         },
       );
-    } else {
-      return FutureBuilder(
-        future: _individualView(context, m, name: _name),
-        builder: (context, snap) {
-          if (snap.hasData) {
-            if (snap.connectionState == ConnectionState.waiting) {
-              return LoadingPage();
-            }
-            return snap.data;
-          }
-          return LoadingPage();
-        },
-      );
-    }
 
   }
 
   //Below is the code for showing this grid view of individuals
-  Future<Widget> _individualView(BuildContext context, _ModeUnits m, {String name}) async {
-    QuerySnapshot units = m == _ModeUnits.all? await _units.getDocuments() :
-    m == _ModeUnits.healthy ? await _units.where("Unit Status", isEqualTo: "healthy").getDocuments():
-    m == _ModeUnits.ill ? await _units.where("Unit Status", isEqualTo: "ill").getDocuments() :
-    m == _ModeUnits.potential ? await _units.where("Unit Status", isEqualTo: "potentially ill").getDocuments() :
-    await _units.getDocuments();
+  Future<Widget> _individualView(BuildContext context, _ModeUnits m, QuerySnapshot units, {String name}) async {
+//    Stream<QuerySnapshot units = m == _ModeUnits.all? await _units.getDocuments() :
+//    m == _ModeUnits.healthy ? await _units.where("Unit Status", isEqualTo: "healthy").getDocuments():
+//    m == _ModeUnits.ill ? await _units.where("Unit Status", isEqualTo: "ill").getDocuments() :
+//    m == _ModeUnits.potential ? await _units.where("Unit Status", isEqualTo: "potentially ill").getDocuments() :
+//    await _units.getDocuments();
+
     List<DocumentSnapshot> ppl = [];
     for (var unit in units.documents) {
       QuerySnapshot inds;
@@ -382,12 +403,16 @@ class UnitsGridState extends State<UnitsGrid> {
     String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + unitName;
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
-    if (ptag == Colors.black) {
-      if (stag == Colors.red && temps[date.last] > temps[date[date.length - 2]]) {
-        trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
-      }
-      if (stag == Colors.blue && temps[date.last] < temps[date[date.length - 2]]) {
-        trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+    if (temps != null && date.length != 0) {
+      if (ptag == Colors.black) {
+        if (stag == Colors.red &&
+            temps[date.last] > temps[date[date.length - 2]]) {
+          trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+        }
+        if (stag == Colors.blue &&
+            temps[date.last] < temps[date[date.length - 2]]) {
+          trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+        }
       }
     }
     return GestureDetector(

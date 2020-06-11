@@ -387,11 +387,12 @@ class IndividualPageState extends State<IndividualPage> {
                                 .substring(0, 10),
                             style: cup.TextStyle(fontSize: 20)),
                         Text(
-                            (_userInfo['Temperature']
-                                        [_userInfo['Last Measured']]
+                            (_userInfo['Temperature'][_userInfo['Last Measured']].toString().length >= 5 ? _userInfo['Temperature'][_userInfo['Last Measured']]
                                     .toString()
                                     .substring(0, 5) +
                                 String.fromCharCode(0x00B0) +
+                                'C' : _userInfo['Temperature'][_userInfo['Last Measured']].toString() +
+                            String.fromCharCode(0x00B0) +
                                 'C'),
                             style: _userInfo['Temperature']
                                         [_userInfo['Last Measured']] <
@@ -611,6 +612,10 @@ class IndividualPageState extends State<IndividualPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("My Profile"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: profileView(context),
     );

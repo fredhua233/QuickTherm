@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
+import 'package:quicktherm/Utils/UserInfo.dart';
+import 'package:quicktherm/main.dart';
+
+import 'UnitsGrid.dart';
 
 class IndividualsGrid extends StatefulWidget {
   IndividualsGrid(
@@ -55,7 +59,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
     Map<String, dynamic> temps = info["Temperature"];
     List<String> date = temps.keys.toList();
     date.sort((a, b) => a.compareTo(b));
-    String lastTemp = temps == null || date.length == 0? 'N/A' : temps[date.last].toString();
+    String lastTemp = temps == null || date.length == 0 ? 'N/A' : temps[date.last].toString();
     Icon trend = Icon(Icons.sentiment_satisfied, color:  Colors.green);
     if (lastTemp.length > 5) {
       lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +
@@ -69,15 +73,16 @@ class IndividualsGridState extends State<IndividualsGrid> {
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
     String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + widget.unitName;
-    if (ptag == Colors.black) {
-      if (stag == Colors.red && temps[date.last] > temps[date[date.length - 2]]) {
-        trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
-      }
-      if (stag == Colors.blue && temps[date.last] < temps[date[date.length - 2]]) {
-        trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+    if (temps != null && date.length != 0) {
+      if (ptag == Colors.black) {
+        if (stag == Colors.red && temps[date.last] > temps[date[date.length - 2]]) {
+          trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+        }
+        if (stag == Colors.blue && temps[date.last] < temps[date[date.length - 2]]) {
+          trend = Icon(Icons.sentiment_dissatisfied, color: Colors.red);
+        }
       }
     }
-
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => IndividualPage(data.reference, Firestore.instance.document(unitPath))));
