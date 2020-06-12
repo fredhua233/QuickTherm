@@ -89,6 +89,7 @@ class ProfilePageState extends State<ProfilePage> {
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(20),
+            child: Align(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
@@ -236,7 +237,7 @@ class ProfilePageState extends State<ProfilePage> {
                   ),
                   enabled: false,
                 ),
-///FiXME: the _userInfo['Sex'} jsut does not change, tried radio list tiles and raisedbutton, even disabled saving current state of the form, using textformfield for now
+///FiXME: the _userInfo['Sex'} just does not change, tried radio list tiles and raisedbutton, even disabled saving current state of the form, using textformfield for now
 //                Row(
 //                  children: [
 //                    Expanded(
@@ -375,6 +376,7 @@ class ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

@@ -410,12 +410,12 @@ class IndividualPageState extends State<IndividualPage> {
                 ],
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text('Health Message: '),
-                  Text(_userInfo['Health Message'])
-                ],
+              TextFormField(
+                initialValue: _userInfo['Health Message'],
+                decoration: InputDecoration(
+                  labelText: 'Your current predicted condition',
+                ),
+                enabled: false,
               ),
               SizedBox(height: 20),
               Row(
