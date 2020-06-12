@@ -316,10 +316,6 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                               hintText: 'Ex. 100',
                               labelText: "Room Number"
                           ),
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: <TextInputFormatter>[
-                            WhitelistingTextInputFormatter.digitsOnly
-                          ],
                           validator: (value){
                             if(value.isEmpty){
                               return "Please enter your room number";
@@ -421,7 +417,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                             onChanged: (Illness value) {
                               setState(() {
                                 _condition = value;
-                                UserInfo.primaryTag = Colors.white.toString(); // initialize firestore
+                                UserInfo.primaryTag = value == Illness.severe ? Colors.black.toString() : value == Illness.potential ? Colors.black45.toString() : Colors.white.toString(); // initialize firestore
                                 UserInfo.secondaryTag = Colors.green.toString(); // initialize firestore
                                 UserInfo.healthMsg = 'N/A'; // initialize firestore
                                 UserInfo.lastMeasured = 'N/A';

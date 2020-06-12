@@ -110,11 +110,11 @@ class ProfilePageState extends State<ProfilePage> {
                         children: [
                           Text('Last Measured: ', style: TextStyle(fontSize: 20)),
                           SizedBox(height: 10),
-                          Text(_userInfo['Last Measured'].toString().substring(0, 10), style: TextStyle(fontSize: 20) ),
-                          Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString().substring(0,5) + String.fromCharCode(0x00B0) + 'C' ),
+                          _userInfo['Last Measured'] != null ? Text(_userInfo['Last Measured'].toString().substring(0, 10), style: TextStyle(fontSize: 20)) : Text('N/A', style: TextStyle(fontSize: 20)),
+                          _userInfo['Last Measured'] != null ? Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString().substring(0,5) + String.fromCharCode(0x00B0) + 'C' ),
                               style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
                               _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
-                              TextStyle(fontSize: 40, color: Colors.green)),
+                              TextStyle(fontSize: 40, color: Colors.green)) :  Text('N/A', style: TextStyle(fontSize: 40)),
                         ],
                       ),
                     )
@@ -153,8 +153,7 @@ class ProfilePageState extends State<ProfilePage> {
                         _userInfo['Secondary Tag'].substring(29, 46) == 'Color(0xff2196f3)' ? Column(children: [Text('Low Temperature, Potentially hypothermia')]) :
                         Column(children: [Text('Normal Temperature, Keep it up!')])
                     ),
-                    _tag(_secondaryTag(_userInfo['Temperature'][_userInfo['Last Measured']].toString())),
-
+                    _userInfo['Temperature'][_userInfo['Last Measured']] != null ? _tag(_secondaryTag(_userInfo['Temperature'][_userInfo['Last Measured']].toString())) : Text('N/A')
                   ],
                 ),
                 SizedBox(height: 20),
