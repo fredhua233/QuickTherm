@@ -167,13 +167,13 @@ class _selectIdentityState extends State<selectIdentity> {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(5),
                     child: Text('Director:', style: TextStyle(color: Colors.black)),
                   ),
                   Spacer(),
                   Container(
                     padding: EdgeInsets.all(5),
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     child: Text("Only choose this if you are the organizer of an SRO, hospital, or care center. This identity is strictly for identities who oversees manmagers.", style: TextStyle(color: Colors.black54),),
                   )
                 ],
@@ -184,14 +184,15 @@ class _selectIdentityState extends State<selectIdentity> {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(5),
                     child: Text('Manager: ', style: TextStyle(color: Colors.black)),
                   ),
                   Spacer(),
                   Container(
                     padding: EdgeInsets.all(5),
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("Only choose this if you are the manager of an SRO, hospital, or care center. This identity is strictly for identities who manage the tenants or patients", style: TextStyle(color: Colors.black54),),
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child:
+                    Text("Only choose this if you are the manager of an SRO, hospital, or care center. This identity is strictly for identities who manage the tenants or patients", style: TextStyle(color: Colors.black54),),
                   )
                 ],
               ),
@@ -201,13 +202,13 @@ class _selectIdentityState extends State<selectIdentity> {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(5),
                     child: Text('Resident: ', style: TextStyle(color: Colors.black)),
                   ),
                   Spacer(),
                   Container(
                     padding: EdgeInsets.all(5),
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    width: MediaQuery.of(context).size.width * 0.7,
                     child: Text('Only choose this if you are a tenant of an SRO or a patient at a care center or a hospital.', style: TextStyle(color: Colors.black54),),
                   )
                 ],

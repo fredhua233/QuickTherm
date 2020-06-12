@@ -110,11 +110,8 @@ class ProfilePageState extends State<ProfilePage> {
                         children: [
                           Text('Last Measured: ', style: TextStyle(fontSize: 20)),
                           SizedBox(height: 10),
-                          _userInfo['Last Measured'] != null ? Text(_userInfo['Last Measured'].toString().substring(0, 10), style: TextStyle(fontSize: 20)) : Text('N/A', style: TextStyle(fontSize: 20)),
-                          _userInfo['Last Measured'] != null ? Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString().substring(0,5) + String.fromCharCode(0x00B0) + 'C' ),
-                              style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
-                              _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
-                              TextStyle(fontSize: 40, color: Colors.green)) :  Text('N/A', style: TextStyle(fontSize: 40)),
+                          _userInfo['Last Measured'] != 'N/A'  ? Text(_userInfo['Last Measured'].toString().substring(0, 10), style: TextStyle(fontSize: 20)) : Text('N/A', style: TextStyle(fontSize: 20)),
+                          _displayTemp()
                         ],
                       ),
                     )
@@ -289,7 +286,7 @@ class ProfilePageState extends State<ProfilePage> {
                     },
                     onSaved: (val) => setState((){
                       _arrAddress[0] = val;
-                      _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2] + ', ' + _arrAddress[3];
+                      _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2];
                     })
                 ),
                 TextFormField(
@@ -307,14 +304,14 @@ class ProfilePageState extends State<ProfilePage> {
                     },
                     onSaved: (val) => setState((){
                       _arrAddress[1] = val;
-                      _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2] + ', ' + _arrAddress[3];
+                      _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2];
                     })
                 ),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
-                          initialValue: _arrAddress[2],
+                          initialValue: (_arrAddress[2] as String).substring(0,2),
                           decoration: InputDecoration(
                               hintText: 'Ex. CA',
                               labelText: 'State'
@@ -328,13 +325,13 @@ class ProfilePageState extends State<ProfilePage> {
                           },
                           onSaved: (val) => setState(() {
                             _arrAddress[2] = val;
-                            _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2] + ', ' + _arrAddress[3];
+                            _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2];
                           })
                       ),
                     ),
                     Expanded(
                       child: TextFormField(
-                          initialValue: _arrAddress[3],
+                          initialValue: (_arrAddress[2] as String).substring(3),
                           decoration: InputDecoration(
                               hintText: 'Ex. 94105',
                               labelText: 'Zip code'
@@ -348,28 +345,30 @@ class ProfilePageState extends State<ProfilePage> {
                             return null;
                           },
                           onSaved: (val) => setState(() {
-                            _arrAddress[3] = val;
-                            _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2] + ', ' + _arrAddress[3];
+                            _arrAddress[2] += ' $val';
+                            _userInfo['Address'] = _arrAddress[0] + ', ' + _arrAddress[1] + ', ' + _arrAddress[2];
                           })
                       ),
                     ),
-                    TextFormField(
-                        initialValue: _userInfo['Manager Name'],
-                        decoration: InputDecoration(
-                            hintText: 'Ex. Jane Doe',
-                            labelText: "Manager's Name"
-                        ),
-                        enabled: _edit,
-                        validator: (value){
-                          if(value.isEmpty){
-                            return "Please enter your Manager's Name";
-                          }
-                          return null;
-                        },
-                        onSaved: (val) => setState((){
-                          _userInfo['Manager Name'] = val;
-                        })
-                    ),
+                    Expanded(
+                      child: TextFormField(
+                          initialValue: _userInfo['Manager Name'],
+                          decoration: InputDecoration(
+                              hintText: 'Ex. Jane Doe',
+                              labelText: "Manager's Name"
+                          ),
+                          enabled: _edit,
+                          validator: (value){
+                            if(value.isEmpty){
+                              return "Please enter your Manager's Name";
+                            }
+                            return null;
+                          },
+                          onSaved: (val) => setState((){
+                            _userInfo['Manager Name'] = val;
+                          })
+                      ),
+                    )
                   ],
                 ),
               ],
@@ -380,6 +379,23 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _displayTemp() {
+    if (_userInfo['Last Measured'] != 'N/A') {
+      if (_userInfo['Temperature'][_userInfo['Last Measured']].toString().length >= 5) {
+        return Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString().substring(0,5) + String.fromCharCode(0x00B0) + 'C' ),
+            style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
+            _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
+            TextStyle(fontSize: 40, color: Colors.green));
+      } else {
+        return Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString() + String.fromCharCode(0x00B0) + 'C' ),
+            style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
+            _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
+            TextStyle(fontSize: 40, color: Colors.green));
+      }
+    } else {
+      return Text('N/A', style: TextStyle(fontSize: 40));
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
