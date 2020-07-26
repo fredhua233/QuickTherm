@@ -28,7 +28,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
 //  Map<String, dynamic> info;
   TimeOfDay _remindAM, _remindNOON, _remindPM;
   TimeOfDay _time = TimeOfDay.now();
-  List<bool> isSelected = [false, false];
+  List<bool> isSelected = [true, false];
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override

@@ -46,22 +46,16 @@ class Utils {
 
   String compTemp(double temp) {
     if (UNITPREF == "C") {
-      return temp.toString() + String.fromCharCode(0x00B0) +
+      return ((temp  * 100).floor()/100).toString() + String.fromCharCode(0x00B0) +
           "C";
     } else {
-      double f = ((temp * 9)/5) + 32;
-      if (f.toString().length > 5) {
-        return f.toString().substring(0, 5) + String.fromCharCode(0x00B0) +
-            "F";
-      } else {
-        return f.toString() + String.fromCharCode(0x00B0) +
-            "F";
-      }
+      double f = ((((temp * 9) / 5) + 32) * 100).floor()/100;
+      return f.toString() + String.fromCharCode(0x00B0) + "F";
     }
   }
   double compNumTemp(double temp) {
     if (UNITPREF == "C") {
-      return temp;
+      return (temp * 100).floor()/100;
     } else {
       return ((((temp * 9) / 5) + 32) * 100).floor()/100;
     }

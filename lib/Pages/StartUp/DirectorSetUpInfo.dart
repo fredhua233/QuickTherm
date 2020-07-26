@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import '../../Utils/UserInfo.dart';
+import '../../main.dart';
 import '../Director/Director.dart';
 import '../ConnectingDevicesPage.dart';
 import 'ChooseIdentityPage.dart';
@@ -19,6 +21,7 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
   final _formKey = new GlobalKey<FormState>();
   UserInfo _user = new UserInfo();
   Map<String, dynamic> _directorInfo = new Map<String, dynamic>();
+  List<bool> isSelected = [true, false];
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +75,32 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
                               _directorInfo['Contacts'] = val;
                             })
                         ),
-                        ///FIXME: show time picked on screen for remind times
+                        ToggleButtons(
+                          children: <Widget>[
+                            Icon(MdiIcons.temperatureCelsius),
+                            Icon(MdiIcons.temperatureFahrenheit),
+                          ],
+                          onPressed: (int index) async {
+                            setState(() {
+                              for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                                if (buttonIndex == index) {
+                                  isSelected[buttonIndex] = true;
+                                } else {
+                                  isSelected[buttonIndex] = false;
+                                }
+                              }
+                            });
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            if (index == 0) {
+                              prefs.setString('Temp Unit', "C");
+                              UNITPREF = "C";
+                            } else {
+                              prefs.setString('Temp Unit', "F");
+                              UNITPREF = "F";
+                            }
+                          },
+                          isSelected: isSelected,
+                        ),
                         RaisedButton(
                           onPressed: () async {
                             final form = _formKey.currentState;

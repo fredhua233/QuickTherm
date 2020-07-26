@@ -2,11 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quicktherm/Utils/Utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../main.dart';
 
 class UnitsGrid extends StatefulWidget {
   UnitsGrid(
@@ -45,6 +50,25 @@ class UnitsGridState extends State<UnitsGrid> {
         appBar: AppBar(
           title: Text("Units"),
           actions: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: IconButton(
+                    icon: Icon(MdiIcons.thermometer),
+                    tooltip: "Change Unit",
+                    onPressed: () {
+                      SharedPreferences.getInstance().then((pref) {
+                        setState(() {
+                          if (UNITPREF == "C") {
+                            UNITPREF = "F";
+                          } else {
+                            UNITPREF = "C";
+                          }
+                          pref.setString("Temp Unit", UNITPREF);
+                        });
+                      });
+                    }
+                )
+            ),
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
@@ -286,21 +310,7 @@ class UnitsGridState extends State<UnitsGrid> {
   }
 
   Widget _viewControllerInd(BuildContext context, _ModeUnits m, {String name}) {
-//    if (m == _ModeUnits.selfDefined) {
-//      return FutureBuilder(
-//        future: _individualView(context, m, name: _name),
-//        builder: (context, snap) {
-//          if (snap.hasData) {
-//            if (snap.connectionState == ConnectionState.waiting) {
-//              return LoadingPage();
-//            }
-//            return snap.data;
-//          }
-//          return LoadingPage();
-//        },
-//      );
-//    } else {
-          Stream<QuerySnapshot> units = m == _ModeUnits.all?  _units.snapshots() :
+    Stream<QuerySnapshot> units = m == _ModeUnits.all?  _units.snapshots() :
     m == _ModeUnits.healthy ? _units.where("Unit Status", isEqualTo: "healthy").snapshots():
     m == _ModeUnits.ill ? _units.where("Unit Status", isEqualTo: "ill").snapshots() :
     m == _ModeUnits.potential ? _units.where("Unit Status", isEqualTo: "potentially ill").snapshots() :
@@ -328,12 +338,6 @@ class UnitsGridState extends State<UnitsGrid> {
 
   //Below is the code for showing this grid view of individuals
   Future<Widget> _individualView(BuildContext context, _ModeUnits m, QuerySnapshot units, {String name}) async {
-//    Stream<QuerySnapshot units = m == _ModeUnits.all? await _units.getDocuments() :
-//    m == _ModeUnits.healthy ? await _units.where("Unit Status", isEqualTo: "healthy").getDocuments():
-//    m == _ModeUnits.ill ? await _units.where("Unit Status", isEqualTo: "ill").getDocuments() :
-//    m == _ModeUnits.potential ? await _units.where("Unit Status", isEqualTo: "potentially ill").getDocuments() :
-//    await _units.getDocuments();
-
     List<DocumentSnapshot> ppl = [];
     for (var unit in units.documents) {
       QuerySnapshot inds;
@@ -388,21 +392,22 @@ class UnitsGridState extends State<UnitsGrid> {
     Map<String, dynamic> temps = info["Temperature"];
     List<String> date = temps.keys.toList();
     date.sort((a, b) => a.compareTo(b));
-    String lastTemp = temps == null || date.length == 0? 'N/A' : temps[date.last].toString();
+    String lastTemp = temps == null || date.length == 0? 'N/A' : Utils().compTemp(temps[date.last]);
     Icon trend = Icon(Icons.sentiment_satisfied, color:  Colors.green);
-    if (lastTemp.length > 5) {
-      lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +
-          "C";
-    } else {
-      lastTemp = lastTemp + String.fromCharCode(0x00B0) +
-          "C";
-    }
+//    if (lastTemp.length > 5) {
+//      lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +
+//          "C";
+//    } else {
+//      lastTemp = lastTemp + String.fromCharCode(0x00B0) +
+//          "C";
+//    }
     String name = info["Name"];
     String age = info.containsKey("Date of Birth") ? (DateTime.now().difference(DateTime.parse(info["Date of Birth"])).inDays/365).floor().toString() : "";
     String unitName = info["Unit Name"];
     String unitPath = "/Organization/" + info["Organization"] + "/Managers/" + info["Manager Name"] + "/Units/" + unitName;
     Color ptag = _getPColor(info["Primary Tag"]);
     Color stag = _getSColor(info["Secondary Tag"]);
+    // Get trend
     if (temps != null && date.length > 2) {
       if (ptag == Colors.black) {
         if (stag == Colors.red &&

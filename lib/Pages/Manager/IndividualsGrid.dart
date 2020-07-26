@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 import 'package:quicktherm/Utils/UserInfo.dart';
+import 'package:quicktherm/Utils/Utils.dart';
 import 'package:quicktherm/main.dart';
 
 import 'UnitsGrid.dart';
@@ -59,15 +60,15 @@ class IndividualsGridState extends State<IndividualsGrid> {
     Map<String, dynamic> temps = info["Temperature"];
     List<String> date = temps.keys.toList();
     date.sort((a, b) => a.compareTo(b));
-    String lastTemp = temps == null || date.length == 0 ? 'N/A' : temps[date.last].toString();
+    String lastTemp = temps == null || date.length == 0 ? 'N/A' : Utils().compTemp(temps[date.last]);
     Icon trend = Icon(Icons.sentiment_satisfied, color:  Colors.green);
-    if (lastTemp.length > 5) {
-      lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +
-          "C";
-    } else {
-      lastTemp = lastTemp + String.fromCharCode(0x00B0) +
-          "C";
-    }
+//    if (lastTemp.length > 5) {
+//      lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +
+//          "C";
+//    } else {
+//      lastTemp = lastTemp + String.fromCharCode(0x00B0) +
+//          "C";
+//    }
     String name = info["Name"];
     String age = info.containsKey("Date of Birth") ? (DateTime.now().difference(DateTime.parse(info["Date of Birth"])).inDays/365).floor().toString() : "";
     Color ptag = _getPColor(info["Primary Tag"]);

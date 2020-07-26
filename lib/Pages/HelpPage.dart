@@ -218,7 +218,9 @@ class HelpPageState extends State<HelpPage> {
                     "which monitors your temperature constantly. Press the starts button to start monitoring, "
                     "stop button to stop monitoring.\n\n"
                     "Disconnect - disconnect from current device and connect to a new device. \n\n"
-                    "Delete - deletes the current temperature measurement from record.", style: TextStyle(color: Colors.black54),),
+                    "Delete - deletes the current temperature measurement from record. \n\n"
+                    "Change Unit Preference - changes the unit you view your temperature in, "
+                    "if you are on fahrenheit, it will swap to celsius and vice versa.", style: TextStyle(color: Colors.black54),),
               )
             ],
           ),
@@ -387,6 +389,22 @@ class HelpPageState extends State<HelpPage> {
                 children: [
                   Container(
                     padding: EdgeInsets.all(10),
+                    child: Icon(MdiIcons.thermometer, size: 40),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    child: Text("This is the Change Unit Preference button, it changes the unit you view your temperature in, "
+                        "if you are on fahrenheit, it will swap to celsius and vice versa.", style: TextStyle(color: Colors.black54),),
+                  )
+                ],
+              ),
+            ),
+            Card(
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10),
                     child: Icon(Icons.refresh, size: 40),
                   ),
                   Container(
@@ -472,6 +490,22 @@ class HelpPageState extends State<HelpPage> {
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
                       child: Text("This is the view icon, you can tap this icon to see all managers.", style: TextStyle(color: Colors.black54)),
+                    )
+                  ],
+                ),
+              ),
+              Card(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Icon(MdiIcons.thermometer, size: 40),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Text("This is the Change Unit Preference button, it changes the unit you view your temperature in, "
+                          "if you are on fahrenheit, it will swap to celsius and vice versa.", style: TextStyle(color: Colors.black54),),
                     )
                   ],
                 ),
@@ -579,7 +613,7 @@ class HelpPageState extends State<HelpPage> {
                   ],
                 ),
               ),
-              Text("Icons", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+              Text("Other Icons", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
               Card(
                 child: Row(
                   children: [
@@ -621,6 +655,21 @@ class HelpPageState extends State<HelpPage> {
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
                       child: Text("This is the view icon, you can tap this icon to sort the individuals/units by their health condition.", style: TextStyle(color: Colors.black54)),
+                    )
+                  ],
+                ),
+              ),
+              Card(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Icon(Icons.refresh, size: 40),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Text("Pull down page to refresh data. Please remember to do so before viewing a specific individual.", style: TextStyle(color: Colors.black54)),
                     )
                   ],
                 ),

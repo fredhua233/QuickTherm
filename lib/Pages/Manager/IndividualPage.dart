@@ -12,6 +12,7 @@ import 'package:charts_flutter/flutter.dart';
 import 'package:charts_flutter/src/text_element.dart' as text;
 // ignore: implementation_imports
 import 'package:charts_flutter/src/text_style.dart' as style;
+import 'package:quicktherm/main.dart';
 
 String _time = "N/A";
 String _temp = "N/A";
@@ -54,7 +55,7 @@ class CustomCircleSymbolRenderer extends CircleSymbolRenderer {
     textStyle.color = Color.black;
     textStyle.fontSize = 15;
     canvas.drawText(
-        text.TextElement(_time.substring(11, 19) + " , " + _temp + String.fromCharCode(0x00B0) + "C", style: textStyle),
+        text.TextElement(_time.substring(11, 19) + " , " + _temp + String.fromCharCode(0x00B0) + UNITPREF, style: textStyle),
         (bounds.left - 58).round(),
         (bounds.top - 28).round()
     );
@@ -107,12 +108,12 @@ class IndividualPageState extends State<IndividualPage> {
       date.sort((a, b) => a.compareTo(b));
       setState(() {
         _lastMeasured = date.last;
-        _lastTemp = t[_lastMeasured].toString();
+        _lastTemp = Utils().compNumTemp(t[_lastMeasured]).toString();
       });
       if (m == _Mode.BeginningOfTime) {
         for (int i = date.length - 1; i >= 0; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Since Beginning of Time";
@@ -123,7 +124,7 @@ class IndividualPageState extends State<IndividualPage> {
             .difference(DateTime.parse(date[i]))
             .inHours <= 24; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last Day";
@@ -134,7 +135,7 @@ class IndividualPageState extends State<IndividualPage> {
             .difference(DateTime.parse(date[i]))
             .inHours < 1; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last Hour";
@@ -145,7 +146,7 @@ class IndividualPageState extends State<IndividualPage> {
             .difference(DateTime.parse(date[i]))
             .inDays < 7; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last Week";
@@ -156,7 +157,7 @@ class IndividualPageState extends State<IndividualPage> {
             .difference(DateTime.parse(date[i]))
             .inDays < 3; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last 3 Days";
@@ -164,7 +165,7 @@ class IndividualPageState extends State<IndividualPage> {
       } else if (m == _Mode.Custom) {
         List<String> tempDay = date.where((element) => element.contains(day)).toList();
         for (var s in tempDay) {
-          points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
+          points.add(new TempsData(DateTime.parse(s), Utils().compNumTemp(t[s]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Custom";
@@ -264,7 +265,7 @@ class IndividualPageState extends State<IndividualPage> {
         ],
         behaviors: [
           new ChartTitle(_mode,
-              subTitle: String.fromCharCode(0x00B0) + "C",
+              subTitle: String.fromCharCode(0x00B0) + UNITPREF,
               behaviorPosition: BehaviorPosition.top,
               titleOutsideJustification: OutsideJustification.start,
               innerPadding: 18),
@@ -295,26 +296,16 @@ class IndividualPageState extends State<IndividualPage> {
   }
 
   cup.Color _secondaryTag(String tag) {
-    return tag != null &&
-            tag != "" &&
-            tag != " " &&
-            tag != "N/A" &&
-            (double.parse(tag) ?? 0) > 37.5
-        ? Colors.red
-        : tag != null &&
-                tag != "" &&
-                tag != " " &&
-                tag != "N/A" &&
-                (double.parse(tag) ?? 36) < 35.0
-            ? Colors.blue
-            : tag != null &&
-                    tag != "" &&
-                    tag != " " &&
-                    tag != "N/A" &&
-                    (double.parse(tag) ?? 90) < 37.5 &&
-                    (double.parse(tag) ?? 0) > 35.0
-                ? Colors.green
-                : Colors.white;
+    if (UNITPREF== "C") {
+      return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 37.5 ? Colors.red :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 36) < 35.0 ? Colors.blue :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 90) < 37.5 && (double.parse(tag) ?? 0) > 35.0 ? Colors.green : Colors.white;
+    } else {
+      return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 99.5 ? Colors.red :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 96) < 95.0 ? Colors.blue :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 100) < 99.5 && (double.parse(tag) ?? 0) > 95.0 ? Colors.green : Colors.white;
+    }
+
   }
 
   Widget _tag(cup.Color c) {
@@ -386,14 +377,7 @@ class IndividualPageState extends State<IndividualPage> {
                                 .toString()
                                 .substring(0, 10),
                             style: cup.TextStyle(fontSize: 20)),
-                        Text(
-                            (_userInfo['Temperature'][_userInfo['Last Measured']].toString().length >= 5 ? _userInfo['Temperature'][_userInfo['Last Measured']]
-                                    .toString()
-                                    .substring(0, 5) +
-                                String.fromCharCode(0x00B0) +
-                                'C' : _userInfo['Temperature'][_userInfo['Last Measured']].toString() +
-                            String.fromCharCode(0x00B0) +
-                                'C'),
+                        Text(Utils().compTemp(_userInfo['Temperature'][_userInfo['Last Measured']]),
                             style: _userInfo['Temperature']
                                         [_userInfo['Last Measured']] <
                                     35

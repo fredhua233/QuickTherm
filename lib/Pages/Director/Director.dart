@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utils/UserInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../main.dart';
 
 class Director extends StatefulWidget {
   Director(
@@ -86,6 +90,25 @@ class DirectorState extends State<Director> {
                         });
                       }
                   )
+          ),
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: IconButton(
+                  icon: Icon(MdiIcons.thermometer),
+                  tooltip: "Change Unit",
+                  onPressed: () {
+                    SharedPreferences.getInstance().then((pref) {
+                      setState(() {
+                        if (UNITPREF == "C") {
+                          UNITPREF = "F";
+                        } else {
+                          UNITPREF = "C";
+                        }
+                        pref.setString("Temp Unit", UNITPREF);
+                      });
+                    });
+                  }
+              )
           ),
           Padding(
               padding: EdgeInsets.only(right: 20.0),

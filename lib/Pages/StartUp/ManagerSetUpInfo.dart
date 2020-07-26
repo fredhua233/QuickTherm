@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
 import 'package:quicktherm/Utils/UserInfo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../main.dart';
 ///FIXME: Change the format of some fields, add shared pref
 class managerSetUpInfo extends StatefulWidget {
   @override
@@ -13,6 +16,7 @@ class managerSetUpInfo extends StatefulWidget {
 class _managerSetUpInfoState extends State<managerSetUpInfo> {
   final _formKey = new GlobalKey<FormState>();
   Map<String, dynamic> _managerInfo = new Map<String, dynamic>();
+  List<bool> isSelected = [true, false];
   UserInfo _user = new UserInfo();
   @override
   Widget build(BuildContext context) {
@@ -140,6 +144,32 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                               ),
                             )
                           ],
+                        ),
+                        ToggleButtons(
+                          children: <Widget>[
+                            Icon(MdiIcons.temperatureCelsius),
+                            Icon(MdiIcons.temperatureFahrenheit),
+                          ],
+                          onPressed: (int index) async {
+                            setState(() {
+                              for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                                if (buttonIndex == index) {
+                                  isSelected[buttonIndex] = true;
+                                } else {
+                                  isSelected[buttonIndex] = false;
+                                }
+                              }
+                            });
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            if (index == 0) {
+                              prefs.setString('Temp Unit', "C");
+                              UNITPREF = "C";
+                            } else {
+                              prefs.setString('Temp Unit', "F");
+                              UNITPREF = "F";
+                            }
+                          },
+                          isSelected: isSelected,
                         ),
                         RaisedButton(
                           onPressed: () async {
