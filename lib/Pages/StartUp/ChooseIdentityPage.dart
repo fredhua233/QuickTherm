@@ -131,31 +131,30 @@ class _selectIdentityState extends State<selectIdentity> {
                               case 'resident':
                                 //addStringToSF('id', 'manager');
                                 addStringToSF('id', 'resident');
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => setUpInfoPage()));
-                                print('My identity is ' + getValueSF('id'));
+                                Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) => setUpInfoPage()),
+                                        (Route<dynamic> route) => false);
                                 ///key: id, value: resident
                                 //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                                 //go to profile page TODO: finish profile page
                                 break;
                                 case 'manager':
                                   addStringToSF('id', 'manager');
-                                  Navigator.pushReplacement(
+                                  Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => managerSetUpInfo()));
+                                          builder: (context) => managerSetUpInfo()), (Route<dynamic> route) => false);
                                   ///key: id, value: manager
                                   //Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectingDevicesPage(title: "Available Devices", storage: NameStorage())));
                                   //go to profile page TODO: finish profile page
                                   break;
                                   case 'director':
                                     addStringToSF('id', 'director');
-                                    Navigator.pushReplacement(
+                                    Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => directorSetUpInfo()));
+                                            builder: (context) => directorSetUpInfo()), (Route<dynamic> route) => false);
                                     break;
                             }
                           }

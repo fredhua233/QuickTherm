@@ -9,6 +9,7 @@ import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
 import 'package:quicktherm/Pages/ProfilePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Pages/StartUp/ChooseIdentityPage.dart';
+import 'Pages/StartUp/ChooseLanguage.dart';
 import 'Pages/StartUp/SetUpInfoPage.dart';
 import 'Pages/ConnectingDevicesPage.dart';
 import 'Utils/Utils.dart';
@@ -95,7 +96,8 @@ class InitializeState extends State<Initialize> {
                     return Director(managers: UserInfo().fireStore.collection(_path + "/Managers"));
 //                    return Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"));
                   case "":
-                    return ChooseIdentityPage();
+                    return ChooseLanguagePage();
+//                    return ChooseIdentityPage();
                   default:
                     return Container();
                 }
