@@ -824,10 +824,10 @@ class HelpPageState extends State<HelpPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 40),
-                    child: Text("Feel free to message them anything about this app! If you found it a bug please email them about it, "
+                    child: Text("Feel free to message us anything about this app! If you found it a bug please email us about it, "
                         "providing a thorough description and if you can attach a screenshot or screen recording of the bug. Thank you! \n\n "
-                        "You can email them by clicking on their email address or compose a SMS by tapping on their phone number. \n \n"
-                        "If you are not comfortable with English, you can also message or email them in Chinese! \n如果您使用中文，您可以点击以上电子邮箱"
+                        "You can email us by clicking on their email addresses or compose a SMS by tapping on our phone numbers. \n \n"
+                        "If you are not comfortable with English, you can also message or email us in Chinese! \n如果您使用中文，您可以点击以上电子邮箱"
                         "或电话号码用中文跟我们联系，谢谢！"),
                   )
                 ],
