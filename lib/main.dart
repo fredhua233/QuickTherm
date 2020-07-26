@@ -12,14 +12,13 @@ import 'Pages/StartUp/ChooseIdentityPage.dart';
 import 'Pages/StartUp/SetUpInfoPage.dart';
 import 'Pages/ConnectingDevicesPage.dart';
 import 'Utils/Utils.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'Utils/UserInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Pages/HistoryPage.dart';
 
 void main() => runApp(BLETherometer());
 
-String PATH;
+String PATH, UNITPREF;
 //TODO：If the user already set up info, move choose devices, which moves to temperature else move to choose identity page
 //Clean Data base aka only keep recent 2 weeks
 class BLETherometer extends StatelessWidget {
@@ -32,7 +31,6 @@ class BLETherometer extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        //FIXME: Change below to ChooseIdentity
 //        home: GeneratePage()
 //        home: ChooseIdentityPage(),
 //        home: UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/Miles/Units"))
@@ -54,10 +52,8 @@ class Initialize extends StatefulWidget{
 }
 
 class InitializeState extends State<Initialize> {
-  Future<SharedPreferences> _prefs = Utils().pref;
   String _identity;
   String _path;
-  Firestore _firestore = Firestore.instance;
 
   @override
   void initState() {
@@ -71,6 +67,8 @@ class InitializeState extends State<Initialize> {
 //    _identity = "";
       _path = pref.getString("path") ?? "";
       PATH = _path;
+      // if prefrence unit not avaliable, default is C
+      UNITPREF = pref.getString("Temp Unit") ?? "C";
 //      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
       UserInfo.path = _path;
   }

@@ -7,13 +7,14 @@ import "package:shared_preferences/shared_preferences.dart";
 import '../Pages/ConnectingDevicesPage.dart';
 import '../Pages/ProfilePage.dart';
 import '../Pages/TempMonitorPage.dart';
+import '../main.dart';
 
 class Utils {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future<SharedPreferences> get pref  {
+  Future<SharedPreferences> get pref {
     return _prefs;
-}
+  }
 
   /**
    * Template for error dialogs.
@@ -41,6 +42,29 @@ class Utils {
         );
       },
     );
+  }
+
+  String compTemp(double temp) {
+    if (UNITPREF == "C") {
+      return temp.toString() + String.fromCharCode(0x00B0) +
+          "C";
+    } else {
+      double f = ((temp * 9)/5) + 32;
+      if (f.toString().length > 5) {
+        return f.toString().substring(0, 5) + String.fromCharCode(0x00B0) +
+            "F";
+      } else {
+        return f.toString() + String.fromCharCode(0x00B0) +
+            "F";
+      }
+    }
+  }
+  double compNumTemp(double temp) {
+    if (UNITPREF == "C") {
+      return temp;
+    } else {
+      return ((((temp * 9) / 5) + 32) * 100).floor()/100;
+    }
   }
 
   Widget getMenu(BuildContext context, String identity, String currentPage) {

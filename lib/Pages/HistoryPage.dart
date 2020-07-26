@@ -10,6 +10,7 @@ import 'package:charts_flutter/src/text_element.dart' as text;
 import 'package:charts_flutter/src/text_style.dart' as style;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quicktherm/main.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import '../Utils/UserInfo.dart';
@@ -71,6 +72,8 @@ class HistoryPageState extends State<HistoryPage> {
     }
     setState(() {
       _line = _getData(_displayMode);
+      _time = "N/A";
+      _temp = "N/A";
     });
   }
 
@@ -165,7 +168,7 @@ class HistoryPageState extends State<HistoryPage> {
                         alignment: cup.FractionalOffset(0.975,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child:  _temp != null ? new Text(_temp +  String.fromCharCode(0x00B0) + "C") : new Text(" ")),
+                            child:  _temp != null ? new Text(_temp +  String.fromCharCode(0x00B0) + UNITPREF) : new Text(" ")),
                       ),
                     ],
                   )
@@ -234,19 +237,19 @@ class HistoryPageState extends State<HistoryPage> {
                         alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child: _avg != null ? new Text(_avg + String.fromCharCode(0x00B0) + "C") : Text("")),
+                            child: _avg != null ? new Text(_avg + String.fromCharCode(0x00B0) + UNITPREF) : Text("")),
                       ),
                       Align(
                           alignment: cup.FractionalOffset(0.5,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child: _max != null ? new Text(_max + String.fromCharCode(0x00B0) + "C") : Text(""))
+                            child: _max != null ? new Text(_max + String.fromCharCode(0x00B0) + UNITPREF) : Text(""))
                       ),
                       Align(
                         alignment: cup.FractionalOffset(0.975,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child: _min != null ? new Text(_min + String.fromCharCode(0x00B0) + "C") : Text(""))
+                            child: _min != null ? new Text(_min + String.fromCharCode(0x00B0) + UNITPREF) : Text(""))
                       ),
                     ],
                   )
@@ -309,7 +312,7 @@ class HistoryPageState extends State<HistoryPage> {
                           alignment: cup.FractionalOffset(0.975,0),
                           child: Padding(
                               padding: new EdgeInsets.only(top: 10.0),
-                              child: _lastTemp != null ? new Text(_lastTemp + String.fromCharCode(0x00B0) + "C") : Text(""))
+                              child: _lastTemp != null ? new Text(_lastTemp + String.fromCharCode(0x00B0) + UNITPREF) : Text(""))
                       ),
                     ],
                   )
@@ -359,9 +362,16 @@ class HistoryPageState extends State<HistoryPage> {
 
   //Gets color of secondary tag
   cup.Color _secondaryTag(String tag) {
-    return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 37.5 ? Colors.red :
-           tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 36) < 35.0 ? Colors.blue :
-           tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 90) < 37.5 && (double.parse(tag) ?? 0) > 35.0 ? Colors.green : Colors.white;
+    if (UNITPREF== "C") {
+      return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 37.5 ? Colors.red :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 36) < 35.0 ? Colors.blue :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 90) < 37.5 && (double.parse(tag) ?? 0) > 35.0 ? Colors.green : Colors.white;
+    } else {
+      return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 99.5 ? Colors.red :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 96) < 95.0 ? Colors.blue :
+      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 100) < 99.5 && (double.parse(tag) ?? 0) > 95.0 ? Colors.green : Colors.white;
+    }
+
   }
 
 
@@ -408,7 +418,7 @@ class HistoryPageState extends State<HistoryPage> {
         ],
         behaviors: [
           new ChartTitle(_mode,
-              subTitle: String.fromCharCode(0x00B0) + "C",
+              subTitle: String.fromCharCode(0x00B0) + UNITPREF,
               behaviorPosition: BehaviorPosition.top,
               titleOutsideJustification: OutsideJustification.start,
               innerPadding: 18),
@@ -437,7 +447,7 @@ class HistoryPageState extends State<HistoryPage> {
       date.sort((a, b) => a.compareTo(b));
       setState(() {
         _lastMeasured = date.last;
-        _lastTemp = t[_lastMeasured].toString();
+        _lastTemp = Utils().compNumTemp(t[_lastMeasured]).toString();
       });
       if (m == _Mode.BeginningOfTime) {
         for (int i = date.length - 1; i >= 0; i--) {
@@ -453,7 +463,7 @@ class HistoryPageState extends State<HistoryPage> {
             .difference(DateTime.parse(date[i]))
             .inHours <= 24; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last Day";
@@ -464,7 +474,7 @@ class HistoryPageState extends State<HistoryPage> {
             .difference(DateTime.parse(date[i]))
             .inHours < 1; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last Hour";
@@ -475,7 +485,7 @@ class HistoryPageState extends State<HistoryPage> {
             .difference(DateTime.parse(date[i]))
             .inDays < 7; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last Week";
@@ -486,7 +496,7 @@ class HistoryPageState extends State<HistoryPage> {
             .difference(DateTime.parse(date[i]))
             .inDays < 3; i--) {
           points.add(new TempsData(
-              DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
+              DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Last 3 Days";
@@ -494,7 +504,7 @@ class HistoryPageState extends State<HistoryPage> {
       } else if (m == _Mode.Custom) {
         List<String> tempDay = date.where((element) => element.contains(day)).toList();
         for (var s in tempDay) {
-          points.add(new TempsData(DateTime.parse(s), t[s], Colors.blueAccent));
+          points.add(new TempsData(DateTime.parse(s), Utils().compNumTemp(t[s]), Colors.blueAccent));
         }
         setState(() {
           _mode = "Custom";
@@ -611,7 +621,7 @@ class CustomCircleSymbolRenderer extends CircleSymbolRenderer {
     textStyle.color = Color.black;
     textStyle.fontSize = 15;
     canvas.drawText(
-        text.TextElement(_time.substring(11, 19) + " , " + _temp + String.fromCharCode(0x00B0) + "C", style: textStyle),
+        text.TextElement(_time.substring(11, 19) + " , " + _temp + String.fromCharCode(0x00B0) + UNITPREF, style: textStyle),
         (bounds.left - 58).round(),
         (bounds.top - 28).round()
     );

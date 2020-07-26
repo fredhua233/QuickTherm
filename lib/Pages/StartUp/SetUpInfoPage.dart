@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import '../../Utils/UserInfo.dart';
+import '../../main.dart';
 import '../ConnectingDevicesPage.dart';
 import 'ChooseIdentityPage.dart';
 import 'package:quicktherm/Utils/Utils.dart'; //
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-///FIXME: Change the format of some fields
+//FIXME: Change the format of some fields Set up the desired unit of temperature
 class setUpInfoPage extends StatefulWidget {
   @override
   _setUpInfoPageState createState() => _setUpInfoPageState();
@@ -26,7 +28,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
 //  Map<String, dynamic> info;
   TimeOfDay _remindAM, _remindNOON, _remindPM;
   TimeOfDay _time = TimeOfDay.now();
-
+  List<bool> isSelected = [false, false];
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override
@@ -360,7 +362,33 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           UserInfo.healthHistory = val;
                         }) ,
                       ),
-                      ///FIXME: show time picked on screen for remind times
+                      Text("Desired unit of temperature"),
+                      ToggleButtons(
+                        children: <Widget>[
+                          Icon(MdiIcons.temperatureCelsius),
+                          Icon(MdiIcons.temperatureFahrenheit),
+                        ],
+                        onPressed: (int index) async {
+                          setState(() {
+                            for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                              if (buttonIndex == index) {
+                                isSelected[buttonIndex] = true;
+                              } else {
+                                isSelected[buttonIndex] = false;
+                              }
+                            }
+                          });
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          if (index == 0) {
+                            prefs.setString('Temp Unit', "C");
+                            UNITPREF = "C";
+                          } else {
+                            prefs.setString('Temp Unit', "F");
+                            UNITPREF = "F";
+                          }
+                        },
+                        isSelected: isSelected,
+                      ),
                       Row(
                           children: [
                             Text('Morning Remind time'),

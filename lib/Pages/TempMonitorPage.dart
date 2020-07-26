@@ -8,6 +8,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Utils/UserInfo.dart';
+import 'package:quicktherm/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utils/Utils.dart';
@@ -27,9 +28,10 @@ enum _State { constant, discreet }
 
 enum _Therm { started, stopped }
 
+
 class TempMonitorPage extends StatefulWidget {
-  BluetoothDevice connectDevice;
-  List<BluetoothService> services;
+  final BluetoothDevice connectDevice;
+  final List<BluetoothService> services;
 
   TempMonitorPage(this.connectDevice, this.services);
 
@@ -85,13 +87,15 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     }
 
     //Sets up shared persistence
-
     String text, time, hmsg, ptag, stag = "";
     if (_pref.containsKey("LastTemp")) {
+//      text = _pref.containsKey("LastTemp")
+//          ? _pref.getDouble("LastTemp").toString() +
+//              String.fromCharCode(0x00B0) +
+//              "C"
+//          : "Take Temperature";
       text = _pref.containsKey("LastTemp")
-          ? _pref.getDouble("LastTemp").toString() +
-              String.fromCharCode(0x00B0) +
-              "C"
+          ? _utils.compTemp(_pref.getDouble("LastTemp"))
           : "Take Temperature";
     }
     if (_pref.containsKey("LastMeasTime")) {
@@ -188,7 +192,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                       Temp = double.parse(TempString);
                       Vcc = int.parse(reading.substring(semi + 5));
                       setState(() {
-                        msg = TempString + String.fromCharCode(0x00B0) + "C";
+//                        msg = TempString + String.fromCharCode(0x00B0) + "C";
+                        msg = _utils.compTemp(Temp);
                       });
                       break;
                     }
@@ -240,9 +245,10 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                             Temp = double.parse(TempString);
                             Vcc = int.parse(reading.substring(semi + 5));
                             setState(() {
-                              msg = TempString +
-                                  String.fromCharCode(0x00B0) +
-                                  "C";
+//                              msg = TempString +
+//                                  String.fromCharCode(0x00B0) +
+//                                  "C";
+                              msg = _utils.compTemp(Temp);
                             });
                             DateTime now = new DateTime.now();
                             _pref.setDouble("LastTemp", Temp);
@@ -383,10 +389,12 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Your Temperature: " +
-              temp.toString() +
-              String.fromCharCode(0x00B0) +
-              "C"),
+//          title: new Text("Your Temperature: " +
+//              temp.toString() +
+//              String.fromCharCode(0x00B0) +
+//              "C"),
+            title: new Text("Your Temperature: " +
+                _utils.compTemp(temp)),
           content: new Text(
               "Delete this measurement in cloud? If you think there is an error in this measurement, please press Yes and measure again."),
           actions: <Widget>[
@@ -590,6 +598,20 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                             break;
                           case "Delete":
                             _deleteData();
+                            break;
+                          case "Change Unit":
+                            SharedPreferences.getInstance().then((pref) {
+                              setState(() {
+                                if (UNITPREF == "C") {
+                                  UNITPREF = "F";
+                                } else {
+                                  UNITPREF = "C";
+                                }
+                                pref.setString("Temp Unit", UNITPREF);
+                                msg = _utils.compTemp(pref.getDouble("LastTemp"));
+                              });
+                            });
+                            break;
                         }
                       },
                       itemBuilder: (context) => [
@@ -604,7 +626,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                               "Disconnect from Current Device",
                             )),
                         PopupMenuItem(
-                            value: "Delete", child: Text("Delete Last Taking"))
+                            value: "Delete", child: Text("Delete Last Taking")),
+                        PopupMenuItem(
+                            value: "Change Unit", child: Text("Change Unit Preference"))
                       ],
                     ))),
           ],
