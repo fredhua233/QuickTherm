@@ -1,5 +1,9 @@
 import 'dart:io';
+import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import "package:shared_preferences/shared_preferences.dart";
@@ -14,6 +18,30 @@ class Utils {
 
   Future<SharedPreferences> get pref {
     return _prefs;
+  }
+
+  /**
+   * For parsing JSON file
+   */
+  static Map<String, String> _localizedStrings;
+
+  Future<bool> load() async {
+    // Load the language JSON file from the "lang" folder
+    String jsonString =
+    await rootBundle.loadString('language/$LANG.json');
+    Map<String, dynamic> jsonMap = json.decode(jsonString);
+    _localizedStrings = jsonMap.map((key, value) {
+      return MapEntry(key, value.toString());
+    });
+    return true;
+  }
+
+  // This method will be called from every widget which needs a localized text
+  String translate(String key) {
+    if (_localizedStrings.containsKey(key)) {
+      return _localizedStrings[key];
+    }
+    return key;
   }
 
   /**

@@ -19,7 +19,7 @@ import 'Pages/HistoryPage.dart';
 
 void main() => runApp(BLETherometer());
 
-String PATH, UNITPREF;
+String PATH, UNITPREF, LANG;
 //TODO：If the user already set up info, move choose devices, which moves to temperature else move to choose identity page
 //Clean Data base aka only keep recent 2 weeks
 class BLETherometer extends StatelessWidget {
@@ -70,8 +70,10 @@ class InitializeState extends State<Initialize> {
       PATH = _path;
       // if prefrence unit not avaliable, default is C
       UNITPREF = pref.getString("Temp Unit") ?? "C";
-//      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
+      LANG = pref.getString("lang") ?? "en";
       UserInfo.path = _path;
+      await Utils().load();
+//      _path = "/Organizations/Santa's Toy Factory/Managers/Miles/Units/Unit1/Individuals/Anthony";
   }
 
   @override

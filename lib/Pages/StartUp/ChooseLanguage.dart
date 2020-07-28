@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quicktherm/Pages/StartUp/ChooseIdentityPage.dart';
+import 'package:quicktherm/Utils/Utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../main.dart';
 
 enum Language { EN, CN_S, CN_T, CN_Y, AR, SP, RU }
 
@@ -12,6 +15,8 @@ class ChooseLanguagePage extends StatefulWidget {
 class ChooseLanguagePageState extends State<ChooseLanguagePage> {
   Language _lang = Language.EN;
   bool acceptedTerms = false;
+  Utils _utils = new Utils();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,28 +97,30 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
             },
           ),
           RaisedButton(
-              onPressed: () {
+              onPressed: () async {
+                LANG = _lang.toString().substring(9).toLowerCase();
+                await _utils.load();
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     // return object of type Dialog
                     return AlertDialog(
-                      title: new Text("Permissions Requested"),
+                      title: new Text(_utils.translate("Permissions Requested")),
                       content: new SingleChildScrollView(
-                        child: Text(
-                            "By clicking on continue you agree to share the following: \n\n"
-                                "- Name, address and age  \n"
-                                "- Contact Information \n"
-                                "- Previous health history and conditions \n"
-                                "- Current health conditions and statistics \n\n"
-                                "to your residential supervisors/your nurses and their supervisors and the developers.\n"
-                                "The developers DOES NOT AND WILL NOT use your personal info for purposes other than the purposes required by this app. \n"
-                                "If you agree and wish to proceed, please tap on 'Agree' and then tap 'Continue'. Thank you!"),
+                        child: Text(_utils.translate("Privacy Message"))
+//                            "By clicking on continue you agree to share the following: \n\n"
+//                                "- Name, address and age  \n"
+//                                "- Contact Information \n"
+//                                "- Previous health history and conditions \n"
+//                                "- Current health conditions and statistics \n\n"
+//                                "to your residential supervisors/your nurses and their supervisors and the developers.\n"
+//                                "The developers DOES NOT AND WILL NOT use your personal info for purposes other than the purposes required by this app. \n"
+//                                "If you agree and wish to proceed, please tap on 'Agree' and then tap 'Continue'. Thank you!"),
                       ),
                       actions: <Widget>[
                         // usually buttons at the bottom of the dialog
                         new FlatButton(
-                          child: new Text("Agree"),
+                          child: new Text(_utils.translate("Agree")),
                           onPressed: () {
                             setState(() {
                               acceptedTerms = true;
@@ -122,7 +129,7 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
                           },
                         ),
                         new FlatButton(
-                          child: new Text("Disagree"),
+                          child: new Text(_utils.translate("Disagree")),
                           onPressed: () {
                             setState(() {
                               acceptedTerms = false;
@@ -138,7 +145,7 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
                   Navigator.push(context, MaterialPageRoute(builder:(context) => ChooseIdentityPage()));
                 }
               },
-              child: Text("Continue")
+              child: Text("Continue/继续/繼續/Продолжать/Seguir/استمر")
           ),
         ],
       ),
