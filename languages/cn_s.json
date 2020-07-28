@@ -1,13 +1,13 @@
 {
   "Permissions Requested": "请求权限",
-  "Privacy Message" : "点击“继续”代表您同意分享您以下的私人信息： \n\n - 姓名, 住址，年龄  \n - 联系信息 \n - 以往医疗和健康情况 \n - 目前健康情况以及数据 \n\n 给您的住屋管理员/护士长和, the developers.\n The developers DOES NOT AND WILL NOT use your personal info for purposes other than the purposes required by this app. \n If you agree and wish to proceed, please tap on 'Agree' and then tap 'Continue'. Thank you!",
-  "Continue" : "Continue",
-  "Agree" : "Agree",
-  "Disagree" : "Disagree",
+  "Privacy Message" : "点击“继续”代表您同意分享您以下的私人信息： \n\n - 姓名, 住址，年龄  \n - 联系信息 \n - 以往医疗和健康情况 \n - 目前健康情况以及数据 \n\n 给您的住屋管理员/护士长和开发者\n 开发者们永远不会将您的私人信息用于除了这款应用之外的其他用途。 \n 如果您同意以上所讲并且想继续，请点击“同意”然后点击“继续”。谢谢！",
+  "Continue" : "继续",
+  "Agree" : "同意",
+  "Disagree" : "不同意",
 
-  "BLE Thermometer" : "BLE Thermometer",
+  "BLE Thermometer" : "BLE 体温计",
 
-  "Choose My Identity" : "Choose My Identity",
+  "Choose My Identity" : "选择我的身份"
 
 
 
