@@ -30,6 +30,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   TimeOfDay _time = TimeOfDay.now();
   List<bool> isSelected = [true, false];
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  Utils _utils = new Utils();
 
   @override
   void initState() {
@@ -58,8 +59,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
         androidPlatformChannelSpecificsM, iOSPlatformChannelSpecificsM);
     await flutterLocalNotificationsPlugin.showDailyAtTime(
         0,
-        'Time to measure your temperature!',
-        'Be sure to open Quick Temp and update your temperature!',
+        _utils.translate('Time to measure your temperature!'),
+        _utils.translate('Be sure to open Quick Temp and update your temperature!'),
         timeMorning,
         platformChannelSpecificsM);
     var androidPlatformChannelSpecificsN = AndroidNotificationDetails(
@@ -71,8 +72,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
         androidPlatformChannelSpecificsN, iOSPlatformChannelSpecificsN);
     await flutterLocalNotificationsPlugin.showDailyAtTime(
         1,
-        'Time to measure your temperature!',
-        'Be sure to open Quick Temp and update your temperature!',
+        _utils.translate('Time to measure your temperature!'),
+        _utils.translate('Be sure to open Quick Temp and update your temperature!'),
         timeNoon,
         platformChannelSpecificsN);
     var androidPlatformChannelSpecificsA = AndroidNotificationDetails(
@@ -84,8 +85,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
         androidPlatformChannelSpecificsA, iOSPlatformChannelSpecificsA);
     await flutterLocalNotificationsPlugin.showDailyAtTime(
         2,
-        'Time to measure your temperature!',
-        'Be sure to open Quick Temp and update your temperature!',
+        _utils.translate('Time to measure your temperature!'),
+        _utils.translate('Be sure to open Quick Temp and update your temperature!'),
         timeAfternoon,
         platformChannelSpecificsA);
   }
@@ -95,8 +96,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
       context: context,
       builder: (_) {
         return new AlertDialog(
-          title: Text("PayLoad"),
-          content: Text("Payload : $payload"),
+          title: Text("Reminder"),
+          content: Text("Reminder: " + payload),
         );
       },
     );
@@ -130,7 +131,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Fill out your information'),
+          title: Text(_utils.translate('Fill out your information')),
         ),
         body: SafeArea(
             top: false,
@@ -146,12 +147,12 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       TextFormField(
                           decoration: InputDecoration(
                               icon: Icon(Icons.person),
-                              hintText: 'Ex. John Doe',
-                              labelText: 'Name'
+                              hintText: _utils.translate('Ex. John Doe'),
+                              labelText: _utils.translate('Name')
                           ),
                           validator: (value) {
                             if (value.isEmpty || !value.contains(' ')){
-                              return "Please enter in correct format: 'first last'";
+                              return _utils.translate("Please enter in correct format: 'first last'");
                             }
                             return null;
                           },
@@ -160,13 +161,13 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       TextFormField(
                           decoration: InputDecoration(
                               icon: Icon(Icons.phone),
-                              hintText: 'Ex. 123-456-7890',
-                              labelText: 'Contact'
+                              hintText: _utils.translate('Ex. 123-456-7890'),
+                              labelText: _utils.translate('Contact')
                           ),
                           keyboardType: TextInputType.phone,
                           validator: (value){
                             if(value.isEmpty || value.length != 12 || !value.contains('-')){
-                              return 'Please enter in correct format: xxx-xxx-xxxx';
+                              return _utils.translate('Please enter in correct format: xxx-xxx-xxxx');
                             }
                             return null;
                           },
@@ -175,13 +176,13 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       TextFormField(
                           decoration: InputDecoration(
                               icon: Icon(Icons.calendar_today),
-                              hintText: 'Ex. YYYY-MM-DD',
-                              labelText: 'Date of Birth'
+                              hintText: _utils.translate('Ex. YYYY-MM-DD'),
+                              labelText: _utils.translate('Date of Birth')
                           ),
                           keyboardType: TextInputType.phone,
                           validator: (value){
                             if(value.isEmpty || !value.contains('-')){
-                              return 'Please enter in correct format: YYYY-MM-DD';
+                              return _utils.translate('Please enter in correct format: YYYY-MM-DD');
                             }
                             return null;
                           },
@@ -195,7 +196,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           })
                       ),
                       RadioListTile(
-                          title: const Text('Male'),
+                          title: Text(_utils.translate('Male')),
                           value: 'Male',
                           groupValue: _groupValue,
                           onChanged: (value) => {
@@ -206,7 +207,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           }
                       ),
                       RadioListTile(
-                          title: const Text('Female'),
+                          title: Text(_utils.translate('Female')),
                           value: 'Female',
                           groupValue: _groupValue,
                           onChanged: (value) => {
@@ -218,12 +219,12 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       TextFormField(
                           decoration: InputDecoration(
-                              hintText: 'Ex. CCDC',
-                              labelText: 'Your Organization'
+                              hintText: _utils.translate('Ex. CCDC'),
+                              labelText: _utils.translate('Your Organization')
                           ),
                           validator: (value){
                             if(value.isEmpty){
-                              return 'Please enter the organization that you belong to';
+                              return _utils.translate('Please enter the organization that you belong to');
                             }
                             return null;
                           },
@@ -235,12 +236,12 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       TextFormField(
                           decoration: InputDecoration(
                               icon: Icon(Icons.home),
-                              hintText: 'Ex. 1 Main st.',
-                              labelText: changed ? 'Your address in ${UserInfo.organization}:' : 'Your address'
+                              hintText: _utils.translate('Ex. 1 Main st.'),
+                              labelText: changed ? _utils.translate('Your address in') + UserInfo.organization + _utils.translate(':') : _utils.translate('Your address')
                           ),
                           validator: (value){
                             if(value.isEmpty){
-                              return 'Please enter your address in your organization';
+                              return _utils.translate('Please enter your address in your organization');
                             }
                             return null;
                           },
@@ -248,12 +249,12 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       TextFormField(
                           decoration: InputDecoration(
-                              hintText: 'Ex. San Francisco',
-                              labelText: 'City'
+                              hintText: _utils.translate('Ex. San Francisco'),
+                              labelText: _utils.translate('City')
                           ),
                           validator: (value){
                             if(value.isEmpty){
-                              return 'Please enter your city';
+                              return _utils.translate('Please enter your city');
                             }
                             return null;
                           },
@@ -264,12 +265,12 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           Expanded(
                             child: TextFormField(
                                 decoration: InputDecoration(
-                                    hintText: 'Ex. CA',
-                                    labelText: 'State'
+                                    hintText: _utils.translate('Ex. CA'),
+                                    labelText: _utils.translate('State')
                                 ),
                                 validator: (value){
                                   if(value.isEmpty || value.length > 2){
-                                    return 'Please enter your state';
+                                    return _utils.translate('Please enter your state');
                                   }
                                   return null;
                                 },
@@ -279,8 +280,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           Expanded(
                             child: TextFormField(
                                 decoration: InputDecoration(
-                                    hintText: 'Ex. 94105',
-                                    labelText: 'Zip code'
+                                    hintText: _utils.translate('Ex. 94105'),
+                                    labelText: _utils.translate('Zip code')
                                 ),
                                 keyboardType: TextInputType.phone,
                                 inputFormatters: [
@@ -288,7 +289,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                                 ],
                                 validator: (value){
                                   if(value.isEmpty || value.length != 5){
-                                    return 'Please enter your zip code';
+                                    return _utils.translate('Please enter your zip code');
                                   }
                                   return null;
                                 },
@@ -315,12 +316,12 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
 //                      ),
                       TextFormField(
                           decoration: InputDecoration(
-                              hintText: 'Ex. 100',
-                              labelText: "Room Number"
+                              hintText: _utils.translate('Ex. 100'),
+                              labelText: _utils.translate("Room Number")
                           ),
                           validator: (value){
                             if(value.isEmpty){
-                              return "Please enter your room number";
+                              return _utils.translate("Please enter your room number");
                             }
                             return null;
                           },
@@ -328,20 +329,20 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       TextFormField(
                           decoration: InputDecoration(
-                              hintText: 'Ex. Jane Doe',
-                              labelText: "Manager's Name"
+                              hintText: _utils.translate('Ex. Jane Doe'),
+                              labelText: _utils.translate("Manager's Name")
                           ),
                           validator: (value){
                             if(value.isEmpty){
 //                              || !value.contains(' ')
-                              return "Please enter your Building manager's name";
+                              return _utils.translate("Please enter your Building manager's name");
                             }
                             return null;
                           },
                           onSaved: (val) => setState(() => UserInfo.managerName = val)
                       ),
                       CheckboxListTile(
-                          title: const Text('I have pre-existing health condition'),
+                          title: Text(_utils.translate('I have pre-existing health condition')),
                           value: _preExist,
                           onChanged: (bool value) {
                             setState(() {
@@ -352,8 +353,8 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       TextFormField(
                         decoration: InputDecoration(
-                          labelText: 'Pre-existing health conditions',
-                          hintText:'Please briefly describe your conditions',
+                          labelText: _utils.translate('Pre-existing health conditions'),
+                          hintText:_utils.translate('Please briefly describe your conditions'),
                         ),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
@@ -362,7 +363,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                           UserInfo.healthHistory = val;
                         }) ,
                       ),
-                      Text("Desired unit of temperature"),
+                      Text(_utils.translate("Desired unit of temperature")),
                       ToggleButtons(
                         children: <Widget>[
                           Icon(MdiIcons.temperatureCelsius),
@@ -391,7 +392,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       Row(
                           children: [
-                            Text('Morning Remind time'),
+                            Text(_utils.translate('Morning Remind time')),
                             IconButton(
                               icon: Icon(Icons.alarm),
                               onPressed: () {
@@ -404,7 +405,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       Row(
                           children: [
-                            Text('Noon Remind time'),
+                            Text(_utils.translate('Noon Remind time')),
                             IconButton(
                               icon: Icon(Icons.alarm),
                               onPressed: () => selectTime(context, 2),
@@ -415,7 +416,7 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       Row(
                           children: [
-                            Text('Evening Remind time'),
+                            Text(_utils.translate('Evening Remind time')),
                             IconButton(
                               icon: Icon(Icons.alarm),
                               onPressed: () => selectTime(context, 3),
@@ -426,19 +427,19 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                       ),
                       Row(
                         children: [
-                          Text('Current health condition: '),
+                          Text(_utils.translate('Current health condition: ')),
                           DropdownButton<Illness>(
                             items: [
                               DropdownMenuItem<Illness>(
-                                child: Text('Healthy'),
+                                child: Text(_utils.translate('Healthy')),
                                 value: Illness.healthy,
                               ),
                               DropdownMenuItem<Illness>(
-                                child: Text('Potential'),
+                                child: Text(_utils.translate('Potential')),
                                 value: Illness.potential,
                               ),
                               DropdownMenuItem<Illness>(
-                                child: Text('Severe'),
+                                child: Text(_utils.translate('Severe')),
                                 value: Illness.severe,
                               ),
                             ],
@@ -447,11 +448,11 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
                                 _condition = value;
                                 UserInfo.primaryTag = value == Illness.severe ? Colors.black.toString() : value == Illness.potential ? Colors.black45.toString() : Colors.white.toString(); // initialize firestore
                                 UserInfo.secondaryTag = Colors.green.toString(); // initialize firestore
-                                UserInfo.healthMsg = 'N/A'; // initialize firestore
-                                UserInfo.lastMeasured = 'N/A';
+                                UserInfo.healthMsg = _utils.translate('N/A'); // initialize firestore
+                                UserInfo.lastMeasured = _utils.translate('N/A');
                               });
                             },
-                            hint: Text('condition'),
+                            hint: Text(_utils.translate('condition')),
                             value: _condition,
                           ),
                         ],
@@ -462,7 +463,6 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
 
                           if (form.validate()) {
                             if(!_preExist){
-                              print("hi");
                               setState(() {
                               UserInfo.priorHealth = false;
                               });
@@ -473,13 +473,13 @@ class _setUpInfoPageState extends State<setUpInfoPage> {
 //                            SharedPreferences _pref = await SharedPreferences.getInstance();
                             Navigator.pushReplacement(context, MaterialPageRoute(
                                 builder: (context) => ConnectingDevicesPage(
-                                    title: "Available Devices",
+                                    title: _utils.translate("Available Devices"),
                                     storage: NameStorage(),
                                     autoConnect: true)));
 
                           }
                         },
-                        child: Text('Save'),
+                        child: Text(_utils.translate('Save')),
                       ),
                     ],
                   ),

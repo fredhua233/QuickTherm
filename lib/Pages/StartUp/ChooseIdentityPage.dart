@@ -13,7 +13,7 @@ class ChooseIdentityPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose my identity'),
+        title: Text(Utils().translate('Choose my identity')),
       ),
       body: Container(
         child: selectIdentity()
@@ -32,7 +32,7 @@ class _selectIdentityState extends State<selectIdentity> {
   String temp;
   bool checkValue;
   SharedPreferences _pref;
-
+  Utils _utils = new Utils();
   @override
   void initState() {
     // TODO: implement initState
@@ -96,20 +96,20 @@ class _selectIdentityState extends State<selectIdentity> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('I am a: '),
+                          Text(_utils.translate('I am a: ')),
                           SizedBox(width: 10),
                           DropdownButton<String>(
                             items: [
                               DropdownMenuItem<String>(
-                                child: Text('Resident'),
+                                child: Text(_utils.translate('Resident')),
                                 value: 'resident',
                               ),
                               DropdownMenuItem<String>(
-                                child: Text('Manager'),
+                                child: Text(_utils.translate('Manager')),
                                 value: 'manager',
                               ),
                               DropdownMenuItem<String>(
-                                child: Text('Director'),
+                                child: Text(_utils.translate('Director')),
                                 value: 'director',
                               ),
                             ],
@@ -118,13 +118,13 @@ class _selectIdentityState extends State<selectIdentity> {
                                 _identity = value;
                               });
                               },
-                            hint: Text('identity'),
+                            hint: Text(_utils.translate('identity')),
                             value: _identity,
                           )
                         ],
                       ),
                       RaisedButton(
-                        child: Text('Continue'),
+                        child: Text(_utils.translate('Continue')),
                         onPressed: () {
                           if (_identity != null) {
                             switch (_identity) {
@@ -161,20 +161,20 @@ class _selectIdentityState extends State<selectIdentity> {
                           },
                       ),
                       SizedBox(height: 30),
-                      Text('Please Read!', style: TextStyle(fontSize: 20, decoration: TextDecoration.underline, color: Colors.red)),
+                      Text(_utils.translate('Please Read!'), style: TextStyle(fontSize: 20, decoration: TextDecoration.underline, color: Colors.red)),
                       SizedBox(height: 10),
                       Card(
                         child: Row(
                           children: [
                             Container(
                               padding: EdgeInsets.all(10),
-                              child: Text('Director:', style: TextStyle(color: Colors.black)),
+                              child: Text(_utils.translate('Director: '), style: TextStyle(color: Colors.black)),
                             ),
                             Spacer(),
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text("Only choose this if you are the organizer of an SRO, hospital, or care center. This identity is strictly for identities who oversees manmagers.", style: TextStyle(color: Colors.black54),),
+                              child: Text(_utils.translate("Only choose this if you are the organizer of an SRO, hospital, or care center. This identity is strictly for identities who oversees managers."), style: TextStyle(color: Colors.black54),),
                             )
                           ],
                         ),
@@ -185,13 +185,13 @@ class _selectIdentityState extends State<selectIdentity> {
                           children: [
                             Container(
                               padding: EdgeInsets.all(10),
-                              child: Text('Manager: ', style: TextStyle(color: Colors.black)),
+                              child: Text(_utils.translate('Manager: '), style: TextStyle(color: Colors.black)),
                             ),
                             Spacer(),
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text("Only choose this if you are the manager of an SRO, hospital, or care center. This identity is strictly for identities who manage the tenants or patients", style: TextStyle(color: Colors.black54),),
+                              child: Text(_utils.translate("Only choose this if you are the manager of an SRO, hospital, or care center. This identity is strictly for identities who manage the tenants or patients"), style: TextStyle(color: Colors.black54),),
                             )
                           ],
                         ),
@@ -202,13 +202,13 @@ class _selectIdentityState extends State<selectIdentity> {
                           children: [
                             Container(
                               padding: EdgeInsets.all(10),
-                              child: Text('Resident: ', style: TextStyle(color: Colors.black)),
+                              child: Text(_utils.translate('Resident: '), style: TextStyle(color: Colors.black)),
                             ),
                             Spacer(),
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text('Only choose this if you are a tenant of an SRO or a patient at a care center or a hospital.', style: TextStyle(color: Colors.black54),),
+                              child: Text(_utils.translate('Only choose this if you are a tenant of an SRO or a patient at a care center or a hospital.'), style: TextStyle(color: Colors.black54)),
                             )
                           ],
                         ),
