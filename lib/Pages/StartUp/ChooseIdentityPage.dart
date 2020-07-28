@@ -13,7 +13,7 @@ class ChooseIdentityPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Utils().translate('Choose my identity')),
+        title: Text(Utils().translate('Choose My Identity')),
       ),
       body: Container(
         child: selectIdentity()
@@ -174,7 +174,7 @@ class _selectIdentityState extends State<selectIdentity> {
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text(_utils.translate("Only choose this if you are the organizer of an SRO, hospital, or care center. This identity is strictly for identities who oversees managers."), style: TextStyle(color: Colors.black54),),
+                              child: Text(_utils.translate("Director intro description"), style: TextStyle(color: Colors.black54),),
                             )
                           ],
                         ),
@@ -191,7 +191,7 @@ class _selectIdentityState extends State<selectIdentity> {
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text(_utils.translate("Only choose this if you are the manager of an SRO, hospital, or care center. This identity is strictly for identities who manage the tenants or patients"), style: TextStyle(color: Colors.black54),),
+                              child: Text(_utils.translate("Manager intro description"), style: TextStyle(color: Colors.black54),),
                             )
                           ],
                         ),
@@ -202,13 +202,13 @@ class _selectIdentityState extends State<selectIdentity> {
                           children: [
                             Container(
                               padding: EdgeInsets.all(10),
-                              child: Text(_utils.translate('Resident: '), style: TextStyle(color: Colors.black)),
+                              child: Text(_utils.translate("Resident: "), style: TextStyle(color: Colors.black)),
                             ),
                             Spacer(),
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text(_utils.translate('Only choose this if you are a tenant of an SRO or a patient at a care center or a hospital.'), style: TextStyle(color: Colors.black54)),
+                              child: Text(_utils.translate('Resident intro description'), style: TextStyle(color: Colors.black54)),
                             )
                           ],
                         ),
