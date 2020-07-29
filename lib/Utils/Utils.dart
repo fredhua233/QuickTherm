@@ -37,7 +37,7 @@ class Utils {
   }
 
   // This method will be called from every widget which needs a localized text
-  String translate(String key) {
+  static String translate(String key) {
     if (_localizedStrings.containsKey(key)) {
       return _localizedStrings[key];
     }
@@ -92,7 +92,7 @@ class Utils {
   Widget getMenu(BuildContext context, String identity, String currentPage) {
     switch (identity) {
       case "resident":
-        return PopupMenuButton<String>(
+        PopupMenuButton<String>(
             onSelected: (value) {
               switch (value) {
                 case "profile":

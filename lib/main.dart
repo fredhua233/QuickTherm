@@ -90,7 +90,7 @@ class InitializeState extends State<Initialize> {
               } else {
                 switch (_identity) {
                   case "resident":
-                    return ConnectingDevicesPage(title: "Available Devices", storage: NameStorage(), autoConnect: true);
+                    return ConnectingDevicesPage(title: Utils.translate("Available Devices"), storage: NameStorage(),autoConnect: true);
                   case "manager":
                     return UnitsGrid(units: UserInfo().fireStore.collection(_path + "/Units"));
 //                    return UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers/John White/Units"));

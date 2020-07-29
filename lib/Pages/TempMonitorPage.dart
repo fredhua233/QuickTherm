@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Utils/Utils.dart';
 import 'ConnectingDevicesPage.dart';
 import 'HistoryPage.dart';
+import 'ProfilePage.dart';
 
 //Critical voltage 3V, threshold 3.3V
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
@@ -55,7 +56,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   bool save = true;
 
   String msg = "";
-  String heading = "Your Temperature";
+  String heading = Utils.translate("Your Temperature");
   String _time = "";
   String _healthMsg = "";
 
@@ -83,7 +84,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     if (doc != null) {
       _data = doc.data;
     } else {
-      _utils.errDialog("Unable to get data", "Incorrect path", context);
+      _utils.errDialog(Utils.translate("Unable to get data"), Utils.translate("Incorrect path"), context);
     }
 
     //Sets up shared persistence
@@ -96,7 +97,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
 //          : "Take Temperature";
       text = _pref.containsKey("LastTemp")
           ? _utils.compTemp(_pref.getDouble("LastTemp"))
-          : "Take Temperature";
+          : Utils.translate("Take Temperature");
     }
     if (_pref.containsKey("LastMeasTime")) {
       time = _pref.containsKey("LastMeasTime")
@@ -147,18 +148,16 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       }
     } else {
       _utils.errDialog(
-          "Service not found",
-          "Needed service not found, disconnect and "
-              "attempt again, or connect to another device.",
+          Utils.translate("Service not found"),
+          Utils.translate("Service not found msg"),
           context);
     }
     if (char != null) {
       return char;
     } else {
       _utils.errDialog(
-          "Suitable characteristic not found",
-          "disconnect and "
-              "attempt again, or connect to another device.",
+          Utils.translate("Suitable characteristic not found"),
+          Utils.translate("Suitable characteristic not found msg"),
           context);
       return null;
     }
@@ -177,7 +176,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                 onPressed: () async {
                   String TempString = "";
                   setState(() {
-                    heading = "Your Temperature";
+                    heading = Utils.translate("Your Temperature");
                   });
                   BluetoothCharacteristic characteristic = _getCharacteristic();
                   await characteristic.setNotifyValue(true);
@@ -202,15 +201,15 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                   _checkingForHealth(Temp, 1, 1);
                   if (Vcc < 3300) {
                     _utils.errDialog(
-                        "Low Battery",
-                        "Low battery, please charge your armband. "
-                                "Current Battery level: " +
+                        Utils.translate("Low Battery"),
+                        Utils.translate("Low battery, please charge your device. ") +
+                        Utils.translate("Current Battery level: ") +
                             ((Vcc / 3700) * 100).toString() +
                             "%",
                         context);
                   }
                 },
-                label: Text("Measure"),
+                label: Text(Utils.translate("Measure")),
                 icon: new Icon(MdiIcons.thermometer)))
       ]);
     } else {
@@ -225,7 +224,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                     onPressed: () async {
                       String TempString = "";
                       setState(() {
-                        heading = "Started";
+                        heading = Utils.translate("Started");
                         _constantMode = _Therm.started;
                       });
                       BluetoothCharacteristic characteristic =
@@ -266,8 +265,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                             _checkingForHealth(Temp, 0, 0);
                             if (Vcc < 3300) {
                               _utils.errDialog(
-                                  "Low Battery",
-                                  "Low battery, please charge your armband.",
+                                  Utils.translate("Low Battery"),
+                                  Utils.translate("Low battery, please charge your device."),
                                   context);
                             }
                           }
@@ -278,7 +277,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                         }
                       });
                     },
-                    label: Text("Start"),
+                    label: Text(Utils.translate("Start")),
                     backgroundColor: Colors.green,
                   ))),
           Align(
@@ -291,12 +290,12 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                   await characteristic.write(utf8.encode("S"));
                   Future.delayed(Duration(seconds: 1)).then((value) {
                     setState(() {
-                      heading = "Stopped";
+                      heading = Utils.translate("Stopped");
                       _constantMode = _Therm.stopped;
                     });
                   });
                 },
-                label: Text("Stop"),
+                label: Text(Utils.translate("Stop")),
                 backgroundColor: Colors.red,
               )),
         ],
@@ -311,29 +310,29 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     bool set = false;
     if (temp < 15 || temp > 45) {
       _utils.errDialog(
-          "Try Again!",
-          "Bad measurement, please close this dialog, adjust placement of armband and try to measure your temperature again.",
+          Utils.translate("Try Again!"),
+          Utils.translate("Bad measurement msg"),
           context);
     } else {
       if (temp < 35) {
         if (m > 0) {
           _utils.errDialog(
-              "Hypothermia!", "You potentially have hypothermia!", context);
+              Utils.translate("Hypothermia!"), Utils.translate("You potentially have hypothermia!"), context);
         }
         setState(() {
           _primaryTag = Colors.black;
           _secondaryTag = Colors.blue;
-          _healthMsg = "Ill, potential hypothermia ";
+          _healthMsg = Utils.translate("Ill, potential hypothermia ");
         });
         set = true;
       } else if (temp > 37.5) {
         if (m > 0) {
-          _utils.errDialog("Fever!", "You potentially have fever!", context);
+          _utils.errDialog(Utils.translate("Fever!"), Utils.translate("You potentially have fever!"), context);
         }
         setState(() {
           _primaryTag = Colors.black;
           _secondaryTag = Colors.red;
-          _healthMsg = "Ill, potential fever";
+          _healthMsg = Utils.translate("Ill, potential fever");
         });
         set = true;
       }
@@ -348,8 +347,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           }
           _primaryTag = elapsed >= 3 ? Colors.white : Colors.black45;
           _healthMsg = elapsed >= 3
-              ? "Healthy, normal temperature"
-              : "Potential illness/recovery, \n normal temperature";
+              ? Utils.translate("Healthy, normal temperature")
+              : Utils.translate("Normal temp msg");
           _secondaryTag = Colors.green;
         });
       }
@@ -374,8 +373,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
     });
     _pushData(temp, now).then((success) {
       if (!success) {
-        _utils.errDialog("Pushing data to cloud failed!",
-            "Please check your wifi connection and try again.", context);
+        _utils.errDialog(Utils.translate("Pushing data to cloud failed!"),
+            Utils.translate("Please check your wifi connection and try again."), context);
       }
     });
   }
@@ -393,14 +392,13 @@ class TempMonitorPageState extends State<TempMonitorPage> {
 //              temp.toString() +
 //              String.fromCharCode(0x00B0) +
 //              "C"),
-            title: new Text("Your Temperature: " +
+            title: new Text(Utils.translate("Your Temperature: ") +
                 _utils.compTemp(temp)),
-          content: new Text(
-              "Delete this measurement in cloud? If you think there is an error in this measurement, please press Yes and measure again."),
+          content: new Text(Utils.translate("Delete msg")),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
-              child: new Text("Yes"),
+              child: new Text(Utils.translate("Yes")),
               onPressed: () {
                 setState(() {
                   save = false;
@@ -409,7 +407,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
               },
             ),
             new FlatButton(
-              child: new Text("No"),
+              child: new Text(Utils.translate("No")),
               onPressed: () {
                 setState(() {
                   save = true;
@@ -439,7 +437,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
           date.removeLast();
         } catch (e) {
           _utils.errDialog(
-              "Unable to delete", "Last Data already deleted", context);
+              Utils.translate("Unable to delete"), Utils.translate("Last Data already deleted"), context);
         }
       }
     }
@@ -518,13 +516,41 @@ class TempMonitorPageState extends State<TempMonitorPage> {
       await transaction.update(_user.unit, {"Unit Status" : unitStatus});
     });
   }
-
+  @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
 //          FIXME: Change line below
-          leading: _utils.getMenu(context, "resident", "Temp Monitor Page"),
+          leading: PopupMenuButton<String>(
+              onSelected: (value) {
+                switch (value) {
+                  case "profile":
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ProfilePage()));
+                    break;
+                  case "TempMon":
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                    value: "profile",
+                    child: Text(
+                      "Profile",
+                    )),
+                PopupMenuItem(
+                    value: "TempMon",
+                    child: Text(
+                      "Temperature Monitor",
+                    ))
+              ],
+              icon: Icon(Icons.menu)),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),

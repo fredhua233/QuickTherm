@@ -15,7 +15,7 @@ class ChooseLanguagePage extends StatefulWidget {
 class ChooseLanguagePageState extends State<ChooseLanguagePage> {
   Language _lang = Language.EN;
   bool acceptedTerms = false;
-  Utils _utils = new Utils();
+//  Utils Utils = new Utils();
 
   @override
   Widget build(BuildContext context) {
@@ -99,15 +99,17 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
           RaisedButton(
               onPressed: () async {
                 LANG = _lang.toString().substring(9).toLowerCase();
-                await _utils.load();
+                await Utils().load();
+                SharedPreferences _pref = await SharedPreferences.getInstance();
+                _pref.setString('lang', LANG);
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     // return object of type Dialog
                     return AlertDialog(
-                      title: new Text(_utils.translate("Permissions Requested")),
+                      title: new Text(Utils.translate("Permissions Requested")),
                       content: new SingleChildScrollView(
-                        child: Text(_utils.translate("Privacy Message"))
+                        child: Text(Utils.translate("Privacy Message"))
 //                            "By clicking on continue you agree to share the following: \n\n"
 //                                "- Name, address and age  \n"
 //                                "- Contact Information \n"
@@ -120,7 +122,7 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
                       actions: <Widget>[
                         // usually buttons at the bottom of the dialog
                         new FlatButton(
-                          child: new Text(_utils.translate("Agree")),
+                          child: new Text(Utils.translate("Agree")),
                           onPressed: () {
                             setState(() {
                               acceptedTerms = true;
@@ -129,7 +131,7 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
                           },
                         ),
                         new FlatButton(
-                          child: new Text(_utils.translate("Disagree")),
+                          child: new Text(Utils.translate("Disagree")),
                           onPressed: () {
                             setState(() {
                               acceptedTerms = false;

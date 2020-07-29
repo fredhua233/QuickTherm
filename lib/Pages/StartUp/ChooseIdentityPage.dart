@@ -13,7 +13,7 @@ class ChooseIdentityPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Utils().translate('Choose My Identity')),
+        title: Text(Utils.translate('Choose My Identity')),
       ),
       body: Container(
         child: selectIdentity()
@@ -32,7 +32,7 @@ class _selectIdentityState extends State<selectIdentity> {
   String temp;
   bool checkValue;
   SharedPreferences _pref;
-  Utils _utils = new Utils();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -96,20 +96,20 @@ class _selectIdentityState extends State<selectIdentity> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(_utils.translate('I am a: ')),
+                          Text(Utils.translate('I am a: ')),
                           SizedBox(width: 10),
                           DropdownButton<String>(
                             items: [
                               DropdownMenuItem<String>(
-                                child: Text(_utils.translate('Resident')),
+                                child: Text(Utils.translate('Resident')),
                                 value: 'resident',
                               ),
                               DropdownMenuItem<String>(
-                                child: Text(_utils.translate('Manager')),
+                                child: Text(Utils.translate('Manager')),
                                 value: 'manager',
                               ),
                               DropdownMenuItem<String>(
-                                child: Text(_utils.translate('Director')),
+                                child: Text(Utils.translate('Director')),
                                 value: 'director',
                               ),
                             ],
@@ -118,13 +118,13 @@ class _selectIdentityState extends State<selectIdentity> {
                                 _identity = value;
                               });
                               },
-                            hint: Text(_utils.translate('identity')),
+                            hint: Text(Utils.translate('identity')),
                             value: _identity,
                           )
                         ],
                       ),
                       RaisedButton(
-                        child: Text(_utils.translate('Continue')),
+                        child: Text(Utils.translate('Continue')),
                         onPressed: () {
                           if (_identity != null) {
                             switch (_identity) {
@@ -161,20 +161,20 @@ class _selectIdentityState extends State<selectIdentity> {
                           },
                       ),
                       SizedBox(height: 30),
-                      Text(_utils.translate('Please Read!'), style: TextStyle(fontSize: 20, decoration: TextDecoration.underline, color: Colors.red)),
+                      Text(Utils.translate('Please Read!'), style: TextStyle(fontSize: 20, decoration: TextDecoration.underline, color: Colors.red)),
                       SizedBox(height: 10),
                       Card(
                         child: Row(
                           children: [
                             Container(
                               padding: EdgeInsets.all(10),
-                              child: Text(_utils.translate('Director: '), style: TextStyle(color: Colors.black)),
+                              child: Text(Utils.translate('Director: '), style: TextStyle(color: Colors.black)),
                             ),
                             Spacer(),
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text(_utils.translate("Director intro description"), style: TextStyle(color: Colors.black54),),
+                              child: Text(Utils.translate("Director intro description"), style: TextStyle(color: Colors.black54),),
                             )
                           ],
                         ),
@@ -185,13 +185,13 @@ class _selectIdentityState extends State<selectIdentity> {
                           children: [
                             Container(
                               padding: EdgeInsets.all(10),
-                              child: Text(_utils.translate('Manager: '), style: TextStyle(color: Colors.black)),
+                              child: Text(Utils.translate('Manager: '), style: TextStyle(color: Colors.black)),
                             ),
                             Spacer(),
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text(_utils.translate("Manager intro description"), style: TextStyle(color: Colors.black54),),
+                              child: Text(Utils.translate("Manager intro description"), style: TextStyle(color: Colors.black54),),
                             )
                           ],
                         ),
@@ -202,13 +202,13 @@ class _selectIdentityState extends State<selectIdentity> {
                           children: [
                             Container(
                               padding: EdgeInsets.all(10),
-                              child: Text(_utils.translate("Resident: "), style: TextStyle(color: Colors.black)),
+                              child: Text(Utils.translate("Resident: "), style: TextStyle(color: Colors.black)),
                             ),
                             Spacer(),
                             Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
-                              child: Text(_utils.translate('Resident intro description'), style: TextStyle(color: Colors.black54)),
+                              child: Text(Utils.translate('Resident intro description'), style: TextStyle(color: Colors.black54)),
                             )
                           ],
                         ),

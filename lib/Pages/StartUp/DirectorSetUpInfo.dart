@@ -20,7 +20,6 @@ class directorSetUpInfo extends StatefulWidget {
 class _directorSetUpInfoState extends State<directorSetUpInfo> {
   final _formKey = new GlobalKey<FormState>();
   UserInfo _user = new UserInfo();
-  Utils _utils = new Utils();
   Map<String, dynamic> _directorInfo = new Map<String, dynamic>();
   List<bool> isSelected = [true, false];
 
@@ -28,7 +27,7 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(_utils.translate('Fill out your information')),
+          title: Text(Utils.translate('Fill out your information')),
         ),
         body: SafeArea(
           top: false,
@@ -44,12 +43,12 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
                         TextFormField(
                             decoration: InputDecoration(
                                 icon: Icon(Icons.person),
-                                hintText: _utils.translate('Ex. CCDC'),
-                                labelText: _utils.translate('Organization Name')
+                                hintText: Utils.translate('Ex. CCDC'),
+                                labelText: Utils.translate('Organization Name')
                             ),
                             validator: (value) {
                               if (value.isEmpty){
-                                return _utils.translate("Please enter your Organization name");
+                                return Utils.translate("Please enter your Organization name");
                               }
                               return null;
                             },
@@ -61,13 +60,13 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
                         TextFormField(
                             decoration: InputDecoration(
                                 icon: Icon(Icons.phone),
-                                hintText: _utils.translate('Ex. 123-456-7890'),
-                                labelText: _utils.translate('Contact')
+                                hintText: Utils.translate('Ex. 123-456-7890'),
+                                labelText: Utils.translate('Contact')
                             ),
                             keyboardType: TextInputType.phone,
                             validator: (value){
                               if(value.isEmpty || value.length != 12 || !value.contains('-')){
-                                return _utils.translate('Please enter in correct format: xxx-xxx-xxxx');
+                                return Utils.translate('Please enter in correct format: xxx-xxx-xxxx');
                               }
                               return null;
                             },
@@ -76,7 +75,7 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
                               _directorInfo['Contacts'] = val;
                             })
                         ),
-                        Text(_utils.translate("Desired unit of temperature")),
+                        Text(Utils.translate("Desired unit of temperature")),
                         ToggleButtons(
                           children: <Widget>[
                             Icon(MdiIcons.temperatureCelsius),
@@ -113,7 +112,7 @@ class _directorSetUpInfoState extends State<directorSetUpInfo> {
                                   builder: (context) => Director(managers: UserInfo().fireStore.collection("/Organizations/${_directorInfo['Organization']}/Managers"),)));
                             }
                           },
-                          child: Text(_utils.translate('Save')),
+                          child: Text(Utils.translate('Save')),
                         ),
                       ],
                     ),

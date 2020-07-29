@@ -22,6 +22,13 @@ class ProfilePageState extends State<ProfilePage> {
   var _arrAddress = new List(4);
 
   @override
+  void setState(fn) {
+    if(mounted){
+      super.setState(fn);
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     getPathDataAndOthers();

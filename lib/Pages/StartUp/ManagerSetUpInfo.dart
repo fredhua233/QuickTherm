@@ -19,12 +19,12 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
   Map<String, dynamic> _managerInfo = new Map<String, dynamic>();
   List<bool> isSelected = [true, false];
   UserInfo _user = new UserInfo();
-  Utils _utils = new Utils();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(_utils.translate('Fill out your information')),
+          title: Text(Utils.translate('Fill out your information')),
         ),
         body: SafeArea(
           top: false,
@@ -40,12 +40,12 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                         TextFormField(
                             decoration: InputDecoration(
                                 icon: Icon(Icons.person),
-                                hintText: _utils.translate('Ex. John Doe'),
-                                labelText: _utils.translate('Name')
+                                hintText: Utils.translate('Ex. John Doe'),
+                                labelText: Utils.translate('Name')
                             ),
                             validator: (value) {
                               if (value.isEmpty || !value.contains(' ')){
-                                return _utils.translate("Please enter in correct format: 'first last'");
+                                return Utils.translate("Please enter in correct format: 'first last'");
                               }
                               return null;
                             },
@@ -56,13 +56,13 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                         TextFormField(
                             decoration: InputDecoration(
                                 icon: Icon(Icons.phone),
-                                hintText: _utils.translate('Ex. 123-456-7890'),
-                                labelText: _utils.translate('Contact')
+                                hintText: Utils.translate('Ex. 123-456-7890'),
+                                labelText: Utils.translate('Contact')
                             ),
                             keyboardType: TextInputType.phone,
                             validator: (value){
                               if(value.isEmpty || value.length != 12 || !value.contains('-')){
-                                return _utils.translate('Please enter in correct format: xxx-xxx-xxxx');
+                                return Utils.translate('Please enter in correct format: xxx-xxx-xxxx');
                               }
                               return null;
                             },
@@ -70,12 +70,12 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                         ),
                         TextFormField(
                             decoration: InputDecoration(
-                                hintText: _utils.translate('Ex. CCDC'),
-                                labelText: _utils.translate('Your Organization')
+                                hintText: Utils.translate('Ex. CCDC'),
+                                labelText: Utils.translate('Your Organization')
                             ),
                             validator: (value){
                               if(value.isEmpty){
-                                return _utils.translate('Please enter your organization name');
+                                return Utils.translate('Please enter your organization name');
                               }
                               return null;
                             },
@@ -85,12 +85,12 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                         TextFormField(
                             decoration: InputDecoration(
                                 icon: Icon(Icons.home),
-                                hintText: _utils.translate('Ex. 1 Main st.'),
-                                labelText: _utils.translate('Your Organization address:')
+                                hintText: Utils.translate('Ex. 1 Main st.'),
+                                labelText: Utils.translate('Your Organization address:')
                             ),
                             validator: (value){
                               if(value.isEmpty){
-                                return _utils.translate('Please enter your street address');
+                                return Utils.translate('Please enter your street address');
                               }
                               return null;
                             },
@@ -98,12 +98,12 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                         ),
                         TextFormField(
                             decoration: InputDecoration(
-                                hintText: _utils.translate('Ex. San Francisco'),
-                                labelText: _utils.translate('City')
+                                hintText: Utils.translate('Ex. San Francisco'),
+                                labelText: Utils.translate('City')
                             ),
                             validator: (value){
                               if(value.isEmpty){
-                                return _utils.translate('Please enter your city');
+                                return Utils.translate('Please enter your city');
                               }
                               return null;
                             },
@@ -114,12 +114,12 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                             Expanded(
                               child: TextFormField(
                                   decoration: InputDecoration(
-                                      hintText: _utils.translate('Ex. CA'),
-                                      labelText: _utils.translate('State')
+                                      hintText: Utils.translate('Ex. CA'),
+                                      labelText: Utils.translate('State')
                                   ),
                                   validator: (value){
                                     if(value.isEmpty || value.length > 2){
-                                      return _utils.translate('Please enter your state');
+                                      return Utils.translate('Please enter your state');
                                     }
                                     return null;
                                   },
@@ -129,8 +129,8 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                             Expanded(
                               child: TextFormField(
                                   decoration: InputDecoration(
-                                      hintText: _utils.translate('Ex. 94105'),
-                                      labelText: _utils.translate('Zip code')
+                                      hintText: Utils.translate('Ex. 94105'),
+                                      labelText: Utils.translate('Zip code')
                                   ),
                                   keyboardType: TextInputType.phone,
                                   inputFormatters: [
@@ -138,7 +138,7 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                                   ],
                                   validator: (value){
                                     if(value.isEmpty || value.length != 5){
-                                      return _utils.translate('Please enter your zip code');
+                                      return Utils.translate('Please enter your zip code');
                                     }
                                     return null;
                                   },
@@ -147,7 +147,7 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                             )
                           ],
                         ),
-                        Text(_utils.translate("Desired unit of temperature")),
+                        Text(Utils.translate("Desired unit of temperature")),
                         ToggleButtons(
                           children: <Widget>[
                             Icon(MdiIcons.temperatureCelsius),
@@ -185,7 +185,7 @@ class _managerSetUpInfoState extends State<managerSetUpInfo> {
                                   builder: (context) => UnitsGrid(units: UserInfo().fireStore.collection("/Organizations/${_managerInfo['Organization']}/Managers/${_managerInfo['Name']}/Units"))));
                             }
                           },
-                          child: Text(_utils.translate('Save')),
+                          child: Text(Utils.translate('Save')),
                         ),
                       ],
                     ),
