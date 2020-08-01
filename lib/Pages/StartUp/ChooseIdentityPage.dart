@@ -175,6 +175,7 @@ class _selectIdentityState extends State<selectIdentity> {
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width * 0.75,
                               child: Text(Utils.translate("Director intro description"), style: TextStyle(color: Colors.black54),),
+
                             )
                           ],
                         ),
