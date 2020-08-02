@@ -76,26 +76,26 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
               });
             },
           ),
-          RadioListTile<Language>(
-            title: const Text('русский'),
-            value: Language.RU,
-            groupValue: _lang,
-            onChanged: (Language lang) {
-              setState(() {
-                _lang = lang;
-              });
-            },
-          ),
-          RadioListTile<Language>(
-            title: const Text('عربى'),
-            value: Language.AR,
-            groupValue: _lang,
-            onChanged: (Language lang) {
-              setState(() {
-                _lang = lang;
-              });
-            },
-          ),
+//          RadioListTile<Language>(
+//            title: const Text('русский'),
+//            value: Language.RU,
+//            groupValue: _lang,
+//            onChanged: (Language lang) {
+//              setState(() {
+//                _lang = lang;
+//              });
+//            },
+//          ),
+//          RadioListTile<Language>(
+//            title: const Text('عربى'),
+//            value: Language.AR,
+//            groupValue: _lang,
+//            onChanged: (Language lang) {
+//              setState(() {
+//                _lang = lang;
+//              });
+//            },
+//          ),
           RaisedButton(
               onPressed: () async {
                 LANG = _lang.toString().substring(9).toLowerCase();

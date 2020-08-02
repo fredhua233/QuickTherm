@@ -542,12 +542,12 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                 PopupMenuItem(
                     value: "profile",
                     child: Text(
-                      "Profile",
+                        Utils.translate("Profile"),
                     )),
                 PopupMenuItem(
                     value: "TempMon",
                     child: Text(
-                      "Temperature Monitor",
+                        Utils.translate("Temperature Monitor"),
                     ))
               ],
               icon: Icon(Icons.menu)),
@@ -600,7 +600,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                               setState(() {
                                 _constantMode = _Therm.stopped;
                                 _monitorState = _State.discreet;
-                                heading = "Your Temperature";
+                                heading = Utils.translate("Your Temperature");
                               });
                             } else {
                               setState(() {
@@ -617,7 +617,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (context) => ConnectingDevicesPage(
-                                        title: "Available Devices",
+                                        title: Utils.translate("Available Devices"),
                                         storage: NameStorage(),
                                         autoConnect: false)),
                                 (Route<dynamic> route) => false);
@@ -644,21 +644,21 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                         PopupMenuItem(
                             value: "Change Mode",
                             child: Text(
-                              "Change Mode of Monitoring",
+                                Utils.translate("Change Mode of Monitoring"),
                             )),
                         PopupMenuItem(
                             value: "Disconnect",
                             child: Text(
-                              "Disconnect from Current Device",
+                                Utils.translate("Disconnect from Current Device"),
                             )),
                         PopupMenuItem(
-                            value: "Delete", child: Text("Delete Last Taking")),
+                            value: "Delete", child: Text(Utils.translate("Delete Last Taking"))),
                         PopupMenuItem(
-                            value: "Change Unit", child: Text("Change Unit Preference"))
+                            value: "Change Unit", child: Text(Utils.translate("Change Unit Preference")))
                       ],
                     ))),
           ],
-          title: Text("Thermometer"),
+          title: Text(Utils.translate("Thermometer")),
         ),
         body: Stack(children: <Widget>[
           Align(
@@ -677,7 +677,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                       style: new TextStyle(fontSize: 40, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.15, 0.45),
-              child: Text("Time taken: ",
+              child: Text(Utils.translate("Time taken: "),
                   style: new TextStyle(fontSize: 18, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.175, 0.5),
@@ -688,7 +688,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                       style: new TextStyle(fontSize: 15, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.175, 0.6),
-              child: Text("Health Condition: ",
+              child: Text(Utils.translate("Health Condition: "),
                   style: new TextStyle(fontSize: 18, color: Colors.black))),
           Align(
               alignment: FractionalOffset(0.15, 0.675),

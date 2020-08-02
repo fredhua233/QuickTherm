@@ -18,11 +18,11 @@ class HelpPageState extends State<HelpPage> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Help"),
+            title: Text(Utils.translate("Help")),
             bottom: TabBar(
               tabs: [
-                Tab(text: "About/Help"),
-                Tab(text: "Ask the Developers"),
+                Tab(text: Utils.translate("About/Help")),
+                Tab(text: Utils.translate("Ask the Developers")),
               ],
             ),
           ),
@@ -69,7 +69,7 @@ class HelpPageState extends State<HelpPage> {
               Container(
                 padding: EdgeInsets.all(5),
                 width: MediaQuery.of(context).size.width * 0.75,
-                child: Text("This is the history icon, you can tap this to see your historical temperature trends.", style: TextStyle(color: Colors.black54),),
+                child: Text(Utils.translate("History icon"), style: TextStyle(color: Colors.black54),),
               )
             ],
           ),
@@ -84,7 +84,7 @@ class HelpPageState extends State<HelpPage> {
               Container(
                 padding: EdgeInsets.all(5),
                 width: MediaQuery.of(context).size.width * 0.75,
-                child: Text("This is the thermometer icon, you can tap this icon to measure your current temperature.", style: TextStyle(color: Colors.black54),),
+                child: Text(Utils.translate("Thermometer icon"), style: TextStyle(color: Colors.black54),),
               )
             ],
           ),
@@ -140,8 +140,7 @@ class HelpPageState extends State<HelpPage> {
               Container(
                 padding: EdgeInsets.all(5),
                 width: MediaQuery.of(context).size.width * 0.75,
-                child: Text("These are the primary tags that represent your current health condition: \n\n"
-                    "Black - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy", style: TextStyle(color: Colors.black54),),
+                child: Text(Utils.translate("Primary tag explanation"), style: TextStyle(color: Colors.black54),),
               )
             ],
           ),
@@ -197,8 +196,7 @@ class HelpPageState extends State<HelpPage> {
               Container(
                 padding: EdgeInsets.all(5),
                 width: MediaQuery.of(context).size.width * 0.75,
-                child: Text("These are the secondary tags that represent your current temperature: \n\n"
-                    "Red - fever. \nGreen - normal \nBlue - hypothermia", style: TextStyle(color: Colors.black54),),
+                child: Text(Utils.translate("Secondary tag explanation"), style: TextStyle(color: Colors.black54),),
               )
             ],
           ),
@@ -213,14 +211,7 @@ class HelpPageState extends State<HelpPage> {
               Container(
                 padding: EdgeInsets.all(5),
                 width: MediaQuery.of(context).size.width * 0.75,
-                child: Text("This is options icon, you can tap this icon to:\n\n"
-                    "Change Mode - this changes the temperature taking mode to be constant monitoring mode, "
-                    "which monitors your temperature constantly. Press the starts button to start monitoring, "
-                    "stop button to stop monitoring.\n\n"
-                    "Disconnect - disconnect from current device and connect to a new device. \n\n"
-                    "Delete - deletes the current temperature measurement from record. \n\n"
-                    "Change Unit Preference - changes the unit you view your temperature in, "
-                    "if you are on fahrenheit, it will swap to celsius and vice versa.", style: TextStyle(color: Colors.black54),),
+                child: Text(Utils.translate("Options icon"), style: TextStyle(color: Colors.black54),),
               )
             ],
           ),
@@ -235,7 +226,7 @@ class HelpPageState extends State<HelpPage> {
         padding: EdgeInsets.all(5),
         child: Column(
           children: [
-            Text("Units Tab", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+            Text(Utils.translate("Units Tab"), style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
             Card(
               child: Row(
                 children: [
@@ -250,19 +241,17 @@ class HelpPageState extends State<HelpPage> {
                                 color: Colors.black,
                                 width: 2,
                                 style: BorderStyle.solid)),
-                        child: Center(child: Text("Unit 1", style: TextStyle(fontSize: 10)))),
+                        child: Center(child: Text(Utils.translate("Unit 1"), style: TextStyle(fontSize: 10)))),
                   ),
                   Container(
                     padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("In the units tab, you can see all the units under your responsibility. "
-                        "Each unit is represented by a tile with the unit name in the middle and its condition is represented by its color:\n\n"
-                        "Black - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy\n\nTap on the unit tile to see all the individuals in the unit", style: TextStyle(color: Colors.black54),),
+                    child: Text(Utils.translate("Units Tab description"), style: TextStyle(color: Colors.black54),),
                   )
                 ],
               ),
             ),
-            Text("Individuals Tab", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+            Text(Utils.translate("Individuals Tab"), style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
             Card(
               child: Row(
                 children: [
@@ -330,15 +319,12 @@ class HelpPageState extends State<HelpPage> {
                   Container(
                     padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("In the individuals tab, you can see the health information of the individual. "
-                        "Each individual is represented by a tile with the their temperature in the middle, name on top, and condition is represented by a tag following this color code:\n\n"
-                        "Black - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy\n\n"
-                        "Their temperature is displayed with colors following this color code:\n\nRed - fever. \nGreen - normal \nBlue - hypothermia\n\nTap on the individual tile to see the individual's information in detail", style: TextStyle(color: Colors.black54),),
+                    child: Text(Utils.translate("Individuals Tab description"), style: TextStyle(color: Colors.black54),),
                   )
                 ],
               ),
             ),
-            Text("Icons", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+            Text(Utils.translate("Icons"), style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
             Card(
               child: Row(
                 children: [
@@ -349,7 +335,7 @@ class HelpPageState extends State<HelpPage> {
                   Container(
                     padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("This is the search icon, you can tap this icon to search for specific unit or individual.", style: TextStyle(color: Colors.black54),),
+                    child: Text(Utils.translate("Search icon description"), style: TextStyle(color: Colors.black54),),
                   )
                 ],
               ),
@@ -364,7 +350,7 @@ class HelpPageState extends State<HelpPage> {
                   Container(
                     padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("This is the remind icon, you can tap this icon to see all individuals that had not taken a temperature measurement in the last 12 hours, so that you can remind them.", style: TextStyle(color: Colors.black54)),
+                    child: Text(Utils.translate("Remind icon description"), style: TextStyle(color: Colors.black54)),
                   )
                 ],
               ),
@@ -379,7 +365,7 @@ class HelpPageState extends State<HelpPage> {
                   Container(
                     padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("This is the view icon, you can tap this icon to sort the individuals/units by their health condition.", style: TextStyle(color: Colors.black54)),
+                    child: Text(Utils.translate("View icon(individual)"), style: TextStyle(color: Colors.black54)),
                   )
                 ],
               ),
@@ -394,8 +380,7 @@ class HelpPageState extends State<HelpPage> {
                   Container(
                     padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("This is the Change Unit Preference button, it changes the unit you view your temperature in, "
-                        "if you are on fahrenheit, it will swap to celsius and vice versa.", style: TextStyle(color: Colors.black54),),
+                    child: Text(Utils.translate("Change Unit Preference Button description"), style: TextStyle(color: Colors.black54),),
                   )
                 ],
               ),
@@ -410,7 +395,7 @@ class HelpPageState extends State<HelpPage> {
                   Container(
                     padding: EdgeInsets.all(5),
                     width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text("Pull down page to refresh data. Please remember to do so before viewing a specific individual.", style: TextStyle(color: Colors.black54)),
+                    child: Text(Utils.translate("Refresh Icon"), style: TextStyle(color: Colors.black54)),
                   )
                 ],
               ),
@@ -428,7 +413,7 @@ class HelpPageState extends State<HelpPage> {
           padding: EdgeInsets.all(5),
           child: Column(
             children: [
-              Text("Director View", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+              Text(Utils.translate("Director View"), style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
               Card(
                 child: Row(
                   children: [
@@ -437,12 +422,12 @@ class HelpPageState extends State<HelpPage> {
                       child: Column(
                         children: [
                           Center(
-                              child: Text("Mary", style: TextStyle(fontSize: 10))
+                              child: Text(Utils.translate("Mary"), style: TextStyle(fontSize: 10))
                           ),
                           Padding(
                               padding: EdgeInsets.only(top: 5),
                               child: Center(
-                                child: Text("# of Residents", style: TextStyle(fontSize: 7)),
+                                child: Text(Utils.translate("# of Residents"), style: TextStyle(fontSize: 7)),
                               )
                           ),
                           Padding(
@@ -457,9 +442,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("In the director view, you can see all the managers under your responsibility. "
-                          "Each manager is represented by a tile with the manager name on the top and number of residents under the specific manager's responsibility."
-                          " Tap on the manager tile to see all the units under the manager's responsibility", style: TextStyle(color: Colors.black54)),
+                      child: Text(Utils.translate("Director View Description"), style: TextStyle(color: Colors.black54)),
                     )
                   ],
                 ),
@@ -474,7 +457,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("This is the search icon, you can tap this icon to search for specific manager.", style: TextStyle(color: Colors.black54),),
+                      child: Text(Utils.translate("Search icon description"), style: TextStyle(color: Colors.black54),),
                     )
                   ],
                 ),
@@ -489,7 +472,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("This is the view icon, you can tap this icon to see all managers.", style: TextStyle(color: Colors.black54)),
+                      child: Text(Utils.translate("View icon(manager)"), style: TextStyle(color: Colors.black54)),
                     )
                   ],
                 ),
@@ -504,13 +487,12 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("This is the Change Unit Preference button, it changes the unit you view your temperature in, "
-                          "if you are on fahrenheit, it will swap to celsius and vice versa.", style: TextStyle(color: Colors.black54),),
+                      child: Text(Utils.translate("Change Unit Preference Button description"), style: TextStyle(color: Colors.black54),),
                     )
                   ],
                 ),
               ),
-              Text("Units Tab", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+              Text(Utils.translate("Units Tab"), style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
               Card(
                 child: Row(
                   children: [
@@ -525,19 +507,17 @@ class HelpPageState extends State<HelpPage> {
                                   color: Colors.black,
                                   width: 2,
                                   style: BorderStyle.solid)),
-                          child: Center(child: Text("Unit 1", style: TextStyle(fontSize: 10)))),
+                          child: Center(child: Text(Utils.translate("Unit 1"), style: TextStyle(fontSize: 10)))),
                     ),
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("In the units tab, you can see all the units under your responsibility. "
-                          "Each unit is represented by a tile with the unit name in the middle and its condition is represented by its color:\n\n"
-                          "Black - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy\n\nTap on the unit tile to see all the individuals in the unit", style: TextStyle(color: Colors.black54),),
+                      child: Text(Utils.translate("Units Tab description"), style: TextStyle(color: Colors.black54),),
                     )
                   ],
                 ),
               ),
-              Text("Individuals Tab", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+              Text(Utils.translate("Individuals Tab"), style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
               Card(
                 child: Row(
                   children: [
@@ -605,10 +585,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("In the individuals tab, you can see the health information of the individual. "
-                          "Each individual is represented by a tile with the their temperature in the middle, name on top, and condition is represented by a tag following this color code:\n\n"
-                          "Black - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy\n\n"
-                          "Their temperature is displayed with colors following this color code:\n\nRed - fever. \nGreen - normal \nBlue - hypothermia\n\nTap on the individual tile to see the individual's information in detail", style: TextStyle(color: Colors.black54),),
+                      child: Text(Utils.translate("Individuals Tab description"), style: TextStyle(color: Colors.black54),),
                     )
                   ],
                 ),
@@ -624,7 +601,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("This is the search icon, you can tap this icon to search for specific unit or individual.", style: TextStyle(color: Colors.black54),),
+                      child: Text(Utils.translate("Search icon description"), style: TextStyle(color: Colors.black54),),
                     )
                   ],
                 ),
@@ -639,7 +616,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("This is the remind icon, you can tap this icon to see all individuals that had not taken a temperature measurement in the last 12 hours, so that you can remind them.", style: TextStyle(color: Colors.black54)),
+                      child: Text(Utils.translate("Remind icon description"), style: TextStyle(color: Colors.black54)),
                     )
                   ],
                 ),
@@ -654,7 +631,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("This is the view icon, you can tap this icon to sort the individuals/units by their health condition.", style: TextStyle(color: Colors.black54)),
+                      child: Text(Utils.translate("View icon(individual)"), style: TextStyle(color: Colors.black54)),
                     )
                   ],
                 ),
@@ -669,7 +646,7 @@ class HelpPageState extends State<HelpPage> {
                     Container(
                       padding: EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("Pull down page to refresh data. Please remember to do so before viewing a specific individual.", style: TextStyle(color: Colors.black54)),
+                      child: Text(Utils.translate("Refresh Icon"), style: TextStyle(color: Colors.black54)),
                     )
                   ],
                 ),
@@ -685,7 +662,7 @@ class HelpPageState extends State<HelpPage> {
       child: Column(
         children: [
           Icon(Icons.sentiment_very_dissatisfied, size: 200, color: Colors.black26,),
-          Text("There is a problem setting up, please delete app and reinstall. :(", style: TextStyle(fontSize: 24), textAlign: TextAlign.center,)
+          Text(Utils.translate("There is a problem setting up, please delete app and reinstall. :("), style: TextStyle(fontSize: 24), textAlign: TextAlign.center,)
         ],
       ),
     );
@@ -698,7 +675,7 @@ class HelpPageState extends State<HelpPage> {
               padding: EdgeInsets.all(10.0),
               child: Column(
                 children: [
-                  Text("Meet the Developers!",
+                  Text(Utils.translate("Meet the Developers!"),
                       style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -716,7 +693,7 @@ class HelpPageState extends State<HelpPage> {
                                 text: TextSpan(
                                   style: TextStyle(fontSize: 20, color: Colors.black54),
                                   children: [
-                                    TextSpan(text: "Email:", style: TextStyle(fontWeight: FontWeight.bold)),
+                                    TextSpan(text: Utils.translate("Email:"), style: TextStyle(fontWeight: FontWeight.bold)),
                                     TextSpan(text: "ansuefrhua@gmail.com")
                                   ],
                                 ),
@@ -725,11 +702,11 @@ class HelpPageState extends State<HelpPage> {
                                 if (await canLaunch("mailto:ansuefrhua@gmail.com?subject=BugReport&body=")) {
                                   launch("mailto:ansuefrhua@gmail.com?subject=BugReport&body=").then((success) {
                                     if (!success) {
-                                      Utils().errDialog("Can't send Message", "Please email through another application, sorry!", context);
+                                      Utils().errDialog(Utils.translate("Can't send Message"), Utils.translate("Please email through another application, sorry!"), context);
                                     }
                                   });
                                 } else {
-                                  Utils().errDialog("Can't send Message", "Please email through another application, sorry!", context);
+                                  Utils().errDialog(Utils.translate("Can't send Message"), Utils.translate("Please email through another application, sorry!"), context);
                                 }
                               }
                             ),
@@ -738,7 +715,7 @@ class HelpPageState extends State<HelpPage> {
                                 text: TextSpan(
                                   style: TextStyle(fontSize: 20, color: Colors.black54),
                                   children: [
-                                    TextSpan(text: "Tel:", style: TextStyle(fontWeight: FontWeight.bold)),
+                                    TextSpan(text: Utils.translate("Tel:"), style: TextStyle(fontWeight: FontWeight.bold)),
                                     TextSpan(text: "1(415)996-8529")
                                   ],
                                 ),
@@ -749,14 +726,14 @@ class HelpPageState extends State<HelpPage> {
                                   launch("sms:14159968529")
                                       .then((success) {
                                     if (!success) {
-                                      Utils().errDialog("Can't send Message",
-                                          "Please send SMS through another application, sorry!",
+                                      Utils().errDialog(Utils.translate("Can't send Message"),
+                                          Utils.translate("Please send SMS through another application, sorry!"),
                                           context);
                                     }
                                   });
                                 } else {
-                                  Utils().errDialog("Can't send Message",
-                                      "Please send SMS through another application, sorry!",
+                                  Utils().errDialog(Utils.translate("Can't send Message"),
+                                      Utils.translate("Please send SMS through another application, sorry!"),
                                       context);
                                 }
                               }
@@ -774,7 +751,7 @@ class HelpPageState extends State<HelpPage> {
                               text: TextSpan(
                                 style: TextStyle(fontSize: 20, color: Colors.black54),
                                 children: [
-                                  TextSpan(text: "Email:", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  TextSpan(text: Utils.translate("Email:"), style: TextStyle(fontWeight: FontWeight.bold)),
                                   TextSpan(text: "ansuefrhua@gmail.com")
                                 ],
                               ),
@@ -783,11 +760,11 @@ class HelpPageState extends State<HelpPage> {
                               if (await canLaunch("mailto:ansuefrhua@gmail.com?subject=BugReport&body=")) {
                                 launch("mailto:ansuefrhua@gmail.com?subject=BugReport&body=").then((success) {
                                   if (!success) {
-                                    Utils().errDialog("Can't send Message", "Please email through another application, sorry!", context);
+                                    Utils().errDialog(Utils.translate("Can't send Message"), Utils.translate("Please email through another application, sorry!"), context);
                                   }
                                 });
                               } else {
-                                Utils().errDialog("Can't send Message", "Please email through another application, sorry!", context);
+                                Utils().errDialog(Utils.translate("Can't send Message"), Utils.translate("Please email through another application, sorry!"), context);
                               }
                             }
                         ),
@@ -796,8 +773,8 @@ class HelpPageState extends State<HelpPage> {
                               text: TextSpan(
                                 style: TextStyle(fontSize: 20, color: Colors.black54),
                                 children: [
-                                  TextSpan(text: "Tel:", style: TextStyle(fontWeight: FontWeight.bold)),
-                                  TextSpan(text: "1(415)769-8863")
+                                  TextSpan(text: Utils.translate("Tel:"), style: TextStyle(fontWeight: FontWeight.bold)),
+                                  TextSpan(text: Utils.translate("1(415)769-8863"))
                                 ],
                               ),
                             ),
@@ -807,14 +784,14 @@ class HelpPageState extends State<HelpPage> {
                                 launch("sms:14157698863")
                                     .then((success) {
                                   if (!success) {
-                                    Utils().errDialog("Can't send Message",
-                                        "Please send SMS through another application, sorry!",
+                                    Utils().errDialog(Utils.translate("Can't send Message"),
+                                        Utils.translate("Please send SMS through another application, sorry!"),
                                         context);
                                   }
                                 });
                               } else {
-                                Utils().errDialog("Can't send Message",
-                                    "Please send SMS through another application, sorry!",
+                                Utils().errDialog(Utils.translate("Can't send Message"),
+                                    Utils.translate("Please send SMS through another application, sorry!"),
                                     context);
                               }
                             }
@@ -824,11 +801,7 @@ class HelpPageState extends State<HelpPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 40),
-                    child: Text("Feel free to message us anything about this app! If you found it a bug please email us about it, "
-                        "providing a thorough description and if you can attach a screenshot or screen recording of the bug. Thank you! \n\n "
-                        "You can email us by clicking on their email addresses or compose a SMS by tapping on our phone numbers. \n \n"
-                        "If you are not comfortable with English, you can also message or email us in Chinese! \n如果您使用中文，您可以点击以上电子邮箱"
-                        "或电话号码用中文跟我们联系，谢谢！"),
+                    child: Text(Utils.translate("Meet developer msg")),
                   )
                 ],
               ),
