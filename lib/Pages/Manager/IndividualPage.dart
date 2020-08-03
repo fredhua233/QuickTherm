@@ -14,8 +14,8 @@ import 'package:charts_flutter/src/text_element.dart' as text;
 import 'package:charts_flutter/src/text_style.dart' as style;
 import 'package:quicktherm/main.dart';
 
-String _time = "N/A";
-String _temp = "N/A";
+String _time = Utils.translate("N/A");
+String _temp = Utils.translate("N/A");
 
 
 class IndividualPage extends StatefulWidget {
@@ -69,7 +69,7 @@ class IndividualPageState extends State<IndividualPage> {
   Map<String, dynamic> _userInfo;
   Map<String, dynamic> _unitInfo;
   bool _edit = false;
-  String dropdownValue = "Last Day";
+  String dropdownValue = Utils.translate("Last Day");
   String _lastMeasured, _lastTemp, _mode, _min, _max, _avg, _timeWindow = " ";
   _Mode _displayMode = _Mode.Day;
   Utils _utils = new Utils();
@@ -79,7 +79,7 @@ class IndividualPageState extends State<IndividualPage> {
   IndividualPageState(this.IndividualDoc, this.UnitDoc);
 
   _onSelectionChanged(SelectionModel model) {
-    String time, temp = "N/A";
+    String time, temp = Utils.translate("N/A");
     if(model.hasDatumSelection) {
       temp = model.selectedSeries[0].measureFn(model.selectedDatum[0].index).toString();
       time = model.selectedDatum.first.datum.time.toString();
@@ -116,7 +116,7 @@ class IndividualPageState extends State<IndividualPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Since Beginning of Time";
+          _mode = Utils.translate("Beginning of Time");
         });
       } else if (m == _Mode.Day) {
         DateTime last = DateTime.parse(date.last);
@@ -127,7 +127,7 @@ class IndividualPageState extends State<IndividualPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last Day";
+          _mode = Utils.translate("Last Day");
         });
       } else if (m == _Mode.Hour) {
         DateTime last = DateTime.parse(date.last);
@@ -138,7 +138,7 @@ class IndividualPageState extends State<IndividualPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last Hour";
+          _mode = Utils.translate("Last Hour");
         });
       } else if (m == _Mode.Week) {
         DateTime last = DateTime.parse(date.last);
@@ -149,7 +149,7 @@ class IndividualPageState extends State<IndividualPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last Week";
+          _mode = Utils.translate("Last Week");
         });
       } else if (m == _Mode.ThreeDays) {
         DateTime last = DateTime.parse(date.last);
@@ -160,7 +160,7 @@ class IndividualPageState extends State<IndividualPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last 3 Days";
+          _mode = Utils.translate("Last Three Days");
         });
       } else if (m == _Mode.Custom) {
         List<String> tempDay = date.where((element) => element.contains(day)).toList();
@@ -168,12 +168,11 @@ class IndividualPageState extends State<IndividualPage> {
           points.add(new TempsData(DateTime.parse(s), Utils().compNumTemp(t[s]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Custom";
+          _mode = Utils.translate("Custom");
         });
       }
       if (points.length == 0 || points.length == 1) {
-        _utils.errDialog("Not Enough Value!", "There are no measurements or not "
-            "enough measurements taken in the selected time window. ", context);
+        _utils.errDialog(Utils.translate("Not Enough Value!"), Utils.translate("There are no measurements or not enough measurements taken in the selected time window. "), context);
       }
       for(var pt in points) {
         sum += pt.temp;
@@ -212,35 +211,34 @@ class IndividualPageState extends State<IndividualPage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Input Date"),
+          title: new Text(Utils.translate("Input Date")),
           content: Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
                 controller: _textController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'YYYY-MM-DD',
+                  labelText: Utils.translate('YYYY-MM-DD'),
                 ),
               )
           ),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
-              child: new Text("View"),
+              child: new Text(Utils.translate("View")),
               onPressed: () {
                 String date = _textController.text;
                 setState(() {
                   _line = _getData(_displayMode, day: date);
                 });
                 if (_line[0].data.length == 0) {
-                  _utils.errDialog("Not Enough Value!", "There are no measurements or not "
-                      "enough measurements taken in the selected time window. ", context);
+                  _utils.errDialog(Utils.translate("Not Enough Value!"), Utils.translate("There are no measurements or not enough measurements taken in the selected time window. "), context);
                 }
                 Navigator.of(context).pop();
               },
             ),
             FlatButton(
-              child: new Text("Close"),
+              child: new Text(Utils.translate("Close")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -269,7 +267,7 @@ class IndividualPageState extends State<IndividualPage> {
               behaviorPosition: BehaviorPosition.top,
               titleOutsideJustification: OutsideJustification.start,
               innerPadding: 18),
-          new ChartTitle('Dates: $_timeWindow',
+          new ChartTitle(Utils.translate('Dates:') + _timeWindow,
               behaviorPosition: BehaviorPosition.bottom,
               titleOutsideJustification:
               OutsideJustification.middleDrawArea),
@@ -327,7 +325,7 @@ class IndividualPageState extends State<IndividualPage> {
       _unitInfo = _unitInfoSS.data;
       _userInfo = _userInfoSS.data;
     } else {
-      _utils.errDialog("Unable to get data", "Incorrect path", context);
+      _utils.errDialog(Utils.translate("Unable to get data"), Utils.translate("Incorrect path"), context);
     }
     return _userInfoSS.data;
   }
@@ -358,7 +356,7 @@ class IndividualPageState extends State<IndividualPage> {
                   Expanded(
                     child: Column(
                       children: [
-                        Text('Unit Name: ', style: cup.TextStyle(fontSize: 20)),
+                        Text(Utils.translate('Unit Name: '), style: cup.TextStyle(fontSize: 20)),
                         SizedBox(height: 10),
                         Text(' ', style: cup.TextStyle(fontSize: 20)),
                         Text(_userInfo['Unit Name'],
@@ -370,7 +368,7 @@ class IndividualPageState extends State<IndividualPage> {
                   Expanded(
                     child: Column(
                       children: [
-                        Text('Last Measured: ', style: cup.TextStyle(fontSize: 20)),
+                        Text(Utils.translate('Last Measured: '), style: cup.TextStyle(fontSize: 20)),
                         SizedBox(height: 10),
                         Text(
                             _userInfo['Last Measured']
@@ -397,7 +395,7 @@ class IndividualPageState extends State<IndividualPage> {
               TextFormField(
                 initialValue: _userInfo['Health Message'],
                 decoration: InputDecoration(
-                  labelText: 'Your current predicted condition',
+                  labelText: Utils.translate('Your current predicted condition'),
                 ),
                 enabled: false,
               ),
@@ -407,15 +405,15 @@ class IndividualPageState extends State<IndividualPage> {
                   Expanded(
                       child: _userInfo['Primary Tag'] == 'Color(0xff000000)'
                           ? Column(children: [
-                              Text('Ill, seek medical help immediately')
+                              Text(Utils.translate('Ill, seek medical help immediately'))
                             ])
                           : _userInfo['Primary Tag'] == 'Color(0x73000000)'
                               ? Column(children: [
                                   Text(
-                                      'Potentially sick or recovering, Medical attention suggested')
+                                    Utils.translate('Potentially sick or recovering, Medical attention suggested'))
                                 ])
                               : Column(
-                                  children: [Text('Healthy, Stay safe!')])),
+                                  children: [Text(Utils.translate('Healthy, Stay safe!'))])),
                   _tag(_primaryTag())
                 ],
               ),
@@ -432,17 +430,16 @@ class IndividualPageState extends State<IndividualPage> {
                       child: _userInfo['Secondary Tag'].substring(29, 46) ==
                               'Color(0xfff44336)'
                           ? Column(children: [
-                              Text(
-                                  'High Temperature, Potentially Fever or COVID-19')
+                              Text(Utils.translate('High Temperature, Potentially Fever or COVID-19'))
                             ])
                           : _userInfo['Secondary Tag'].substring(29, 46) ==
                                   'Color(0xff2196f3)'
                               ? Column(children: [
                                   Text(
-                                      'Low Temperature, Potentially hypothermia')
+              Utils.translate('Low Temperature, Potentially hypothermia'))
                                 ])
                               : Column(children: [
-                                  Text('Normal Temperature, Keep it up!')
+                                  Text(Utils.translate('Normal Temperature, Keep it up!'))
                                 ])),
                   _tag(_secondaryTag(_userInfo['Temperature']
                           [_userInfo['Last Measured']]
@@ -455,8 +452,8 @@ class IndividualPageState extends State<IndividualPage> {
                     ? 'None'
                     : _userInfo['Prior Medical Condition'],
                 decoration: InputDecoration(
-                  labelText: 'Pre-existing health conditions',
-                  hintText: 'Please briefly describe your conditions',
+                  labelText: Utils.translate('Pre-existing health conditions'),
+                  hintText: Utils.translate('Please briefly describe your conditions'),
                 ),
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
@@ -471,7 +468,7 @@ class IndividualPageState extends State<IndividualPage> {
               Row(
                 children: [
                   Icon(Icons.person),
-                  Text('Name: '),
+                  Text(Utils.translate('Name: ')),
                   Spacer(),
                   Text(_userInfo['Name'])
                 ],
@@ -480,7 +477,7 @@ class IndividualPageState extends State<IndividualPage> {
               Row(
                 children: [
                   Icon(Icons.phone),
-                  Text('Contact: '),
+                  Text(Utils.translate('Contact: ')),
                   Spacer(),
                   Text(_userInfo['Contacts'])
                 ],
@@ -489,7 +486,7 @@ class IndividualPageState extends State<IndividualPage> {
               Row(
                 children: [
                   Icon(Icons.calendar_today),
-                  Text('Date of birth: '),
+                  Text(Utils.translate('Date of birth: ')),
                   Spacer(),
                   Text((_userInfo['Date of Birth'] as String).substring(0,10))
                 ],
@@ -497,7 +494,7 @@ class IndividualPageState extends State<IndividualPage> {
               SizedBox(height: 10),
               Row(
                 children: [
-                  Text('Age:'),
+                  Text(Utils.translate('Age:')),
                   Spacer(),
                   Text((DateTime.now().difference(DateTime.parse(_userInfo['Date of Birth'])).inDays / 365).floor().toString()),
                 ],
@@ -505,7 +502,7 @@ class IndividualPageState extends State<IndividualPage> {
               SizedBox(height: 10),
               Row(
                 children: [
-                  Text('Sex:'),
+                  Text(Utils.translate('Sex:')),
                   Spacer(),
                   Text(_userInfo['Sex'])
                 ],
@@ -513,7 +510,7 @@ class IndividualPageState extends State<IndividualPage> {
               SizedBox(height: 10),
               Row(
                 children: [
-                  Text('Address in ${_userInfo['Organization']}:'),
+                  Text(Utils.translate('Address in') + _userInfo['Organization'] + ": "),
                   Spacer()
                 ],
               ),
@@ -522,7 +519,7 @@ class IndividualPageState extends State<IndividualPage> {
               SizedBox(height: 10),
               Row(
                 children: [
-                  Text('Managed by: '),
+                  Text(Utils.translate('Managed by: ')),
                   Spacer(),
                   Text(_userInfo['Manager Name']),
                 ],
@@ -530,7 +527,7 @@ class IndividualPageState extends State<IndividualPage> {
               SizedBox(height: 10),
               Row(
                 children: [
-                  Text('Temperature trend:'),
+                  Text(Utils.translate('Temperature trend:')),
                   Spacer(),
                   DropdownButton<String>(
                     value: dropdownValue,
@@ -569,7 +566,7 @@ class IndividualPageState extends State<IndividualPage> {
                         }
                       });
                     },
-                    items: <String>['Last Hour', 'Last Day', 'Last Three Days', 'Last Week', 'Beginning of Time', 'Custom']
+                    items: <String>[Utils.translate('Last Hour'), Utils.translate('Last Day'), Utils.translate('Last Three Days'), Utils.translate('Last Week'), Utils.translate('Beginning of Time'), Utils.translate('Custom')]
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -595,7 +592,7 @@ class IndividualPageState extends State<IndividualPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text(Utils.translate("Profile")),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),

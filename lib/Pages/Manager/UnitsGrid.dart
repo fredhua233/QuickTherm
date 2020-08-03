@@ -48,13 +48,13 @@ class UnitsGridState extends State<UnitsGrid> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Units"),
+          title: Text(Utils.translate("Units")),
           actions: <Widget>[
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: IconButton(
                     icon: Icon(MdiIcons.thermometer),
-                    tooltip: "Change Unit",
+                    tooltip: Utils.translate("Change Unit"),
                     onPressed: () {
                       SharedPreferences.getInstance().then((pref) {
                         setState(() {
@@ -72,10 +72,10 @@ class UnitsGridState extends State<UnitsGrid> {
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
-                    tag: "Remind",
+                    tag: Utils.translate("Remind"),
                     child: IconButton(
                       icon: Icon(Icons.notifications),
-                      tooltip: "See who needs to be reminded",
+                      tooltip: Utils.translate("See who needs to be reminded"),
                       onPressed: () {
                         setState(() {
                           _mode = _ModeUnits.remind;
@@ -85,31 +85,31 @@ class UnitsGridState extends State<UnitsGrid> {
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
-                  tag: "Search",
+                  tag: Utils.translate("Search"),
                   child: IconButton(
                     icon: Icon(Icons.search),
-                    tooltip: "Search For Specific Unit/Individual",
+                    tooltip: Utils.translate("Search For Specific Unit/Individual"),
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           // return object of type Dialog
                           return AlertDialog(
-                            title: new Text("Search specific unit/individual"),
+                            title: new Text(Utils.translate("Search specific unit/individual")),
                             content: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
                                   controller: _search,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(),
-                                    labelText: 'Type in Unit/Individual name',
+                                    labelText: Utils.translate('Type in Unit/Individual name'),
                                   ),
                                 )
                             ),
                             actions: <Widget>[
                               // usually buttons at the bottom of the dialog
                               FlatButton(
-                                child: new Text("View"),
+                                child: new Text(Utils.translate("View")),
                                 onPressed: () {
                                   String name = _search.text;
                                   setState(() {
@@ -120,7 +120,7 @@ class UnitsGridState extends State<UnitsGrid> {
                                 },
                               ),
                               FlatButton(
-                                child: new Text("Close"),
+                                child: new Text(Utils.translate("Close")),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -163,22 +163,22 @@ class UnitsGridState extends State<UnitsGrid> {
                         PopupMenuItem(
                             value: "All",
                             child: Text(
-                              "Show all",
+                                Utils.translate("Show all"),
                             )),
                         PopupMenuItem(
                             value: "Healthy",
                             child: Text(
-                              "Show all healthy",
+                                Utils.translate("Show all healthy"),
                             )),
                         PopupMenuItem(
                             value: "Ill",
                             child: Text(
-                                "Show all ill"
+                                Utils.translate("Show all ill")
                             )),
                         PopupMenuItem(
                             value: "Potential",
                             child: Text(
-                                "Show all potential"
+                                Utils.translate("Show all potential")
                             )),
                       ],
                       icon: Icon(Icons.remove_red_eye),
@@ -187,7 +187,7 @@ class UnitsGridState extends State<UnitsGrid> {
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
-                  tag: "Help",
+                  tag: Utils.translate("Help"),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -203,8 +203,8 @@ class UnitsGridState extends State<UnitsGrid> {
           ],
           bottom: TabBar(
             tabs: [
-              Tab(text: "Units"),
-              Tab(text: "Individuals"),
+              Tab(text: Utils.translate("Units")),
+              Tab(text: Utils.translate("Individuals")),
             ],
           ),
         ),
@@ -270,7 +270,7 @@ class UnitsGridState extends State<UnitsGrid> {
           child: Column(
             children: [
               Icon(Icons.sentiment_dissatisfied, size: 100, color: Colors.black26),
-              Text("No such unit found, sorry!", style: TextStyle(fontSize: 22),)
+              Text(Utils.translate("No such unit found, sorry!"), style: TextStyle(fontSize: 22),)
             ],
           )
         ),
@@ -370,7 +370,7 @@ class UnitsGridState extends State<UnitsGrid> {
             child: Column(
               children: [
                 Icon(Icons.sentiment_dissatisfied, size: 100, color: Colors.black26),
-                Text("No such person found, sorry!", style: TextStyle(fontSize: 20),)
+                Text(Utils.translate("No such person found, sorry!"), style: TextStyle(fontSize: 20),)
               ],
             )
         ),

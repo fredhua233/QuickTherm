@@ -27,7 +27,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Individuals"),
+        title: Text(Utils.translate("Individuals")),
       ),
       body: _indView(context),
     );
@@ -60,7 +60,7 @@ class IndividualsGridState extends State<IndividualsGrid> {
     Map<String, dynamic> temps = info["Temperature"];
     List<String> date = temps.keys.toList();
     date.sort((a, b) => a.compareTo(b));
-    String lastTemp = temps == null || date.length == 0 ? 'N/A' : Utils().compTemp(temps[date.last]);
+    String lastTemp = temps == null || date.length == 0 ? Utils.translate('N/A') : Utils().compTemp(temps[date.last]);
     Icon trend = Icon(Icons.sentiment_satisfied, color:  Colors.green);
 //    if (lastTemp.length > 5) {
 //      lastTemp = lastTemp.substring(0, 5) + String.fromCharCode(0x00B0) +

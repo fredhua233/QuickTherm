@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
+import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utils/UserInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,28 +36,28 @@ class DirectorState extends State<Director> {
             padding: EdgeInsets.only(right: 20.0),
                   child: IconButton(
                     icon: Icon(Icons.search),
-                    tooltip: "Search For Specific Manager",
+                    tooltip: Utils.translate("Search For Specific Manager"),
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           // return object of type Dialog
                           return AlertDialog(
-                            title: new Text("Search specific manager"),
+                            title: new Text(Utils.translate("Search specific manager")),
                             content: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
                                   controller: _search,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(),
-                                    labelText: 'Type in manager name',
+                                    labelText: Utils.translate('Type in manager name'),
                                   ),
                                 )
                             ),
                             actions: <Widget>[
                               // usually buttons at the bottom of the dialog
                               FlatButton(
-                                child: new Text("View"),
+                                child: new Text(Utils.translate("View")),
                                 onPressed: () {
                                   String name = _search.text;
                                   setState(() {
@@ -67,7 +68,7 @@ class DirectorState extends State<Director> {
                                 },
                               ),
                               FlatButton(
-                                child: new Text("Close"),
+                                child: new Text(Utils.translate("Close")),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -83,7 +84,7 @@ class DirectorState extends State<Director> {
               padding: EdgeInsets.only(right: 20.0),
                   child: IconButton(
                       icon: Icon(Icons.remove_red_eye),
-                      tooltip: "View All",
+                      tooltip: Utils.translate("View All"),
                       onPressed: () {
                         setState(() {
                           _state= _State.all;
@@ -95,7 +96,7 @@ class DirectorState extends State<Director> {
               padding: EdgeInsets.only(right: 20.0),
               child: IconButton(
                   icon: Icon(MdiIcons.thermometer),
-                  tooltip: "Change Unit",
+                  tooltip: Utils.translate("Change Unit"),
                   onPressed: () {
                     SharedPreferences.getInstance().then((pref) {
                       setState(() {
@@ -113,7 +114,7 @@ class DirectorState extends State<Director> {
           Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: Hero(
-                tag: "Help",
+                tag: Utils.translate("Help"),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -144,7 +145,7 @@ class DirectorState extends State<Director> {
                 child: Column(
                   children: [
                     Icon(Icons.sentiment_dissatisfied, size: 100, color: Colors.black26),
-                    Text("No such manager found, sorry!", style: TextStyle(fontSize: 20),)
+                    Text(Utils.translate("No such manager found, sorry!"), style: TextStyle(fontSize: 20),)
                   ],
                 )
             ),
@@ -178,7 +179,7 @@ class DirectorState extends State<Director> {
                 Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: Center(
-                      child: Text("# of Residents", style: TextStyle(fontSize: 18)),
+                      child: Text(Utils.translate("# of Residents"), style: TextStyle(fontSize: 18)),
                     )
                 ),
                 Padding(
