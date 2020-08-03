@@ -105,7 +105,7 @@ class ProfilePageState extends State<ProfilePage> {
                     Expanded(
                         child: Column(
                           children: [
-                            Text('Unit Name: ',  style: TextStyle(fontSize: 20)),
+                            Text(Utils.translate('Unit Name: '),  style: TextStyle(fontSize: 20)),
                             SizedBox(height: 10),
                             Text(' ', style: TextStyle(fontSize: 20) ),
                             Text(_userInfo['Unit Name'],  style: TextStyle(fontSize: 40)),
@@ -116,7 +116,7 @@ class ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       child: Column(
                         children: [
-                          Text('Last Measured: ', style: TextStyle(fontSize: 20)),
+                          Text(Utils.translate('Last Measured: '), style: TextStyle(fontSize: 20)),
                           SizedBox(height: 10),
                           _userInfo['Last Measured'] != 'N/A'  ? Text(_userInfo['Last Measured'].toString().substring(0, 10), style: TextStyle(fontSize: 20)) : Text('N/A', style: TextStyle(fontSize: 20)),
                           _displayTemp()
@@ -129,7 +129,7 @@ class ProfilePageState extends State<ProfilePage> {
                 TextFormField(
                   initialValue: _userInfo['Health Message'],
                   decoration: InputDecoration(
-                    labelText: 'Your current predicted condition',
+                    labelText: Utils.translate('Your current predicted condition'),
                   ),
                   enabled: false,
                 ),
@@ -137,9 +137,9 @@ class ProfilePageState extends State<ProfilePage> {
                 Row(
                   children: [
                     Expanded(
-                      child: _userInfo['Primary Tag'] == 'Color(0xff000000)' ? Column(children: [Text('Ill, seek medical help immediately')]) :
-                      _userInfo['Primary Tag'] == 'Color(0x73000000)' ? Column(children: [Text('Potentially sick or recovering, Medical attention suggested')]) :
-                      Column(children: [Text('Healthy, Saty safe!')])
+                      child: _userInfo['Primary Tag'] == 'Color(0xff000000)' ? Column(children: [Text(Utils.translate('Ill, seek medical help immediately'))]) :
+                      _userInfo['Primary Tag'] == 'Color(0x73000000)' ? Column(children: [Text(Utils.translate('Potentially sick or recovering, Medical attention suggested'))]) :
+                      Column(children: [Text(Utils.translate('Healthy, Stay safe!'))])
                     ),
                     _tag(_primaryTag())
                   ],
@@ -154,19 +154,19 @@ class ProfilePageState extends State<ProfilePage> {
                 Row(
                   children: [
                     Expanded(
-                        child: _userInfo['Secondary Tag'].substring(29, 46) == 'Color(0xfff44336)' ? Column(children: [Text('High Temperature, Potentially Fever or COVID-19')]) :
-                        _userInfo['Secondary Tag'].substring(29, 46) == 'Color(0xff2196f3)' ? Column(children: [Text('Low Temperature, Potentially hypothermia')]) :
-                        Column(children: [Text('Normal Temperature, Keep it up!')])
+                        child: _userInfo['Secondary Tag'].substring(29, 46) == 'Color(0xfff44336)' ? Column(children: [Text(Utils.translate('High Temperature, Potentially Fever or COVID-19'))]) :
+                        _userInfo['Secondary Tag'].substring(29, 46) == 'Color(0xff2196f3)' ? Column(children: [Text(Utils.translate('Low Temperature, Potentially hypothermia'))]) :
+                        Column(children: [Text(Utils.translate('Normal Temperature, Keep it up!'))])
                     ),
-                    _userInfo['Temperature'][_userInfo['Last Measured']] != null ? _tag(_secondaryTag(_userInfo['Temperature'][_userInfo['Last Measured']].toString())) : Text('N/A')
+                    _userInfo['Temperature'][_userInfo['Last Measured']] != null ? _tag(_secondaryTag(_userInfo['Temperature'][_userInfo['Last Measured']].toString())) : Text(Utils.translate('N/A'))
                   ],
                 ),
                 SizedBox(height: 20),
                 TextFormField(
-                  initialValue: _userInfo['Prior Medical Condition'] == false ? 'None' : _userInfo['Prior Medical Condition'],
+                  initialValue: _userInfo['Prior Medical Condition'] == false ? Utils.translate('None') : _userInfo['Prior Medical Condition'],
                   decoration: InputDecoration(
-                    labelText: 'Pre-existing health conditions',
-                    hintText:'Please briefly describe your conditions',
+                    labelText: Utils.translate('Pre-existing health conditions'),
+                    hintText: Utils.translate('Please briefly describe your conditions'),
                   ),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
@@ -180,14 +180,14 @@ class ProfilePageState extends State<ProfilePage> {
                   initialValue: _userInfo['Name'],
                   decoration: InputDecoration(
                       icon: Icon(Icons.person),
-                      hintText: 'Ex. John Doe',
-                      labelText: 'Name',
+                      hintText: Utils.translate('Ex. John Doe'),
+                      labelText: Utils.translate('Name'),
                   ),
                   enabled: _edit,
                   autovalidate: true,
                   validator: (value) {
                     if (value.isEmpty || !value.contains(' ')){
-                      return "Please enter in correct format: 'first last'";
+                      return Utils.translate("Please enter in correct format: 'first last'");
                     }
                     return null;
                   },
@@ -199,14 +199,14 @@ class ProfilePageState extends State<ProfilePage> {
                   initialValue: _userInfo['Contacts'],
                     decoration: InputDecoration(
                         icon: Icon(Icons.phone),
-                        hintText: 'Ex. 123-456-7890',
-                        labelText: 'Contact'
+                        hintText: Utils.translate('Ex. 123-456-7890'),
+                        labelText: Utils.translate('Contact')
                     ),
                     enabled: _edit,
                     keyboardType: TextInputType.phone,
                     validator: (value){
                       if(value.isEmpty || value.length != 12 || !value.contains('-')){
-                        return 'Please enter in correct format: xxx-xxx-xxxx';
+                        return Utils.translate('Please enter in correct format: xxx-xxx-xxxx');
                       }
                       return null;
                     },
@@ -216,14 +216,14 @@ class ProfilePageState extends State<ProfilePage> {
                   initialValue: _userInfo['Date of Birth'],
                   decoration: InputDecoration(
                       icon: Icon(Icons.calendar_today),
-                      hintText: 'Ex. MM-DD-YYYY',
-                      labelText: 'Date of Birth'
+                      hintText: Utils.translate('Ex. YYYY-MM-DD'),
+                      labelText: Utils.translate('Date of Birth')
                   ),
                   enabled: _edit,
                   autovalidate: true,
                   validator: (value){
                     if(value.isEmpty || !value.contains('-')){
-                      return 'Please enter in correct format: MM-DD-YYYY';
+                      return Utils.translate('Please enter in correct format: YYYY-MM-DD');
                     }
                     return null;
                   },
@@ -240,7 +240,7 @@ class ProfilePageState extends State<ProfilePage> {
                 TextFormField(
                   initialValue: (DateTime.now().difference(DateTime.parse(_userInfo['Date of Birth'])).inDays/365).floor().toString(),
                   decoration: InputDecoration(
-                    labelText: 'Age',
+                    labelText: Utils.translate('Age'),
                   ),
                   enabled: false,
                 ),
@@ -263,14 +263,14 @@ class ProfilePageState extends State<ProfilePage> {
                 TextFormField(
                   initialValue: _userInfo['Sex'],
                   decoration: InputDecoration(
-                      hintText: 'Ex. Male/Female',
-                      labelText: 'Sex'
+                      hintText: Utils.translate('Ex. Male/Female'),
+                      labelText: Utils.translate('Sex')
                   ),
                   enabled: _edit,
                   autovalidate: true,
                   validator: (value) {
                     if (value.isEmpty /*|| value != 'Male' || value != 'Female' */){
-                      return "Please enter either 'Male' or 'Female'";
+                      return Utils.translate("Please enter either 'Male' or 'Female'");
                     }
                     return null;
                   },
@@ -282,13 +282,13 @@ class ProfilePageState extends State<ProfilePage> {
                     initialValue: _arrAddress[0],
                     decoration: InputDecoration(
                         icon: Icon(Icons.home),
-                        hintText: 'Ex. 1 Main st.',
-                        labelText: 'Your address in ${_userInfo['Organization']}'
+                        hintText: Utils.translate('Ex. 1 Main st.'),
+                        labelText: Utils.translate('Your address in') + _userInfo['Organization']
                     ),
                     enabled: _edit,
                     validator: (value){
                       if(value.isEmpty){
-                        return 'Please enter your street address';
+                        return Utils.translate('Please enter your street address');
                       }
                       return null;
                     },
@@ -300,13 +300,13 @@ class ProfilePageState extends State<ProfilePage> {
                 TextFormField(
                     initialValue: _arrAddress[1],
                     decoration: InputDecoration(
-                        hintText: 'Ex. San Francisco',
-                        labelText: 'City'
+                        hintText: Utils.translate('Ex. San Francisco'),
+                        labelText: Utils.translate('City')
                     ),
                     enabled: _edit,
                     validator: (value){
                       if(value.isEmpty){
-                        return 'Please enter your city';
+                        return Utils.translate('Please enter your city');
                       }
                       return null;
                     },
@@ -321,13 +321,13 @@ class ProfilePageState extends State<ProfilePage> {
                       child: TextFormField(
                           initialValue: (_arrAddress[2] as String).substring(0,2),
                           decoration: InputDecoration(
-                              hintText: 'Ex. CA',
-                              labelText: 'State'
+                              hintText: Utils.translate('Ex. CA'),
+                              labelText: Utils.translate('State')
                           ),
                           enabled: _edit,
                           validator: (value){
                             if(value.isEmpty || value.length > 2){
-                              return 'Please enter your state';
+                              return Utils.translate('Please enter your state');
                             }
                             return null;
                           },
@@ -341,14 +341,14 @@ class ProfilePageState extends State<ProfilePage> {
                       child: TextFormField(
                           initialValue: (_arrAddress[2] as String).substring(3),
                           decoration: InputDecoration(
-                              hintText: 'Ex. 94105',
-                              labelText: 'Zip code'
+                              hintText: Utils.translate('Ex. 94105'),
+                              labelText: Utils.translate('Zip code')
                           ),
                           keyboardType: TextInputType.phone,
                           enabled: _edit,
                           validator: (value){
                             if(value.isEmpty || value.length != 5){
-                              return 'Please enter your zip code';
+                              return Utils.translate('Please enter your zip code');
                             }
                             return null;
                           },
@@ -362,13 +362,13 @@ class ProfilePageState extends State<ProfilePage> {
                       child: TextFormField(
                           initialValue: _userInfo['Manager Name'],
                           decoration: InputDecoration(
-                              hintText: 'Ex. Jane Doe',
-                              labelText: "Manager's Name"
+                              hintText: Utils.translate('Ex. Jane Doe'),
+                              labelText: Utils.translate("Manager's Name")
                           ),
                           enabled: _edit,
                           validator: (value){
                             if(value.isEmpty){
-                              return "Please enter your Manager's Name";
+                              return Utils.translate("Please enter your Manager's Name");
                             }
                             return null;
                           },
@@ -390,30 +390,35 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget _displayTemp() {
     if (_userInfo['Last Measured'] != 'N/A') {
-      if (_userInfo['Temperature'][_userInfo['Last Measured']].toString().length >= 5) {
-        return Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString().substring(0,5) + String.fromCharCode(0x00B0) + 'C' ),
-            style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
-            _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
-            TextStyle(fontSize: 40, color: Colors.green));
-      } else {
-        return Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString() + String.fromCharCode(0x00B0) + 'C' ),
-            style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
-            _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
-            TextStyle(fontSize: 40, color: Colors.green));
-      }
+//      if (_userInfo['Temperature'][_userInfo['Last Measured']].toString().length >= 5) {
+//        return Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString().substring(0,5) + String.fromCharCode(0x00B0) + 'C' ),
+//            style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
+//            _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
+//            TextStyle(fontSize: 40, color: Colors.green));
+      return Text(Utils().compTemp(_userInfo['Temperature'][_userInfo['Last Measured']]) ,
+          style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
+          _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
+          TextStyle(fontSize: 40, color: Colors.green));
+//
+//      } else {
+//        return Text((_userInfo['Temperature'][_userInfo['Last Measured']].toString() + String.fromCharCode(0x00B0) + 'C' ),
+//            style: _userInfo['Temperature'][_userInfo['Last Measured']] < 35 ? TextStyle(fontSize: 40, color: Colors.blue) :
+//            _userInfo['Temperature'][_userInfo['Last Measured']] > 37.5 ? TextStyle(fontSize: 40, color: Colors.red) :
+//            TextStyle(fontSize: 40, color: Colors.green));
+//      }
     } else {
-      return Text('N/A', style: TextStyle(fontSize: 40));
+      return Text(Utils.translate('N/A'), style: TextStyle(fontSize: 40));
     }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Profile"),
+        title: Text(Utils.translate("My Profile")),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            tooltip: 'Edit my info',
+            tooltip: Utils.translate('Edit my info'),
             onPressed: () {
               setState(() {
                 if(_edit == true){

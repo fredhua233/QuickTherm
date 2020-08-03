@@ -196,5 +196,23 @@
   " to ": " to ",
   "Input Date" : "Input Date",
   "YYYY-MM-DD" : "YYYY-MM-DD",
-  "View" : "View"
+  "View" : "View",
+
+  "Unit Name: " : "Unit Name: ",
+  "Last Measured: " : "Last Measured: ",
+  "Your current predicted condition" : "Your current predicted condition",
+  "Ill, seek medical help immediately" : "Ill, seek medical help immediately",
+  "Potentially sick or recovering, Medical attention suggested" : "Potentially sick or recovering, Medical attention suggested",
+  "Healthy, Stay safe!" : "Healthy, Stay safe!",
+  "High Temperature, Potentially Fever or COVID-19" : "High Temperature, Potentially Fever or COVID-19",
+  "Low Temperature, Potentially hypothermia" : "Low Temperature, Potentially hypothermia",
+  "Normal Temperature, Keep it up!" : "Normal Temperature, Keep it up!",
+  "None" : "None",
+  "Sex" : "Sex",
+  "Ex. Male/Female" : "Ex. Male/Female",
+  "Please enter your Manager's Name" : "Please enter your Manager's Name",
+  "Please enter either 'Male' or 'Female'" : "Please enter either 'Male' or 'Female'",
+  "My Profile" : "My Profile",
+  "Edit my info" : "Edit my info"
+
 }
