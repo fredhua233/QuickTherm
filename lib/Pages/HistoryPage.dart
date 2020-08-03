@@ -16,8 +16,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../Utils/UserInfo.dart';
 import '../Utils/Utils.dart';
 
-String _time = "N/A";
-String _temp = "N/A";
+String _time = Utils.translate("N/A");
+String _temp = Utils.translate("N/A");
 
 
 
@@ -38,12 +38,12 @@ class HistoryPageState extends State<HistoryPage> {
   _Mode _displayMode = _Mode.Day;
 
   String _lastMeasured, _lastTemp, _mode, _min, _max, _avg, _timeWindow = " ";
-  String dropdownValue = "Last Day";
+  String dropdownValue = Utils.translate("Last Day");
   final _textController = TextEditingController();
 
 
   _onSelectionChanged(SelectionModel model) {
-    String time, temp = "N/A";
+    String time, temp = Utils.translate("N/A");
     if(model.hasDatumSelection) {
       temp = model.selectedSeries[0].measureFn(model.selectedDatum[0].index).toString();
       time = model.selectedDatum.first.datum.time.toString();
@@ -68,12 +68,12 @@ class HistoryPageState extends State<HistoryPage> {
     if (doc != null) {
       _data = doc.data;
     } else {
-      _utils.errDialog("Unable to get data", "Incorrect path", context);
+      _utils.errDialog(Utils.translate("Unable to get data"), Utils.translate("Incorrect path"), context);
     }
     setState(() {
       _line = _getData(_displayMode);
-      _time = "N/A";
-      _temp = "N/A";
+      _time = Utils.translate("N/A");
+      _temp = Utils.translate("N/A");
     });
   }
 
@@ -81,7 +81,7 @@ class HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("History"),
+        title: Text(Utils.translate("History")),
       ),
       body: SingleChildScrollView(
           child: Column(
@@ -127,7 +127,7 @@ class HistoryPageState extends State<HistoryPage> {
                         }
                       });
                     },
-                    items: <String>['Last Hour', 'Last Day', 'Last Three Days', 'Last Week', 'Beginning of Time', 'Custom']
+                    items: <String>[Utils.translate('Last Hour'), Utils.translate('Last Day'), Utils.translate('Last Three Days'), Utils.translate('Last Week'), Utils.translate('Beginning of Time'), Utils.translate('Custom')]
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -146,7 +146,7 @@ class HistoryPageState extends State<HistoryPage> {
                 alignment: cup.FractionalOffset(0.04,0),
                 child: Padding(
                   padding: new EdgeInsets.only(top: 15.0),
-                  child: new Text("Selected point: " , style: new cup.TextStyle(fontSize: 16),))
+                  child: new Text(Utils.translate("Selected point: ") , style: new cup.TextStyle(fontSize: 16),))
               ),
               Align(
                   alignment: cup.Alignment.topCenter,
@@ -156,7 +156,7 @@ class HistoryPageState extends State<HistoryPage> {
                         alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child: _time != null && _time != "N/A"? new Text(_time.substring(0, 19)) : new Text("N/A")),
+                            child: _time != null && _time != Utils.translate("N/A")? new Text(_time.substring(0, 19)) : new Text(Utils.translate("N/A"))),
                       ),
                       Align(
                           alignment: cup.FractionalOffset(0.75,0),
@@ -184,7 +184,7 @@ class HistoryPageState extends State<HistoryPage> {
                   alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
                       padding: new EdgeInsets.only(top: 30.0),
-                      child: new Text("Statistics \n$_timeWindow: " , style: new cup.TextStyle(fontSize: 17),))
+                      child: new Text(Utils.translate("Statistics") + " \n" + _timeWindow, style: new cup.TextStyle(fontSize: 17),))
               ),
               Align(
                   alignment: cup.Alignment.topCenter,
@@ -200,7 +200,7 @@ class HistoryPageState extends State<HistoryPage> {
                         alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child: new Text("Avg")),
+                            child: new Text(Utils.translate("Avg"))),
                       ),
                       Align(
                           alignment: cup.FractionalOffset(0.575,0),
@@ -212,7 +212,7 @@ class HistoryPageState extends State<HistoryPage> {
                         alignment: cup.FractionalOffset(0.45,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child: new cup.Text("Max"))
+                            child: new cup.Text(Utils.translate("Max")))
                       ),
                       Align(
                           alignment: cup.FractionalOffset(0.98,0),
@@ -224,7 +224,7 @@ class HistoryPageState extends State<HistoryPage> {
                         alignment: cup.FractionalOffset(0.875,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child:  new Text("Min")),
+                            child:  new Text(Utils.translate("Min"))),
                       ),
                     ],
                   )
@@ -265,7 +265,7 @@ class HistoryPageState extends State<HistoryPage> {
                   alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
                       padding: new EdgeInsets.only(top: 30.0),
-                      child: new Text("Last Measurement:" , style: new cup.TextStyle(fontSize: 17),))
+                      child: new Text(Utils.translate("Last Measurement:") , style: new cup.TextStyle(fontSize: 17),))
               ),
               Align(
                   alignment: cup.Alignment.topCenter,
@@ -275,13 +275,13 @@ class HistoryPageState extends State<HistoryPage> {
                         alignment: cup.FractionalOffset(0.04,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child: new Text("Time")),
+                            child: new Text(Utils.translate("Time"))),
                       ),
                       Align(
                         alignment: cup.FractionalOffset(0.975,0),
                         child: Padding(
                             padding: new EdgeInsets.only(top: 10.0),
-                            child:  new Text("Temperature")),
+                            child:  new Text(Utils.translate("Temperature"))),
                       ),
                     ],
                   )
@@ -328,14 +328,14 @@ class HistoryPageState extends State<HistoryPage> {
                   alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
                       padding: new EdgeInsets.only(top: 30.0),
-                      child: new Text("About the Coronavirus (COVID-19)" , style: new cup.TextStyle(fontSize: 17)))
+                      child: new Text(Utils.translate("About the Coronavirus (COVID-19)") , style: new cup.TextStyle(fontSize: 17)))
               ),
               Align(
                   alignment: cup.FractionalOffset(0.04,0),
                   child: Padding(
                       padding: new EdgeInsets.only(top: 30.0, bottom: 20),
                       child:new InkWell(
-                          child: new Text('Learn more (tap here) at: https://www.cdc.gov/coronavirus/2019-ncov/'),
+                          child: new Text(Utils.translate('Learn more (tap here) at:') + ' https://www.cdc.gov/coronavirus/2019-ncov/'),
                           onTap: () => _launchInBrowser("https://www.cdc.gov/coronavirus/2019-ncov/")
                       )
                   ),
@@ -356,7 +356,7 @@ class HistoryPageState extends State<HistoryPage> {
         headers: <String, String>{'my_header_key': 'my_header_value'},
       );
     } else {
-      _utils.errDialog("Unable to Open Link", "Sorry, please navigate to link using the default browser of your device.", context);
+      _utils.errDialog(Utils.translate("Unable to Open Link"), Utils.translate("Sorry, please navigate to link using the default browser of your device."), context);
     }
   }
 
@@ -422,7 +422,7 @@ class HistoryPageState extends State<HistoryPage> {
               behaviorPosition: BehaviorPosition.top,
               titleOutsideJustification: OutsideJustification.start,
               innerPadding: 18),
-          new ChartTitle('Date',
+          new ChartTitle(Utils.translate('Date'),
               subTitle: _timeWindow,
               behaviorPosition: BehaviorPosition.bottom,
               titleOutsideJustification:
@@ -455,7 +455,7 @@ class HistoryPageState extends State<HistoryPage> {
               DateTime.parse(date[i]), t[date[i]], Colors.blueAccent));
         }
         setState(() {
-          _mode = "Since Beginning of Time";
+          _mode = Utils.translate("Beginning of Time");
         });
       } else if (m == _Mode.Day) {
         DateTime last = DateTime.parse(date.last);
@@ -466,7 +466,7 @@ class HistoryPageState extends State<HistoryPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last Day";
+          _mode = Utils.translate("Last Day");
         });
       } else if (m == _Mode.Hour) {
         DateTime last = DateTime.parse(date.last);
@@ -477,7 +477,7 @@ class HistoryPageState extends State<HistoryPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last Hour";
+          _mode = Utils.translate("Last Hour");
         });
       } else if (m == _Mode.Week) {
         DateTime last = DateTime.parse(date.last);
@@ -488,7 +488,7 @@ class HistoryPageState extends State<HistoryPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last Week";
+          _mode = Utils.translate("Last Week");
         });
       } else if (m == _Mode.ThreeDays) {
         DateTime last = DateTime.parse(date.last);
@@ -499,7 +499,7 @@ class HistoryPageState extends State<HistoryPage> {
               DateTime.parse(date[i]), Utils().compNumTemp(t[date[i]]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Last 3 Days";
+          _mode = Utils.translate("Last Three Days");
         });
       } else if (m == _Mode.Custom) {
         List<String> tempDay = date.where((element) => element.contains(day)).toList();
@@ -507,12 +507,11 @@ class HistoryPageState extends State<HistoryPage> {
           points.add(new TempsData(DateTime.parse(s), Utils().compNumTemp(t[s]), Colors.blueAccent));
         }
         setState(() {
-          _mode = "Custom";
+          _mode = Utils.translate("Custom");
         });
       }
       if (points.length == 0 || points.length == 1) {
-        _utils.errDialog("Not Enough Value!", "There are no measurements or not "
-            "enough measurements taken in the selected time window. ", context);
+        _utils.errDialog(Utils.translate("Not Enough Value!"), Utils.translate("There are no measurements or not enough measurements taken in the selected time window. "), context);
       }
       for(var pt in points) {
         sum += pt.temp;
@@ -525,7 +524,7 @@ class HistoryPageState extends State<HistoryPage> {
       }
       avg = sum / points.length;
       setState(() {
-        _timeWindow = "(" + points.last.time.toString().substring(5, 10) + " to " + points.first.time.toString().substring(5, 10) + ")";
+        _timeWindow = "(" + points.last.time.toString().substring(5, 10) + Utils.translate(" to ") + points.first.time.toString().substring(5, 10) + ")";
         _max = max.toString();
         _min = min.toString();
         _avg = avg.toString().length > 5 ? avg.toString().substring(0, 5) : avg.toString();
@@ -551,35 +550,34 @@ class HistoryPageState extends State<HistoryPage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Input Date"),
+          title: new Text(Utils.translate("Input Date")),
           content: Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
                 controller: _textController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'YYYY-MM-DD',
+                  labelText: Utils.translate('YYYY-MM-DD'),
                 ),
               )
           ),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
-              child: new Text("View"),
+              child: new Text(Utils.translate("View")),
               onPressed: () {
                 String date = _textController.text;
                 setState(() {
                   _line = _getData(_displayMode, day: date);
                 });
                 if (_line[0].data.length == 0) {
-                  _utils.errDialog("Not Enough Value!", "There are no measurements or not "
-                      "enough measurements taken in the selected time window. ", context);
+                  _utils.errDialog(Utils.translate("Not Enough Value!"), Utils.translate("There are no measurements or not enough measurements taken in the selected time window. "), context);
                 }
                 Navigator.of(context).pop();
               },
             ),
             FlatButton(
-              child: new Text("Close"),
+              child: new Text(Utils.translate("Close")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
