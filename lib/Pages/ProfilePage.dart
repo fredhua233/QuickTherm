@@ -16,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   final _formKey = new GlobalKey<FormState>();
   UserInfo _user = new UserInfo.defined();
+  String _groupValue;
   Map<String, dynamic> _userInfo;
   DocumentReference _log;
   bool _edit = false;
@@ -72,6 +73,7 @@ class ProfilePageState extends State<ProfilePage> {
     DocumentSnapshot _userInfoSS = await _log.get();
     _userInfo = _userInfoSS.data;
     _arrAddress = _userInfo['Address'].split(', ');
+    _groupValue = _userInfo['Sex'];
     return _userInfoSS.data;
   }
 
@@ -278,6 +280,32 @@ class ProfilePageState extends State<ProfilePage> {
                     _userInfo['Sex'] = val;
                   }),
                 ),
+//                Row(
+//                  children:[
+//                    Radio(
+//                        value: "Male",
+//                        groupValue: _groupValue,
+//                        onChanged: (value) => {
+//                          setState(() {
+//                            _groupValue = value;
+//                            _userInfo['Sex'] = value;
+//                          })
+//                        }
+//                    ),
+//                    Text(Utils.translate('Male')),
+//                    Radio(
+//                        value: "Female",
+//                        groupValue: _groupValue,
+//                        onChanged: (value) => {
+//                          setState(() {
+//                            _groupValue = value;
+//                            _userInfo['Sex'] = value;
+//                          })
+//                        }
+//                    ),
+//                    Text(Utils.translate('Female'))
+//                  ],
+//                ),
                 TextFormField(
                     initialValue: _arrAddress[0],
                     decoration: InputDecoration(
