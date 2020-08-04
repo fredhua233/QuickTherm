@@ -225,16 +225,26 @@
 
   "Units" : "单元",
   "Remind" : "提醒",
-  "See who needs to be reminded" : "See who needs to be reminded",
-  "Search" : "Search",
-  "Search For Specific Unit/Individual" : "Search For Specific Unit/Individual",
-  "Search specific unit/individual" : "Search specific unit/individual",
-  "Type in Unit/Individual name" : "Type in Unit/Individual name",
-  "Show all" : "Show all",
-  "Show all healthy" : "Show all healthy",
-  "Show all ill" : "Show all ill",
-  "Show all potential" : "Show all potential",
-  "Individuals" : "Individuals",
-  "No such unit found, sorry!" : "No such unit found, sorry!",
-  "No such person found, sorry!" : "No such person found, sorry!"
+  "See who needs to be reminded" : "查看谁需被提醒",
+  "Search" : "搜索",
+  "Search For Specific Unit/Individual" : "搜索特定单元/住客",
+  "Search specific unit/individual" : "搜索特定单元/住客",
+  "Type in Unit/Individual name" : "输入单元/住客名称",
+  "Show all" : "显示所有",
+  "Show all healthy" : "显示所有健康单元/住客",
+  "Show all ill" : "显示所有有疾单元/住客",
+  "Show all potential" : "显示所有可能有疾单元/住客",
+  "Individuals" : "个人",
+  "No such unit found, sorry!" : "对不起，未找到此单元!",
+  "No such person found, sorry!" : "对不起，未找到此住客!",
+
+  "Name: " : "姓名: ",
+  "Contact: " : "联系方式: ",
+  "Date of birth: " : "出生日期: ",
+  "Age:" : "年龄: ",
+  "Sex:" : "性别: ",
+  "Address in" : "地址于",
+  "Managed by: " : "管理于: ",
+  "Temperature trend:" : "体温趋势: "
+
 }
