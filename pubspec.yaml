@@ -53,7 +53,7 @@ flutter:
   assets:
     - languages/en.json
     - languages/ru.json
-    - languages/es.json
+    - languages/sp.json
     - languages/ar.json
     - languages/cn_s.json
     - languages/cn_y.json
