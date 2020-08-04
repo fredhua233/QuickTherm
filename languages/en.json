@@ -146,7 +146,7 @@
   "Thermometer icon" : "This is the thermometer icon, you can tap this icon to measure your current temperature.",
   "Primary tag explanation" : "These are the primary tags that represent your current health condition: \n\nBlack - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy",
   "Secondary tag explanation" : "These are the secondary tags that represent your current temperature: \n\nRed - fever. \nGreen - normal \nBlue - hypothermia",
-  "Options icon" : "This is options icon, you can tap this icon to:\n\n Change Mode - this changes the temperature taking mode to be constant monitoring mode, which monitors your temperature constantly. Press the starts button to start monitoring, stop button to stop monitoring.\n\nDisconnect - disconnect from current device and connect to a new device. \n\nDelete - deletes the current temperature measurement from record. \n\nChange Unit Preference - changes the unit you view your temperature in, if you are on fahrenheit, it will swap to celsius and vice versa.",
+  "Options icon" : "This is options icon, you can tap this icon to:\n\n Change Mode - this changes the temperature taking mode to be constant monitoring mode, which monitors your temperature constantly. Press the starts button to start monitoring, stop button to stop monitoring. Or discrete measuring mode to measure you temperature only when you press the \"Measure\" button. \n\nDisconnect - disconnect from current device and connect to a new device. \n\nDelete - deletes the current temperature measurement from record. \n\nChange Unit Preference - changes the unit you view your temperature in, if you are on fahrenheit, it will swap to celsius and vice versa.",
   "Units Tab" : "Units Tab",
   "Unit 1" : "Unit 1",
   "Individuals Tab" : "Individuals Tab",
@@ -245,6 +245,6 @@
   "Sex:" : "Sex: ",
   "Address in" : "Address in",
   "Managed by: " : "Managed by: ",
-  "Temperature trend:" : "Temperature trend: ",
+  "Temperature trend:" : "Temperature trend: "
 
 }
