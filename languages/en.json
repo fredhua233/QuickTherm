@@ -146,11 +146,11 @@
   "Thermometer icon" : "This is the thermometer icon, you can tap this icon to measure your current temperature.",
   "Primary tag explanation" : "These are the primary tags that represent your current health condition: \n\nBlack - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy",
   "Secondary tag explanation" : "These are the secondary tags that represent your current temperature: \n\nRed - fever. \nGreen - normal \nBlue - hypothermia",
-  "Options icon" : "This is options icon, you can tap this icon to:\n\n Change Mode - this changes the temperature taking mode to be constant monitoring mode, which monitors your temperature constantly. Press the starts button to start monitoring, stop button to stop monitoring. Or discrete measuring mode to measure you temperature only when you press the \"Measure\" button. \n\nDisconnect - disconnect from current device and connect to a new device. \n\nDelete - deletes the current temperature measurement from record. \n\nChange Unit Preference - changes the unit you view your temperature in, if you are on fahrenheit, it will swap to celsius and vice versa.",
+  "Options icon" : "This is options icon, you can tap this icon to:\n\n Change Mode - this changes the temperature taking mode to be constant monitoring mode, which monitors your temperature constantly. Press the starts button to start monitoring, stop button to stop monitoring. Or discrete measuring mode to measure your temperature only when you press the \"Measure\" button. \n\nDisconnect - disconnect from current device and connect to a new device. \n\nDelete - deletes the current temperature measurement from record. \n\nChange Unit Preference - changes the unit you view your temperature in, if you are on fahrenheit, it will swap to celsius and vice versa.",
   "Units Tab" : "Units Tab",
   "Unit 1" : "Unit 1",
   "Individuals Tab" : "Individuals Tab",
-  "Individuals Tab description" : "In the individuals tab, you can see the health information of the individual. Each individual is represented by a tile with the their temperature in the middle, name on top, and condition is represented by a tag following this color code:\n\nBlack - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy\n\nTheir temperature is displayed with colors following this color code:\n\nRed - fever. \nGreen - normal \nBlue - hypothermia\n\nTap on the individual tile to see the individual's information in detail",
+  "Individuals Tab description" : "In the individuals tab, you can see the health information of the individual. Each individual is represented by a tile with their temperature in the middle, name on top, and condition is represented by a tag following this color code:\n\nBlack - ill. \nGray - potentially ill, or under recovery. \nWhite - healthy\n\nTheir temperature is displayed with colors following this color code:\n\nRed - fever. \nGreen - normal \nBlue - hypothermia\n\nTap on the individual tile to see the individual's information in detail",
   "Icons" : "Icons",
   "Search icon description" : "This is the search icon, you can tap this icon to search for specific unit or individual.",
   "Remind icon description" : "This is the remind icon, you can tap this icon to see all individuals that had not taken a temperature measurement in the last 12 hours, so that you can remind them.",
@@ -169,7 +169,8 @@
   "Please email through another application, sorry!": "Please email through another application, sorry!",
   "Tel:" : "Tel:",
   "Please send SMS through another application, sorry!" : "Please send SMS through another application, sorry!",
-  "Meet developer msg" :  "Feel free to message us anything about this app! If you found it a bug please email us about it, providing a thorough description and if you can attach a screenshot or screen recording of the bug. Thank you! \n\n You can email us by clicking on their email addresses or compose a SMS by tapping on our phone numbers. \n \nIf you are not comfortable with English, you can also message or email us in your preferred language!",
+  "Meet developer msg" :  "Feel free to message us anything about this app! If you found it a bug please email us about it, provide a thorough description and if you can, attach a screenshot or screen recording of the bug. Thank you! \n\n You can email us by clicking on our email addresses or compose a SMS by tapping on our phone numbers. \n \nIf you are not comfortable with English, you can also message or email us in your preferred language!",
+
 
   "Last Day" : "Last Day",
   "History" : "History",
@@ -246,5 +247,4 @@
   "Address in" : "Address in",
   "Managed by: " : "Managed by: ",
   "Temperature trend:" : "Temperature trend: "
-
 }

@@ -67,7 +67,7 @@ class ChooseLanguagePageState extends State<ChooseLanguagePage> {
             },
           ),
           RadioListTile<Language>(
-            title: const Text('español'),
+            title: const Text('Español'),
             value: Language.SP,
             groupValue: _lang,
             onChanged: (Language lang) {
