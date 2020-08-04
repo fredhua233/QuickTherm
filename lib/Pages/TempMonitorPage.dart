@@ -571,18 +571,21 @@ class TempMonitorPageState extends State<TempMonitorPage> {
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
-                  tag: "Help",
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HelpPage()));
-                    },
-                    child: Icon(
-                      Icons.help_outline,
-                    ),
-                  ),
+                    tag: Utils.translate("Help"),
+                    child: Tooltip(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HelpPage()));
+                        },
+                        child: Icon(
+                          Icons.help_outline,
+                        ),
+                      ),
+                      message: Utils.translate("Help"),
+                    )
                 )),
             Padding(
                 padding: EdgeInsets.only(right: 20.0),

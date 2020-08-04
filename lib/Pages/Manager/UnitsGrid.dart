@@ -182,23 +182,27 @@ class UnitsGridState extends State<UnitsGrid> {
                             )),
                       ],
                       icon: Icon(Icons.remove_red_eye),
+                      tooltip: Utils.translate("View"),
                     )
                 ),
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
                   tag: Utils.translate("Help"),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HelpPage()));
-                    },
-                    child: Icon(
-                      Icons.help_outline,
+                  child: Tooltip(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HelpPage()));
+                      },
+                      child: Icon(
+                        Icons.help_outline,
+                      ),
                     ),
-                  ),
+                    message: Utils.translate("Help"),
+                  )
                 )),
           ],
           bottom: TabBar(

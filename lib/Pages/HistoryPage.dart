@@ -99,31 +99,24 @@ class HistoryPageState extends State<HistoryPage> {
                     onChanged: (String newValue) {
                       setState(() {
                         dropdownValue = newValue;
-                        switch (newValue) {
-                          case 'Last Hour':
-                            _displayMode = _Mode.Hour;
-                            _line = _getData(_displayMode);
-                            break;
-                          case 'Last Day':
-                            _displayMode = _Mode.Day;
-                            _line = _getData(_displayMode);
-                            break;
-                          case 'Last Three Days':
-                            _displayMode = _Mode.ThreeDays;
-                            _line = _getData(_displayMode);
-                            break;
-                          case 'Last Week':
-                            _displayMode = _Mode.Week;
-                            _line = _getData(_displayMode);
-                            break;
-                          case 'Beginning of Time':
-                            _displayMode = _Mode.BeginningOfTime;
-                            _line = _getData(_displayMode);
-                            break;
-                          case 'Custom':
-                            _displayMode = _Mode.Custom;
-                            _inputDialog();
-                            break;
+                        if (newValue == Utils.translate('Last Hour')) {
+                          _displayMode = _Mode.Hour;
+                          _line = _getData(_displayMode);
+                        } else if (newValue == Utils.translate('Last Day')) {
+                          _displayMode = _Mode.Day;
+                          _line = _getData(_displayMode);
+                        } else if (newValue == Utils.translate('Last Three Days')) {
+                          _displayMode = _Mode.ThreeDays;
+                          _line = _getData(_displayMode);
+                        } else if (newValue == Utils.translate('Last Week')) {
+                          _displayMode = _Mode.Week;
+                          _line = _getData(_displayMode);
+                        } else if (newValue == Utils.translate('Beginning of Time')) {
+                          _displayMode = _Mode.BeginningOfTime;
+                          _line = _getData(_displayMode);
+                        } else {
+                          _displayMode = _Mode.Custom;
+                          _inputDialog();
                         }
                       });
                     },

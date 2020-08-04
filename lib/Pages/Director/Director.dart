@@ -30,7 +30,7 @@ class DirectorState extends State<Director> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Director"),
+        title: Text(Utils.translate("Director")),
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 20.0),
@@ -114,18 +114,21 @@ class DirectorState extends State<Director> {
           Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: Hero(
-                tag: Utils.translate("Help"),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => HelpPage()));
-                  },
-                  child: Icon(
-                    Icons.help_outline,
-                  ),
-                ),
+                  tag: Utils.translate("Help"),
+                  child: Tooltip(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HelpPage()));
+                      },
+                      child: Icon(
+                        Icons.help_outline,
+                      ),
+                    ),
+                    message: Utils.translate("Help"),
+                  )
               )),
         ]
       ),

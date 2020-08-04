@@ -590,7 +590,7 @@ class HelpPageState extends State<HelpPage> {
                   ],
                 ),
               ),
-              Text("Other Icons", style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+              Text(Utils.translate("Other Icons"), style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
               Card(
                 child: Row(
                   children: [
