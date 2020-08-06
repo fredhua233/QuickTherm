@@ -245,6 +245,8 @@
   "Sex:" : "性别: ",
   "Address in" : "地址于",
   "Managed by: " : "管理于: ",
-  "Temperature trend:" : "体温趋势: "
+  "Temperature trend:" : "体温趋势: ",
 
+  "Change Language" : "切换语言",
+  "Settings" : "设置"
 }

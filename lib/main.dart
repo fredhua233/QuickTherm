@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:quicktherm/Generate.dart';
 import 'package:quicktherm/Pages/Director/Director.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
@@ -17,7 +18,11 @@ import 'Utils/UserInfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Pages/HistoryPage.dart';
 
-void main() => runApp(BLETherometer());
+void main() => runApp(
+    Phoenix(
+      child: BLETherometer(),
+    )
+);
 
 String PATH, UNITPREF, LANG;
 //TODO：If the user already set up info, move choose devices, which moves to temperature else move to choose identity page
@@ -98,7 +103,7 @@ class InitializeState extends State<Initialize> {
                     return Director(managers: UserInfo().fireStore.collection(_path + "/Managers"));
 //                    return Director(managers: UserInfo().fireStore.collection("/Organizations/Santa's Toy Factory/Managers"));
                   case "":
-                    return ChooseLanguagePage();
+                    return ChooseLanguagePage(acceptedTerms: false,);
 //                    return ChooseIdentityPage();
                   default:
                     return Container();

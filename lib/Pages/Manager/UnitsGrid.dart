@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualPage.dart';
 import 'package:quicktherm/Pages/Manager/IndividualsGrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quicktherm/Pages/StartUp/ChooseLanguage.dart';
 import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,6 +31,7 @@ class UnitsGridState extends State<UnitsGrid> {
   _ModeUnits _mode = _ModeUnits.all;
   String _name = "";
   TextEditingController _search = new TextEditingController();
+  Language _lang = Utils.getLang();
 
   @override
   void initState() {
@@ -50,25 +53,6 @@ class UnitsGridState extends State<UnitsGrid> {
         appBar: AppBar(
           title: Text(Utils.translate("Units")),
           actions: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: IconButton(
-                    icon: Icon(MdiIcons.thermometer),
-                    tooltip: Utils.translate("Change Unit"),
-                    onPressed: () {
-                      SharedPreferences.getInstance().then((pref) {
-                        setState(() {
-                          if (UNITPREF == "C") {
-                            UNITPREF = "F";
-                          } else {
-                            UNITPREF = "C";
-                          }
-                          pref.setString("Temp Unit", UNITPREF);
-                        });
-                      });
-                    }
-                )
-            ),
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: Hero(
@@ -204,6 +188,38 @@ class UnitsGridState extends State<UnitsGrid> {
                     message: Utils.translate("Help"),
                   )
                 )),
+            Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: PopupMenuButton<String>(
+                onSelected: (value) {
+                  switch (value) {
+                    case "Change Unit":
+                      SharedPreferences.getInstance().then((pref) {
+                        setState(() {
+                          if (UNITPREF == "C") {
+                            UNITPREF = "F";
+                          } else {
+                            UNITPREF = "C";
+                          }
+                          pref.setString("Temp Unit", UNITPREF);
+                        });
+                      });
+                      break;
+                    case "Change Language":
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChooseLanguagePage(acceptedTerms: true,)));
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                      value: "Change Unit", child: Text(Utils.translate("Change Unit Preference"))),
+                  PopupMenuItem(
+                      value: "Change Language", child: Text(Utils.translate("Change Language")))
+                ],
+                icon: Icon(Icons.settings),
+                tooltip: Utils.translate("Settings"),
+              ),
+            ),
           ],
           bottom: TabBar(
             tabs: [

@@ -246,5 +246,8 @@
   "Sex:" : "Sex: ",
   "Address in" : "Address in",
   "Managed by: " : "Managed by: ",
-  "Temperature trend:" : "Temperature trend: "
+  "Temperature trend:" : "Temperature trend: ",
+
+  "Settings" : "Settings",
+  "Change Language" : "Change Language"
 }

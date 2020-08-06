@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Pages/LoadingPage.dart';
 import 'package:quicktherm/Pages/Manager/UnitsGrid.dart';
+import 'package:quicktherm/Pages/StartUp/ChooseLanguage.dart';
 import 'package:quicktherm/Utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utils/UserInfo.dart';
@@ -25,7 +27,7 @@ class DirectorState extends State<Director> {
   _State _state = _State.all;
   TextEditingController _search = new TextEditingController();
   String _name = "";
-
+  Language _lang = Utils.getLang();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +35,7 @@ class DirectorState extends State<Director> {
         title: Text(Utils.translate("Director")),
         actions: <Widget>[
           Padding(
-            padding: EdgeInsets.only(right: 20.0),
+            padding: EdgeInsets.only(right: 10.0),
                   child: IconButton(
                     icon: Icon(Icons.search),
                     tooltip: Utils.translate("Search For Specific Manager"),
@@ -81,7 +83,7 @@ class DirectorState extends State<Director> {
                   )
               ),
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
+              padding: EdgeInsets.only(right: 10.0),
                   child: IconButton(
                       icon: Icon(Icons.remove_red_eye),
                       tooltip: Utils.translate("View All"),
@@ -92,29 +94,29 @@ class DirectorState extends State<Director> {
                       }
                   )
           ),
+//          Padding(
+//              padding: EdgeInsets.only(right: 20.0),
+//              child: IconButton(
+//                  icon: Icon(MdiIcons.thermometer),
+//                  tooltip: Utils.translate("Change Unit"),
+//                  onPressed: () {
+//                    SharedPreferences.getInstance().then((pref) {
+//                      setState(() {
+//                        if (UNITPREF == "C") {
+//                          UNITPREF = "F";
+//                        } else {
+//                          UNITPREF = "C";
+//                        }
+//                        pref.setString("Temp Unit", UNITPREF);
+//                      });
+//                    });
+//                  }
+//              )
+//          ),
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: IconButton(
-                  icon: Icon(MdiIcons.thermometer),
-                  tooltip: Utils.translate("Change Unit"),
-                  onPressed: () {
-                    SharedPreferences.getInstance().then((pref) {
-                      setState(() {
-                        if (UNITPREF == "C") {
-                          UNITPREF = "F";
-                        } else {
-                          UNITPREF = "C";
-                        }
-                        pref.setString("Temp Unit", UNITPREF);
-                      });
-                    });
-                  }
-              )
-          ),
-          Padding(
-              padding: EdgeInsets.only(right: 20.0),
+              padding: EdgeInsets.only(right: 10.0),
               child: Hero(
-                  tag: Utils.translate("Help"),
+                  tag: "Help",
                   child: Tooltip(
                     child: GestureDetector(
                       onTap: () {
@@ -130,6 +132,39 @@ class DirectorState extends State<Director> {
                     message: Utils.translate("Help"),
                   )
               )),
+          Padding(
+              padding: EdgeInsets.only(right: 10.0),
+
+                    child: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        switch (value) {
+                          case "Change Unit":
+                            SharedPreferences.getInstance().then((pref) {
+                              setState(() {
+                                if (UNITPREF == "C") {
+                                  UNITPREF = "F";
+                                } else {
+                                  UNITPREF = "C";
+                                }
+                                pref.setString("Temp Unit", UNITPREF);
+                              });
+                            });
+                            break;
+                          case "Change Language":
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChooseLanguagePage(acceptedTerms: true,)));
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                            value: "Change Unit", child: Text(Utils.translate("Change Unit Preference"))),
+                        PopupMenuItem(
+                            value: "Change Language", child: Text(Utils.translate("Change Language")))
+                      ],
+                      icon: Icon(Icons.settings),
+                      tooltip: Utils.translate("Settings"),
+                    ),
+              ),
         ]
       ),
       body: _dirView(context),

@@ -246,6 +246,10 @@
   "Sex:" : "Sexo: ",
   "Address in" : "Habla a en ",
   "Managed by: " : "Gestionado por: ",
-  "Temperature trend:" : "Tendencia de la temperatura: "
+  "Temperature trend:" : "Tendencia de la temperatura: ",
+
+  "Change Language" : "Cambiar idioma",
+  "Settings" : "Configuraciones"
+
 
 }

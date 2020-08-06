@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quicktherm/Pages/HelpPage.dart';
 import 'package:quicktherm/Utils/UserInfo.dart';
@@ -15,6 +16,7 @@ import '../Utils/Utils.dart';
 import 'ConnectingDevicesPage.dart';
 import 'HistoryPage.dart';
 import 'ProfilePage.dart';
+import 'StartUp/ChooseLanguage.dart';
 
 //Critical voltage 3V, threshold 3.3V
 //Steinhart constants A: 0.2501292874e-3, B: 3.847945539e-4, c: -5.719579276e-7
@@ -66,6 +68,7 @@ class TempMonitorPageState extends State<TempMonitorPage> {
   DocumentReference _log;
   Map<String, dynamic> _data;
 
+  Language _lang = Utils.getLang();
   @override
   void initState() {
     super.initState();
@@ -641,7 +644,10 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                               });
                             });
                             break;
-                        }
+                          case "Change Language":
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChooseLanguagePage(acceptedTerms: true,)));
+                            break;
+                          }
                       },
                       itemBuilder: (context) => [
                         PopupMenuItem(
@@ -657,7 +663,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                         PopupMenuItem(
                             value: "Delete", child: Text(Utils.translate("Delete Last Taking"))),
                         PopupMenuItem(
-                            value: "Change Unit", child: Text(Utils.translate("Change Unit Preference")))
+                            value: "Change Unit", child: Text(Utils.translate("Change Unit Preference"))),
+                        PopupMenuItem(
+                            value: "Change Language", child: Text(Utils.translate("Change Language")))
                       ],
                     ))),
           ],

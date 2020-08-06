@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quicktherm/Pages/StartUp/ChooseLanguage.dart';
 import "package:shared_preferences/shared_preferences.dart";
 
 import '../Pages/ConnectingDevicesPage.dart';
@@ -44,6 +45,32 @@ class Utils {
     return key;
   }
 
+  static Language getLang() {
+    switch (LANG) {
+      case "en":
+        return Language.EN;
+        break;
+      case "sp":
+        return Language.SP;
+        break;
+      case "cn_s":
+        return Language.CN_S;
+        break;
+      case "cn_t":
+        return Language.CN_T;
+        break;
+      case "cn_y":
+        return Language.CN_Y;
+        break;
+      case "ru":
+        return Language.RU;
+        break;
+      case "ar":
+        return Language.AR;
+        break;
+    }
+  }
+
   /**
    * Template for error dialogs.
    */
@@ -60,7 +87,7 @@ class Utils {
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
-              child: new Text("Close"),
+              child: new Text(translate("Close")),
               onPressed: () {
                 Navigator.of(context).pop();
               },
