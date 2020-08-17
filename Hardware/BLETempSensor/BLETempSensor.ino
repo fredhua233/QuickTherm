@@ -6,7 +6,7 @@ int ThermistorPin = 3;
 float Vo, Vin;
 float R1 = 10000;
 float logR2, R2, T;
-float c1 = 0.2501292874e-03, c2 = 3.847945539e-04, c3 = -5.719579276e-07;
+float c1 = -0.004591066693, c2 = 0.00120365089360153, c3 = -0.00000405232514232457;
 volatile int ii = 0; // integer to iterate
 void setup() {
   pinMode(ThermistorPin, INPUT);
