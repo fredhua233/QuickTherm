@@ -592,8 +592,8 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                 )),
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
-                child: Hero(
-                    tag: "options",
+//                child: Hero(
+//                    tag: "options",
                     child: PopupMenuButton<String>(
                       onSelected: (value) async {
                         switch (value) {
@@ -667,7 +667,9 @@ class TempMonitorPageState extends State<TempMonitorPage> {
                         PopupMenuItem(
                             value: "Change Language", child: Text(Utils.translate("Change Language")))
                       ],
-                    ))),
+                    )
+//    )
+    ),
           ],
           title: Text(Utils.translate("Thermometer")),
         ),

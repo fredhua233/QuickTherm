@@ -48,6 +48,7 @@ class HistoryPageState extends State<HistoryPage> {
       temp = model.selectedSeries[0].measureFn(model.selectedDatum[0].index).toString();
       time = model.selectedDatum.first.datum.time.toString();
     }
+    print("hi");
     // Request a build.
     setState(() {
       _time = time;
@@ -356,13 +357,13 @@ class HistoryPageState extends State<HistoryPage> {
   //Gets color of secondary tag
   cup.Color _secondaryTag(String tag) {
     if (UNITPREF== "C") {
-      return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 37.5 ? Colors.red :
-      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 36) < 35.0 ? Colors.blue :
-      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 90) < 37.5 && (double.parse(tag) ?? 0) > 35.0 ? Colors.green : Colors.white;
+      return tag != null && tag != "" && tag != " " && tag != Utils.translate("N/A") && (double.parse(tag) ?? 0) > 37.5 ? Colors.red :
+      tag != null && tag != "" && tag != " " && tag != Utils.translate("N/A") && (double.parse(tag) ?? 36) < 35.0 ? Colors.blue :
+      tag != null && tag != "" && tag != " " && tag != Utils.translate("N/A") && (double.parse(tag) ?? 90) < 37.5 && (double.parse(tag) ?? 0) > 35.0 ? Colors.green : Colors.white;
     } else {
-      return tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 0) > 99.5 ? Colors.red :
-      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 96) < 95.0 ? Colors.blue :
-      tag != null && tag != "" && tag != " " && tag != "N/A" && (double.parse(tag) ?? 100) < 99.5 && (double.parse(tag) ?? 0) > 95.0 ? Colors.green : Colors.white;
+      return tag != null && tag != "" && tag != " " && tag != Utils.translate("N/A") && (double.parse(tag) ?? 0) > 99.5 ? Colors.red :
+      tag != null && tag != "" && tag != " " && tag != Utils.translate("N/A") && (double.parse(tag) ?? 96) < 95.0 ? Colors.blue :
+      tag != null && tag != "" && tag != " " && tag != Utils.translate("N/A") && (double.parse(tag) ?? 100) < 99.5 && (double.parse(tag) ?? 0) > 95.0 ? Colors.green : Colors.white;
     }
 
   }
